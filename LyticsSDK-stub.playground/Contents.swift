@@ -309,29 +309,29 @@ Lytics.sharedInstance().reset()
 // ----------
 
 // user?.setConsentState(consentState)
-// let user = MParticle.sharedInstance().identity.currentUser
+// let user = Lytics.sharedInstance().identity.currentUser
 // Create GDPR consent objects
-// let locationCollectionConsent = MPGDPRConsent.init()
+// let locationCollectionConsent = LyticsConsent.init()
 // locationCollectionConsent.consented = true
 // locationCollectionConsent.document = "location_collection_agreement_v4"
 // locationCollectionConsent.timestamp = Date.init()
 // locationCollectionConsent.location = "17 Cherry Tree Lane"
 // locationCollectionConsent.hardwareId = "IDFA:a5d934n0-232f-4afc-2e9a-3832d95zc702"
-// let parentalConsent = MPGDPRConsent.init()
+// let parentalConsent = LyticsConsent.init()
 // parentalConsent.consented = false
 // parentalConsent.document = "parental_consent_agreement_v2"
 // parentalConsent.timestamp = Date.init()
 // parentalConsent.location = "17 Cherry Tree Lane"
 // parentalConsent.hardwareId = "IDFA:a5d934n0-232f-4afc-2e9a-3832d95zc702"
 // // Only one CCPA consent object can be set - it has an implied purpose of `data sale opt-out`
-// let ccpaConsent = MPCCPAConsent.init()
+// let ccpaConsent = LYTICSCCPAConsent.init()
 // ccpaConsent.consented = true; // true represents a "data sale opt-out", false represents the user declining a "data sale opt-out"
 // ccpaConsent.document = "ccpa_consent_agreement_v2"
 // ccpaConsent.timestamp = Date.init()
 // ccpaConsent.location = "17 Cherry Tree Lane"
 // ccpaConsent.hardwareId = "IDFA:a5d934n0-232f-4afc-2e9a-3832d95zc702"
 // // Add to consent state
-// let consentState = MPConsentState.init()
+// let consentState = LyticsConsentState.init()
 // consentState.addGDPRConsentState(locationCollectionConsent, purpose: "location_collection")
 // consentState.addGDPRConsentState(parentalConsent, purpose: "parental")
 // consentState.setCCPAConsentState(ccpaConsent)
