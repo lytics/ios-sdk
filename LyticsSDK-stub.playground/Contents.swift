@@ -21,7 +21,7 @@ struct LyticsConfigOptions {
     var apiKey = ""
     var accountId = ""
     var primaryIdentityKey = ""
-    var anonymouseIdentityKey = ""
+    var anonymousIdentityKey = ""
     var recordScreenViews = false
     var uploadInterval = 1 // seconds (0=off)
     var maxQueueSize = 10 // records
@@ -303,11 +303,20 @@ class LyticsUser {
 // implementation
 // ------------------------------------------------------------------
 
+// notes on missing things
+// session controls
+// explict definitions of auto collected events
+// what versions to support (android, ios)
+// how many constructors
+// declarative constructor syntax
+// call out uuid generation
+// payload handle child/parent propertly to prevent legacy bug where parnet is dropped as we go deeper
+
 // [STORY] developer initializes the instance (note: this does not outline all required configuration options)
 var options = LyticsConfigOptions()
 options.apiKey = "my-api-key"               // the customers collection api key
 options.primaryIdentityKey = "_uid"         // the key that represents the core identifier to be used in api calls
-options.anonymouseIdentityKey = "_uid"      // the key which we use to store the anonymous identifier
+options.anonymousIdentityKey = "_uid"      // the key which we use to store the anonymous identifier
 options.recordScreenViews = true            // example of a flag for automatically collecting screen information
 options.uploadInterval = 5000               // example of a queue setting to determine how often its flushed
 options.maxQueueSize = 10                   // example of a queue setting to determine maximum events before flushing
@@ -337,11 +346,10 @@ consentEvent.properties = [
 consentEvent.consent = [
     "document": "gdpr_collection_agreement_v1",
     "timestamp": "46236424246",
-    "consented": "true",
+    "consented": true,
 ]
 
 lytics.consent(with: consentEvent)
-
 
 // [STORY] developer identifies the current app user
 var idEvent = LyticsIdentityEvent()
@@ -375,6 +383,9 @@ event.properties = [
 ]
 
 lytics.track(with: event)
+// var result = await lytics.track(with: event)
+// make sure that we handle an option to trigger another method after the
+// event send has completed
 
 // [STORY] developer wants to track a screen event when the app user navigates to a new view
 var screenEvent = LyticsEvent()
