@@ -4,23 +4,23 @@
 import PackageDescription
 
 let package = Package(
-    name: "ios-sdk",
+    name: "lytics",
     platforms: [
         .iOS(.v13)
     ],
     products: [
         .library(
-            name: "ios-sdk",
-            targets: ["ios-sdk"]),
+            name: "Lytics",
+            targets: ["Lytics"]),
     ],
     dependencies: [
     ],
     targets: [
         .target(
-            name: "ios-sdk",
+            name: "Lytics",
             dependencies: []),
         .testTarget(
-            name: "ios-sdkTests",
-            dependencies: ["ios-sdk"]),
+            name: "LyticsTests",
+            dependencies: ["Lytics"]),
     ]
 )
