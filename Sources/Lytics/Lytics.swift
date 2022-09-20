@@ -151,11 +151,13 @@ public extension Lytics {
         // ...
     }
 
+    /// Request access to IDFA.
     func requestTrackingAuthorization() async -> Bool {
         // ...
         return false
     }
 
+    /// Disable use of IDFA.
     func disableTracking() {
         // ...
     }
@@ -163,6 +165,11 @@ public extension Lytics {
 
 // MARK: - Utility
 public extension Lytics {
+
+    /// Returns a unique identifier.
+    func identifier() -> String {
+        UUID().uuidString
+    }
 
     /// Force flush the event queue by sending all events in the queue immediately.
     func dispatch() {
