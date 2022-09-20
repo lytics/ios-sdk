@@ -27,14 +27,14 @@ public struct LyticsUser: Codable, Equatable {
     /// - Parameters:
     ///   - userType: The type of user.
     ///   - identifiers: Valuable identification fields of an individual.
-    ///   - traits: Additional information about a user.
+    ///   - attributes: Additional information about a user.
     public init(
         userType: UserType = .anonymous,
         identifiers: [String : String] = [:],
-        traits: [String : String] = [:]
+        attributes: [String : String] = [:]
     ) {
         self.userType = userType
         self.identifiers = identifiers
-        self.traits = traits
+        self.attributes = attributes
     }
 }
