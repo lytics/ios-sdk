@@ -15,10 +15,10 @@ public struct LyticsUser: Codable, Equatable {
     }
 
     /// Valuable identification fields of an individual.
-    var identifiers: [String: String]
+    public var identifiers: [String: String]
 
     /// Additional information about a user.
-    var traits: [String: String]
+    public var attributes: [String: String]
 
     /// Initializes a user.
     /// - Parameters:
