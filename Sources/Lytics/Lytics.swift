@@ -59,6 +59,7 @@ public extension Lytics {
         identifiers: I?,
         properties: P?
     ) {
+        let event = Event(stream: stream, name: name, identifiers: identifiers, properties: properties)
         // ...
     }
 
@@ -100,6 +101,9 @@ public extension Lytics {
         attributes: A?,
         shouldSend: Bool = true
     ) {
+        if shouldSend {
+            let event = IdentityEvent(stream: stream, name: name, identifiers: identifiers, attributes: attributes)
+        }
         // ...
     }
 
@@ -139,6 +143,14 @@ public extension Lytics {
         consent: C?,
         shouldSend: Bool = true
     ) {
+        if shouldSend {
+            let event = ConsentEvent(
+                stream: stream,
+                name: name,
+                identifiers: identifiers,
+                properties: properties,
+                consent: consent)
+        }
         // ...
     }
 
