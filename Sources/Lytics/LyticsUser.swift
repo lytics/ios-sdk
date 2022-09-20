@@ -14,6 +14,9 @@ public struct LyticsUser: Codable, Equatable {
         case identified
     }
 
+    /// The type of user.
+    public var userType: UserType
+
     /// Valuable identification fields of an individual.
     public var identifiers: [String: String]
 
@@ -22,12 +25,15 @@ public struct LyticsUser: Codable, Equatable {
 
     /// Initializes a user.
     /// - Parameters:
+    ///   - userType: The type of user.
     ///   - identifiers: Valuable identification fields of an individual.
     ///   - traits: Additional information about a user.
     public init(
+        userType: UserType = .anonymous,
         identifiers: [String : String] = [:],
         traits: [String : String] = [:]
     ) {
+        self.userType = userType
         self.identifiers = identifiers
         self.traits = traits
     }
