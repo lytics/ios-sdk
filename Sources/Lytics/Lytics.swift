@@ -72,6 +72,7 @@ public extension Lytics {
         name: String? = nil,
         properties: P?
     ) {
+        track(stream: stream, name: name, identifiers: Optional<Never>.none, properties: properties)
     }
 
     /// Track a custom event.
@@ -82,7 +83,7 @@ public extension Lytics {
         stream: String? = nil,
         name: String? = nil
     ) {
-        // ...
+        track(stream: stream, name: name, identifiers: Optional<Never>.none, properties: Optional<Never>.none)
     }
 
     /// Update the user properties and optionally emit an identity event.
@@ -114,7 +115,12 @@ public extension Lytics {
         identifiers: I?,
         shouldSend: Bool = true
     ) {
-        // ...
+        identify(
+            stream: stream,
+            name: name,
+            identifiers: identifiers,
+            attributes: Optional<Never>.none,
+            shouldSend: shouldSend)
     }
 
     /// Update a user consent properties and optionally emit a special event that represents an app user's explicit consent.
@@ -150,6 +156,13 @@ public extension Lytics {
         consent: C?,
         shouldSend: Bool = true
     ) {
+        self.consent(
+            stream: stream,
+            name: name,
+            identifiers: Optional<Never>.none,
+            properties: properties,
+            consent: consent,
+            shouldSend: shouldSend)
     }
 
     /// Update a user consent properties and optionally emit a special event that represents an app user's explicit consent.
@@ -164,6 +177,13 @@ public extension Lytics {
         consent: C?,
         shouldSend: Bool = true
     ) {
+        self.consent(
+            stream: stream,
+            name: name,
+            identifiers: Optional<Never>.none,
+            properties: Optional<Never>.none,
+            consent: consent,
+            shouldSend: shouldSend)
     }
 
     /// Emit an event representing a screen or page view. Device properties are injected into the payload before emitting.
@@ -190,6 +210,7 @@ public extension Lytics {
         name: String? = nil,
         properties: P?
     ) {
+        screen(stream: stream, name: name, identifiers: Optional<Never>.none, properties: properties)
     }
 }
 
