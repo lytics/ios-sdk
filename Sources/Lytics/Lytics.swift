@@ -51,13 +51,13 @@ public extension Lytics {
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
-    ///   - event: An `Encodable` type representing the event properties.
-    ///   - send: A Boolean value indicating whether an event should be emitted.
-    func track<Event: Encodable>(
+    ///   - identifiers: A value representing additional identifiers to associate with this event.
+    ///   - properties: A value  representing the event properties.
+    func track<I: Encodable, P: Encodable>(
         stream: String? = nil,
-        name: String,
-        event: Event,
-        send: Bool = true
+        name: String? = nil,
+        identifiers: I?,
+        properties: P?
     ) {
         // ...
     }
@@ -66,11 +66,21 @@ public extension Lytics {
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
-    ///   - send: A Boolean value indicating whether an event should be emitted.
+    ///   - event: A value representing the event properties.
+    func track<P: Encodable>(
+        stream: String? = nil,
+        name: String? = nil,
+        properties: P?
+    ) {
+    }
+
+    /// Track a custom event.
+    /// - Parameters:
+    ///   - stream: The DataType, or "Table" of type of data being uploaded.
+    ///   - name: The event name.
     func track(
         stream: String? = nil,
-        name: String,
-        send: Bool = true
+        name: String? = nil
     ) {
         // ...
     }
@@ -79,15 +89,15 @@ public extension Lytics {
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
-    ///   - identifiers: An `Encodable` type representing user identifiers.
-    ///   - traits: An `Encodable` type representing additional information about a user.
-    ///   - send: A Boolean value indicating whether an event should be emitted.
-    func identify<Identifiers: Encodable, Traits: Encodable>(
+    ///   - identifiers: A value representing user identifiers.
+    ///   - attributes: A value representing additional information about a user.
+    ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
+    func identify<I: Encodable, A: Encodable>(
         stream: String? = nil,
-        name: String,
-        identifiers: Identifiers,
-        traits: Traits,
-        send: Bool = true
+        name: String? = nil,
+        identifiers: I?,
+        attributes: A?,
+        shouldSend: Bool = true
     ) {
         // ...
     }
@@ -96,13 +106,13 @@ public extension Lytics {
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
-    ///   - identifiers: An `Encodable` type representing user identifiers.
-    ///   - send: A Boolean value indicating whether an event should be emitted.
-    func identify<Identifiers: Encodable>(
+    ///   - identifiers: A value representing user identifiers.
+    ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
+    func identify<I: Encodable>(
         stream: String? = nil,
-        name: String,
-        identifiers: Identifiers,
-        send: Bool = true
+        name: String? = nil,
+        identifiers: I?,
+        shouldSend: Bool = true
     ) {
         // ...
     }
@@ -111,13 +121,61 @@ public extension Lytics {
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
-    ///   - event: An `Encodable` type representing the event properties.
-    ///   - send: A Boolean value indicating whether an event should be emitted.
-    func consent<Event: Encodable>(
+    ///   - identifiers: A value representing additional identifiers to associate with this event.
+    ///   - properties: A value representing the event properties.
+    ///   - consent: A value representing consent properties.
+    ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
+    func consent<I: Encodable, P: Encodable, C: Encodable>(
         stream: String? = nil,
-        name: String,
-        event: Event,
-        send: Bool = true
+        name: String? = nil,
+        identifiers: I?,
+        properties: P?,
+        consent: C?,
+        shouldSend: Bool = true
+    ) {
+        // ...
+    }
+
+    /// Update a user consent properties and optionally emit a special event that represents an app user's explicit consent.
+    /// - Parameters:
+    ///   - stream: The DataType, or "Table" of type of data being uploaded.
+    ///   - name: The event name.
+    ///   - properties: A value representing the event properties.
+    ///   - consent: A value representing consent properties.
+    ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
+    func consent<P: Encodable, C: Encodable>(
+        stream: String? = nil,
+        name: String? = nil,
+        properties: P?,
+        consent: C?,
+        shouldSend: Bool = true
+    ) {
+    }
+
+    /// Update a user consent properties and optionally emit a special event that represents an app user's explicit consent.
+    /// - Parameters:
+    ///   - stream: The DataType, or "Table" of type of data being uploaded.
+    ///   - name: The event name.
+    ///   - consent: A value representing consent properties.
+    ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
+    func consent<C: Encodable>(
+        stream: String? = nil,
+        name: String? = nil,
+        consent: C?,
+        shouldSend: Bool = true
+    ) {
+    }
+
+    /// Emit an event representing a screen or page view. Device properties are injected into the payload before emitting.
+    /// - Parameters:
+    ///   - stream: The DataType, or "Table" of type of data being uploaded.
+    ///   - name: The event name.
+    ///   - properties: A value representing the event properties.
+    func screen<I: Encodable, P: Encodable>(
+        stream: String? = nil,
+        name: String? = nil,
+        identifiers: I?,
+        properties: P?
     ) {
         // ...
     }
@@ -126,15 +184,12 @@ public extension Lytics {
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
-    ///   - event: An `Encodable` type representing the event properties.
-    ///   - send: A Boolean value indicating whether an event should be emitted.
-    func screen<Event: Encodable>(
+    ///   - properties: A value representing the event properties.
+    func screen<P: Encodable>(
         stream: String? = nil,
-        name: String,
-        event: Event,
-        send: Bool = true
+        name: String? = nil,
+        properties: P?
     ) {
-        // ...
     }
 }
 
