@@ -15,6 +15,8 @@ public final class Lytics {
         return instance
     }()
 
+    var logger: LyticsLogger = .live
+
     /// A Boolean value indicating whether this instance has been started.
     public private(set) var hasStarted: Bool = false
 
@@ -39,7 +41,16 @@ public final class Lytics {
 
     /// Configure this Lytics SDK instance.
     /// - Parameter configuration: A closure enabling mutation of the configuration.
-    public func start(_ configuration: (LyticsConfiguration) -> Void) {
+    public func start(_ configure: (inout LyticsConfiguration) -> Void) {
+        guard !hasStarted else {
+            logger.error("Lytics instance has already been started")
+            return
+        }
+
+        var configuration = LyticsConfiguration()
+        configure(&configuration)
+
+        logger.logLevel = configuration.logLevel
         // ...
     }
 }
