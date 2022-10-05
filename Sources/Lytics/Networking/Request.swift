@@ -95,3 +95,7 @@ struct Request<Response>: Codable, Equatable, URLRequestConvertible {
         return urlRequest
     }
 }
+
+extension Request: RequestProtocol where Response: Decodable {
+    typealias Resp = Response
+}
