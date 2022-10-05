@@ -26,5 +26,21 @@ struct EventPipeline {
 
     @usableFromInline
     func handle<T: Encodable>(stream: String, event: T) {
+        Task(priority: .background) {
+            do {
+                try Task.checkCancellation()
+
+                let data = try encoder.encode(event)
+                let request = requestBuilder.dataUpload(stream: stream, data: data)
+
+                try Task.checkCancellation()
+
+                await requestQueue.enqueue(request)
+            } catch is CancellationError {
+                logger.debug("Task for \(stream) was canceled")
+            } catch {
+                logger.error(error.localizedDescription)
+            }
+        }
     }
 }
