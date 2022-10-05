@@ -108,6 +108,7 @@ class Lytics {
         self.uploadInterval = 5000
         self.maxQueueSize = 10
         self.enableAdvertisingTracking = false
+        self.eventQueue =  []
         self.logLevel = "verbose"
         self.environment = "local"
     }
@@ -346,7 +347,7 @@ consentEvent.properties = [
 consentEvent.consent = [
     "document": "gdpr_collection_agreement_v1",
     "timestamp": "46236424246",
-    "consented": true,
+    "consented": "true",
 ]
 
 lytics.consent(with: consentEvent)
