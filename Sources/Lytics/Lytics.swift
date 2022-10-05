@@ -15,7 +15,11 @@ public final class Lytics {
         return instance
     }()
 
-    var logger: LyticsLogger = .live
+    internal var logger: LyticsLogger = .live
+
+    internal var eventPipeline: EventPipeline!
+
+    internal private(set) var defaultStream: String = ""
 
     /// A Boolean value indicating whether this instance has been started.
     public private(set) var hasStarted: Bool = false
@@ -51,7 +55,13 @@ public final class Lytics {
         configure(&configuration)
 
         logger.logLevel = configuration.logLevel
-        // ...
+
+        eventPipeline = EventPipeline(
+            logger: logger,
+            requestBuilder: .live(apiKey: configuration.apiKey),
+            requestQueue: RequestQueue(
+                maxQueueSize: configuration.maxQueueSize,
+                uploadInterval: configuration.uploadInterval))
     }
 }
 
@@ -70,8 +80,15 @@ public extension Lytics {
         identifiers: I?,
         properties: P?
     ) {
-        let event = Event(stream: stream, name: name, identifiers: identifiers, properties: properties)
+        guard hasStarted else {
+            assertionFailure("Lytics must be started before using \(#function)")
+            return
+        }
+
         // ...
+
+        let event = Event(name: name, identifiers: identifiers, properties: properties)
+        eventPipeline.handle(stream: stream ?? defaultStream, event: event)
     }
 
     /// Track a custom event.
@@ -112,8 +129,14 @@ public extension Lytics {
         attributes: A?,
         shouldSend: Bool = true
     ) {
+        guard hasStarted else {
+            assertionFailure("Lytics must be started before using \(#function)")
+            return
+        }
+
         if shouldSend {
-            let event = IdentityEvent(stream: stream, name: name, identifiers: identifiers, attributes: attributes)
+            let event = IdentityEvent(name: name, identifiers: identifiers, attributes: attributes)
+            eventPipeline.handle(stream: stream ?? defaultStream, event: event)
         }
         // ...
     }
@@ -154,13 +177,18 @@ public extension Lytics {
         consent: C?,
         shouldSend: Bool = true
     ) {
+        guard hasStarted else {
+            assertionFailure("Lytics must be started before using \(#function)")
+            return
+        }
+
         if shouldSend {
             let event = ConsentEvent(
-                stream: stream,
                 name: name,
                 identifiers: identifiers,
                 properties: properties,
                 consent: consent)
+            eventPipeline.handle(stream: stream ?? defaultStream, event: event)
         }
         // ...
     }
