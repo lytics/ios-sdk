@@ -55,6 +55,7 @@ public final class Lytics {
         configure(&configuration)
 
         logger.logLevel = configuration.logLevel
+        defaultStream = configuration.defaultStream
 
         eventPipeline = EventPipeline(
             logger: logger,
@@ -62,6 +63,8 @@ public final class Lytics {
             requestQueue: RequestQueue(
                 maxQueueSize: configuration.maxQueueSize,
                 uploadInterval: configuration.uploadInterval))
+
+        hasStarted = true
     }
 }
 
