@@ -50,3 +50,9 @@ extension Optional where Wrapped: RangeReplaceableCollection {
         }
     }
 }
+
+extension Optional where Wrapped == Never {
+
+    @usableFromInline
+    static let never: Self = .none
+}

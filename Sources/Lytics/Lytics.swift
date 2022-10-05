@@ -104,7 +104,7 @@ public extension Lytics {
         name: String? = nil,
         properties: P?
     ) {
-        track(stream: stream, name: name, identifiers: Optional<Never>.none, properties: properties)
+        track(stream: stream, name: name, identifiers: Optional.never, properties: properties)
     }
 
     /// Track a custom event.
@@ -160,7 +160,7 @@ public extension Lytics {
             stream: stream,
             name: name,
             identifiers: identifiers,
-            attributes: Optional<Never>.none,
+            attributes: Optional.never,
             shouldSend: shouldSend)
     }
 
@@ -213,7 +213,7 @@ public extension Lytics {
         self.consent(
             stream: stream,
             name: name,
-            identifiers: Optional<Never>.none,
+            identifiers: Optional.never,
             attributes: attributes,
             consent: consent,
             shouldSend: shouldSend)
@@ -234,8 +234,8 @@ public extension Lytics {
         self.consent(
             stream: stream,
             name: name,
-            identifiers: Optional<Never>.none,
-            attributes: Optional<Never>.none,
+            identifiers: Optional.never,
+            attributes: Optional.never,
             consent: consent,
             shouldSend: shouldSend)
     }
@@ -264,7 +264,7 @@ public extension Lytics {
         name: String? = nil,
         properties: P?
     ) {
-        screen(stream: stream, name: name, identifiers: Optional<Never>.none, properties: properties)
+        screen(stream: stream, name: name, identifiers: Optional.never, properties: properties)
     }
 }
 
