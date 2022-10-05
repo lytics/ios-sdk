@@ -31,8 +31,46 @@ actor RequestQueue: RequestQueueing {
 
         if requests.count >= maxQueueSize {
             // ...
+            Task(priority: .medium) {
+                await emptyQueue()
+            }
+
         } else if timerTask == nil {
             // ...
+        }
+    }
+}
+
+private extension RequestQueue {
+    func send<T: RequestProtocol>(_ request: T) async {
+        do {
+            let response = try await requestPerformer.perform(request)
+                .validate()
+                .decode()
+
+            logger.debug("\(response)")
+        } catch let error as DecodingError {
+            logger.error(error.userDescription)
+        } catch {
+            if shouldRetry(for: error) {
+                enqueue(request)
+            } else {
+                logger.error("Error sending `Request` \(request): \(error)")
+            }
+        }
+    }
+
+    func shouldRetry(for error: Error) -> Bool {
+        // TODO: handle
+        true
+    }
+}
+
+private extension RequestQueue {
+    func emptyQueue() async {
+        defer { requests = [] }
+        for request in requests {
+            await send(request)
         }
     }
 }
