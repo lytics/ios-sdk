@@ -15,8 +15,8 @@ struct RequestBuilder {
 
         var path: String {
             switch self {
-            case .dataUpload:
-                return "/collect/json/"
+            case .dataUpload(let stream):
+                return "/collect/json/\(stream)"
             }
         }
     }
