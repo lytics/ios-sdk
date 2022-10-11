@@ -50,3 +50,9 @@ extension Optional where Wrapped: RangeReplaceableCollection {
         }
     }
 }
+
+public extension Optional where Wrapped == Never {
+
+    /// A convenience member to specify an `Optional<Never>.none` value.
+    static let never: Self = .none
+}
