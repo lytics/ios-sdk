@@ -7,7 +7,7 @@
 import Foundation
 
 struct Event<I: Encodable, P: Encodable>: Encodable {
-    var stream: String?
+    var stream: String
     var name: String?
     var identifiers: I?
     var properties: P?
