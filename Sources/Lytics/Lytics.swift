@@ -17,6 +17,8 @@ public final class Lytics {
 
     internal var logger: LyticsLogger = .live
 
+    internal let userManager = UserManager()
+
     internal private(set) var defaultStream: String = ""
 
     /// A Boolean value indicating whether this instance has been started.
