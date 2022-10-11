@@ -4,6 +4,7 @@
 //  Created by Mathew Gacy on 9/12/22.
 //
 
+import AnyCodable
 import Foundation
 
 public final class Lytics {
@@ -83,12 +84,28 @@ public extension Lytics {
             return
         }
 
-        let event = Event(
-            stream: stream ?? defaultStream,
-            name: name,
-            identifiers: identifiers,
-            properties: properties)
-        // ...
+        Task(priority: .background) {
+            var eventIdentifiers = [String: AnyCodable]()
+            if let identifiers {
+                do {
+                    eventIdentifiers = try await userManager
+                        .updateIdentifiers(with: identifiers)
+                        .mapValues(AnyCodable.init(_:))
+                } catch {
+                    logger.error(error.localizedDescription)
+                }
+            } else {
+                eventIdentifiers = await userManager.identifiers.mapValues(AnyCodable.init(_:))
+            }
+
+            let event = Event(
+                stream: stream ?? defaultStream,
+                name: name,
+                identifiers: eventIdentifiers,
+                properties: properties)
+
+            // ...
+        }
     }
 
     /// Track a custom event.
@@ -134,14 +151,32 @@ public extension Lytics {
             return
         }
 
-        if shouldSend {
-            let event = IdentityEvent(
-                stream: stream ?? defaultStream,
-                name: name,
-                identifiers: identifiers,
-                attributes: attributes)
+        guard identifiers != nil || attributes != nil else {
+            return
         }
-        // ...
+
+        Task(priority: .background) {
+            do {
+                if shouldSend {
+                    let user = try await userManager.update(
+                        with: UserUpdate(identifiers: identifiers, attributes: attributes))
+
+                    let event = IdentityEvent(
+                        stream: stream ?? defaultStream,
+                        name: name,
+                        identifiers: user.identifiers,
+                        attributes: user.attributes)
+
+                    // ...
+
+                } else {
+                    try await userManager.update2(
+                        with: UserUpdate(identifiers: identifiers, attributes: attributes))
+                }
+            } catch {
+                logger.error(error.localizedDescription)
+            }
+        }
     }
 
     /// Update the user properties and optionally emit an identity event.
@@ -185,15 +220,32 @@ public extension Lytics {
             return
         }
 
-        if shouldSend {
-            let event = ConsentEvent(
-                stream: stream ?? defaultStream,
-                name: name,
-                identifiers: identifiers,
-                attributes: attributes,
-                consent: consent)
+        guard identifiers != nil || attributes != nil || consent != nil else {
+            return
         }
-        // ...
+
+        Task(priority: .background) {
+            do {
+                if shouldSend {
+                    let user = try await userManager.update(
+                        with: UserUpdate(identifiers: identifiers, attributes: attributes))
+
+                    let event = ConsentEvent(
+                        stream: stream ?? defaultStream,
+                        name: name,
+                        identifiers: user.identifiers,
+                        attributes: user.attributes,
+                        consent: consent)
+
+                    // ...
+                } else {
+                    try await userManager.update2(
+                        with: UserUpdate(identifiers: identifiers, attributes: attributes))
+                }
+            } catch {
+                logger.error(error.localizedDescription)
+            }
+        }
     }
 
     /// Update a user consent properties and optionally emit a special event that represents an app user's explicit consent.
