@@ -6,6 +6,9 @@
 
 import Foundation
 
+/// A type that provides the path of a resource.
 protocol PathProvider {
+
+    /// The resource path.
     var path: String { get }
 }

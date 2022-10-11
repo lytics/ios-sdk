@@ -6,7 +6,9 @@
 
 import Foundation
 
+/// A type that can convert itself into a `URLRequest`.
 protocol URLRequestConvertible {
+
     /// Returns a `URLRequest` instance.
     func asURLRequest() throws -> URLRequest
 }
