@@ -36,9 +36,9 @@ struct RequestBuilder {
     /// Upload event to API.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
-    ///   - dryrun: TODO: add description
+    ///   - dryrun: A Boolean value indicating whether an event should be processed.
     ///   - timestampField: The name of the column or field in file that contains event timestamp.
-    ///   - filename: Just for record-keeping in our event - stream.
+    ///   - filename: An identifier specifying the unique source of an individual event.
     ///   - data: The data to upload.
     /// - Returns: The request.
     func dataUpload(
