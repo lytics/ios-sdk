@@ -6,10 +6,10 @@
 
 import Foundation
 
-struct ConsentEvent<I: Encodable, P: Encodable, C: Encodable>: Encodable {
+struct ConsentEvent<I: Encodable, A: Encodable, C: Encodable>: Encodable {
     var stream: String
     var name: String?
     var identifiers: I?
-    var properties: P?
+    var attributes: A?
     var consent: C?
 }

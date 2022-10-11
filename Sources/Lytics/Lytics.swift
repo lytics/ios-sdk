@@ -167,14 +167,14 @@ public extension Lytics {
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
     ///   - identifiers: A value representing additional identifiers to associate with this event.
-    ///   - properties: A value representing the event properties.
+    ///   - attributes: A value representing additional information about a user.
     ///   - consent: A value representing consent properties.
     ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
-    func consent<I: Encodable, P: Encodable, C: Encodable>(
+    func consent<I: Encodable, A: Encodable, C: Encodable>(
         stream: String? = nil,
         name: String? = nil,
         identifiers: I?,
-        properties: P?,
+        attributes: A?,
         consent: C?,
         shouldSend: Bool = true
     ) {
@@ -188,7 +188,7 @@ public extension Lytics {
                 stream: stream ?? defaultStream,
                 name: name,
                 identifiers: identifiers,
-                properties: properties,
+                attributes: attributes,
                 consent: consent)
         }
         // ...
@@ -198,13 +198,13 @@ public extension Lytics {
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
-    ///   - properties: A value representing the event properties.
+    ///   - attributes: A value representing additional information about a user.
     ///   - consent: A value representing consent properties.
     ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
-    func consent<P: Encodable, C: Encodable>(
+    func consent<A: Encodable, C: Encodable>(
         stream: String? = nil,
         name: String? = nil,
-        properties: P?,
+        attributes: A?,
         consent: C?,
         shouldSend: Bool = true
     ) {
@@ -212,7 +212,7 @@ public extension Lytics {
             stream: stream,
             name: name,
             identifiers: Optional<Never>.none,
-            properties: properties,
+            attributes: attributes,
             consent: consent,
             shouldSend: shouldSend)
     }
@@ -233,7 +233,7 @@ public extension Lytics {
             stream: stream,
             name: name,
             identifiers: Optional<Never>.none,
-            properties: Optional<Never>.none,
+            attributes: Optional<Never>.none,
             consent: consent,
             shouldSend: shouldSend)
     }
