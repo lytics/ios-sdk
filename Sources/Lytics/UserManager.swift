@@ -46,7 +46,7 @@ actor UserManager: UserManaging {
 
     /// Updates the user with the given update.
     /// - Parameter userUpdate: The update.
-    func update2<A: Encodable, I: Encodable>(with userUpdate: UserUpdate<A, I>) throws {
+    func update2<I: Encodable, A: Encodable>(with userUpdate: UserUpdate<I, A>) throws {
         if let attributesUpdate = userUpdate.attributes {
             try updateAttributes(with: attributesUpdate)
         }
@@ -59,7 +59,7 @@ actor UserManager: UserManaging {
     /// Returns the result of updating the user with the given update.
     /// - Parameter userUpdate: The update.
     /// - Returns: The updated user.
-    func update<A: Encodable, I: Encodable>(with userUpdate: UserUpdate<A, I>) throws -> LyticsUser {
+    func update<I: Encodable, A: Encodable>(with userUpdate: UserUpdate<I, A>) throws -> LyticsUser {
         let updatedAttributes: [String: Any]
         let updatedIdentifiers: [String: Any]
 
