@@ -30,7 +30,7 @@ protocol UserManaging: Actor {
 
     /// Updates the user with the given update.
     /// - Parameter userUpdate: The update.
-    func update2<A: Encodable, I: Encodable>(with userUpdate: UserUpdate<A, I>) throws
+    func apply<A: Encodable, I: Encodable>(_ userUpdate: UserUpdate<A, I>) throws
 
     /// Returns the result of updating the user with the given update.
     /// - Parameter userUpdate: The update.

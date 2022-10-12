@@ -170,8 +170,8 @@ public extension Lytics {
                     // ...
 
                 } else {
-                    try await userManager.update2(
-                        with: UserUpdate(identifiers: identifiers, attributes: attributes))
+                    try await userManager.apply(
+                        UserUpdate(identifiers: identifiers, attributes: attributes))
                 }
             } catch {
                 logger.error(error.localizedDescription)
@@ -239,8 +239,8 @@ public extension Lytics {
 
                     // ...
                 } else {
-                    try await userManager.update2(
-                        with: UserUpdate(identifiers: identifiers, attributes: attributes))
+                    try await userManager.apply(
+                        UserUpdate(identifiers: identifiers, attributes: attributes))
                 }
             } catch {
                 logger.error(error.localizedDescription)

@@ -7,6 +7,7 @@
 import AnyCodable
 import Foundation
 
+/// An object that manages the current user's identity.
 actor UserManager: UserManaging {
     private let encoder: JSONEncoder
 
@@ -46,7 +47,7 @@ actor UserManager: UserManaging {
 
     /// Updates the user with the given update.
     /// - Parameter userUpdate: The update.
-    func update2<I: Encodable, A: Encodable>(with userUpdate: UserUpdate<I, A>) throws {
+    func apply<I: Encodable, A: Encodable>(_ userUpdate: UserUpdate<I, A>) throws {
         if let attributesUpdate = userUpdate.attributes {
             try updateAttributes(with: attributesUpdate)
         }
