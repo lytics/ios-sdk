@@ -57,6 +57,12 @@ struct RequestBuilder {
     }
 }
 
+extension RequestBuilder {
+    static func live(apiKey: String) -> Self {
+        .init(baseURL: URL(string: "https://api.lytics.io")!, apiKey: apiKey)
+    }
+}
+
 private extension RequestBuilder {
     func url(for route: Route) -> URL {
         baseURL.appending(route)
