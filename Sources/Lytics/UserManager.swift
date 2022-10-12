@@ -83,8 +83,13 @@ actor UserManager: UserManaging {
         let data = try encoder.encode(value)
         guard let dictionary = try JSONSerialization.jsonObject(
             with: data,
-            options: .allowFragments) as? [String: Any] else {
-            throw NSError()
+            options: .allowFragments) as? [String: Any]
+        else {
+            throw EncodingError.invalidValue(
+                T.self,
+                .init(
+                    codingPath: [],
+                    debugDescription: "Unable to creation a dictionary from \(value)."))
         }
         return dictionary
     }
