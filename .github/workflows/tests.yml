@@ -9,7 +9,7 @@ on:
       - '*'
 
 jobs:
-  xcode_tests:
+  unit_tests:
     name: Run Tests
     runs-on: macos-12
 
