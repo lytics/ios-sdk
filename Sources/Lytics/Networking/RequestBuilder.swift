@@ -66,7 +66,7 @@ private extension RequestBuilder {
         .init(method: .get, url: url(for: route), headers: [authHeader])
     }
 
-    func post<T>(_ route: Route, data: Data) -> Request<T> {
-        .init(method: .post, url: url(for: route), headers: [authHeader], body: data)
+    func post<T>(_ route: Route, data: Data, contentType: HeaderField.ContentType = .json) -> Request<T> {
+        .init(method: .post, url: url(for: route), headers: [.contentType(contentType), authHeader], body: data)
     }
 }
