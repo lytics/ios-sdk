@@ -10,11 +10,14 @@ import Foundation
 /// A type that manages user identifiers and attributes.
 protocol UserManaging: Actor {
 
-    /// Returns the user attributes.
+    /// The user identifiers.
+    var identifiers: [String: Any] { get }
+
+    /// The user attributes.
     var attributes: [String: Any] { get }
 
-    /// Returns the user identifiers.
-    var identifiers: [String: Any] { get }
+    /// The current user.
+    var user: LyticsUser {  get }
 
     @discardableResult
     /// Updates the user identifiers with the given identifier and returns the result.

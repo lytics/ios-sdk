@@ -17,6 +17,14 @@ actor UserManager: UserManaging {
     /// The user attributes.
     private(set) var attributes: [String: Any]
 
+    /// The current user.
+    var user: LyticsUser {
+        .init(
+            userType: .anonymous,
+            identifiers: identifiers.mapValues(AnyCodable.init(_:)),
+            attributes: attributes.mapValues(AnyCodable.init(_:)))
+    }
+
     init(
         encoder: JSONEncoder = .init(),
         identifiers: [String: Any] = [:],
