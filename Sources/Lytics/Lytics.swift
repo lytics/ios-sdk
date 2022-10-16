@@ -4,6 +4,7 @@
 //  Created by Mathew Gacy on 9/12/22.
 //
 
+import AnyCodable
 import Foundation
 
 public final class Lytics {
@@ -15,7 +16,11 @@ public final class Lytics {
         return instance
     }()
 
-    var logger: LyticsLogger = .live
+    internal var logger: LyticsLogger = .live
+
+    internal let userManager = UserManager()
+
+    internal private(set) var defaultStream: String = ""
 
     /// A Boolean value indicating whether this instance has been started.
     public private(set) var hasStarted: Bool = false
@@ -51,7 +56,11 @@ public final class Lytics {
         configure(&configuration)
 
         logger.logLevel = configuration.logLevel
+        defaultStream = configuration.defaultStream
+
         // ...
+
+        hasStarted = true
     }
 }
 
@@ -70,8 +79,33 @@ public extension Lytics {
         identifiers: I?,
         properties: P?
     ) {
-        let event = Event(stream: stream, name: name, identifiers: identifiers, properties: properties)
-        // ...
+        guard hasStarted else {
+            assertionFailure("Lytics must be started before using \(#function)")
+            return
+        }
+
+        Task(priority: .background) {
+            var eventIdentifiers = [String: AnyCodable]()
+            if let identifiers {
+                do {
+                    eventIdentifiers = try await userManager
+                        .updateIdentifiers(with: identifiers)
+                        .mapValues(AnyCodable.init(_:))
+                } catch {
+                    logger.error(error.localizedDescription)
+                }
+            } else {
+                eventIdentifiers = await userManager.identifiers.mapValues(AnyCodable.init(_:))
+            }
+
+            let event = Event(
+                stream: stream ?? defaultStream,
+                name: name,
+                identifiers: eventIdentifiers,
+                properties: properties)
+
+            // ...
+        }
     }
 
     /// Track a custom event.
@@ -84,7 +118,7 @@ public extension Lytics {
         name: String? = nil,
         properties: P?
     ) {
-        track(stream: stream, name: name, identifiers: Optional<Never>.none, properties: properties)
+        track(stream: stream, name: name, identifiers: Optional.never, properties: properties)
     }
 
     /// Track a custom event.
@@ -95,7 +129,7 @@ public extension Lytics {
         stream: String? = nil,
         name: String? = nil
     ) {
-        track(stream: stream, name: name, identifiers: Optional<Never>.none, properties: Optional<Never>.none)
+        track(stream: stream, name: name, identifiers: Optional.never, properties: Optional.never)
     }
 
     /// Update the user properties and optionally emit an identity event.
@@ -112,10 +146,37 @@ public extension Lytics {
         attributes: A?,
         shouldSend: Bool = true
     ) {
-        if shouldSend {
-            let event = IdentityEvent(stream: stream, name: name, identifiers: identifiers, attributes: attributes)
+        guard hasStarted else {
+            assertionFailure("Lytics must be started before using \(#function)")
+            return
         }
-        // ...
+
+        guard identifiers != nil || attributes != nil else {
+            return
+        }
+
+        Task(priority: .background) {
+            do {
+                if shouldSend {
+                    let user = try await userManager.update(
+                        with: UserUpdate(identifiers: identifiers, attributes: attributes))
+
+                    let event = IdentityEvent(
+                        stream: stream ?? defaultStream,
+                        name: name,
+                        identifiers: user.identifiers,
+                        attributes: user.attributes)
+
+                    // ...
+
+                } else {
+                    try await userManager.apply(
+                        UserUpdate(identifiers: identifiers, attributes: attributes))
+                }
+            } catch {
+                logger.error(error.localizedDescription)
+            }
+        }
     }
 
     /// Update the user properties and optionally emit an identity event.
@@ -134,7 +195,7 @@ public extension Lytics {
             stream: stream,
             name: name,
             identifiers: identifiers,
-            attributes: Optional<Never>.none,
+            attributes: Optional.never,
             shouldSend: shouldSend)
     }
 
@@ -143,47 +204,69 @@ public extension Lytics {
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
     ///   - identifiers: A value representing additional identifiers to associate with this event.
-    ///   - properties: A value representing the event properties.
+    ///   - attributes: A value representing additional information about a user.
     ///   - consent: A value representing consent properties.
     ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
-    func consent<I: Encodable, P: Encodable, C: Encodable>(
+    func consent<I: Encodable, A: Encodable, C: Encodable>(
         stream: String? = nil,
         name: String? = nil,
         identifiers: I?,
-        properties: P?,
+        attributes: A?,
         consent: C?,
         shouldSend: Bool = true
     ) {
-        if shouldSend {
-            let event = ConsentEvent(
-                stream: stream,
-                name: name,
-                identifiers: identifiers,
-                properties: properties,
-                consent: consent)
+        guard hasStarted else {
+            assertionFailure("Lytics must be started before using \(#function)")
+            return
         }
-        // ...
+
+        guard identifiers != nil || attributes != nil || consent != nil else {
+            return
+        }
+
+        Task(priority: .background) {
+            do {
+                if shouldSend {
+                    let user = try await userManager.update(
+                        with: UserUpdate(identifiers: identifiers, attributes: attributes))
+
+                    let event = ConsentEvent(
+                        stream: stream ?? defaultStream,
+                        name: name,
+                        identifiers: user.identifiers,
+                        attributes: user.attributes,
+                        consent: consent)
+
+                    // ...
+                } else {
+                    try await userManager.apply(
+                        UserUpdate(identifiers: identifiers, attributes: attributes))
+                }
+            } catch {
+                logger.error(error.localizedDescription)
+            }
+        }
     }
 
     /// Update a user consent properties and optionally emit a special event that represents an app user's explicit consent.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
-    ///   - properties: A value representing the event properties.
+    ///   - attributes: A value representing additional information about a user.
     ///   - consent: A value representing consent properties.
     ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
-    func consent<P: Encodable, C: Encodable>(
+    func consent<A: Encodable, C: Encodable>(
         stream: String? = nil,
         name: String? = nil,
-        properties: P?,
+        attributes: A?,
         consent: C?,
         shouldSend: Bool = true
     ) {
         self.consent(
             stream: stream,
             name: name,
-            identifiers: Optional<Never>.none,
-            properties: properties,
+            identifiers: Optional.never,
+            attributes: attributes,
             consent: consent,
             shouldSend: shouldSend)
     }
@@ -203,8 +286,8 @@ public extension Lytics {
         self.consent(
             stream: stream,
             name: name,
-            identifiers: Optional<Never>.none,
-            properties: Optional<Never>.none,
+            identifiers: Optional.never,
+            attributes: Optional.never,
             consent: consent,
             shouldSend: shouldSend)
     }
@@ -233,7 +316,7 @@ public extension Lytics {
         name: String? = nil,
         properties: P?
     ) {
-        screen(stream: stream, name: name, identifiers: Optional<Never>.none, properties: properties)
+        screen(stream: stream, name: name, identifiers: Optional.never, properties: properties)
     }
 }
 
