@@ -14,11 +14,17 @@ let package = Package(
             targets: ["Lytics"]),
     ],
     dependencies: [
+        .package(
+            url: "https://github.com/Flight-School/AnyCodable",
+            from: "0.6.6"
+        ),
     ],
     targets: [
         .target(
             name: "Lytics",
-            dependencies: []),
+            dependencies: [
+                "AnyCodable"
+            ]),
         .testTarget(
             name: "LyticsTests",
             dependencies: ["Lytics"]),
