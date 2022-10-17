@@ -6,10 +6,12 @@
 
 import Foundation
 
+@usableFromInline
 struct UserUpdate<I: Encodable, A: Encodable>: Encodable {
     var identifiers: I?
     var attributes: A?
 
+    @usableFromInline
     init(identifiers: I? = nil, attributes: A? = nil) {
         self.identifiers = identifiers
         self.attributes = attributes

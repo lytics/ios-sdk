@@ -7,12 +7,14 @@
 import AnyCodable
 import Foundation
 
+@usableFromInline
 struct Event<P: Encodable>: Encodable {
     var stream: String
     var name: String?
     var identifiers: [String: AnyCodable]?
     var properties: P?
 
+    @usableFromInline
     init(
         stream: String,
         name: String? = nil,

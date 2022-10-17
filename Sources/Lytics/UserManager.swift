@@ -8,14 +8,15 @@ import AnyCodable
 import Foundation
 
 /// An object that manages the current user's identity.
+@usableFromInline
 actor UserManager: UserManaging {
     private let encoder: JSONEncoder
 
     /// The user identifiers.
-    private(set) var identifiers: [String: Any]
+    @usableFromInline private(set) var identifiers: [String: Any]
 
     /// The user attributes.
-    private(set) var attributes: [String: Any]
+    @usableFromInline private(set) var attributes: [String: Any]
 
     /// The current user.
     var user: LyticsUser {
@@ -25,6 +26,7 @@ actor UserManager: UserManaging {
             attributes: attributes.mapValues(AnyCodable.init(_:)))
     }
 
+    @usableFromInline
     init(
         encoder: JSONEncoder = .init(),
         identifiers: [String: Any] = [:],
@@ -36,6 +38,7 @@ actor UserManager: UserManaging {
     }
 
     @discardableResult
+    @usableFromInline
     /// Updates the user identifiers with the given identifier and returns the result.
     /// - Parameter other: The identifier to update.
     /// - Returns: The updated identifiers.
@@ -45,6 +48,7 @@ actor UserManager: UserManaging {
     }
 
     @discardableResult
+    @usableFromInline
     /// Updates the user attributes with the given attribute and returns the result.
     /// - Parameter other: The attribute to update.
     /// - Returns: The updated attributes.
@@ -53,6 +57,7 @@ actor UserManager: UserManaging {
         return attributes
     }
 
+    @usableFromInline
     /// Updates the user with the given update.
     /// - Parameter userUpdate: The update.
     func apply<I: Encodable, A: Encodable>(_ userUpdate: UserUpdate<I, A>) throws {
@@ -65,6 +70,7 @@ actor UserManager: UserManaging {
         }
     }
 
+    @usableFromInline
     /// Returns the result of updating the user with the given update.
     /// - Parameter userUpdate: The update.
     /// - Returns: The updated user.

@@ -29,10 +29,12 @@ public enum LogLevel: Comparable, Equatable {
     }
 }
 
+@usableFromInline
 struct LyticsLogger {
     var logLevel: LogLevel = .error
     var log: (OSLogType, @escaping () -> String, StaticString, StaticString, UInt) -> Void
 
+    @usableFromInline
     /// Log a debug message.
     /// - Parameter message: The message to log.
     func debug(
@@ -47,6 +49,7 @@ struct LyticsLogger {
         log(.debug, message, file, function, line)
     }
 
+    @usableFromInline
     /// Log an info message.
     /// - Parameter message: The message to log.
     func info(
@@ -61,6 +64,7 @@ struct LyticsLogger {
         log(.info, message, file, function, line)
     }
 
+    @usableFromInline
     /// Log an error message.
     /// - Parameter message: The message to log.
     func error(

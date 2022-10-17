@@ -7,6 +7,7 @@
 import AnyCodable
 import Foundation
 
+@usableFromInline
 struct ConsentEvent<C: Encodable>: Encodable {
     var stream: String
     var name: String?
@@ -14,6 +15,7 @@ struct ConsentEvent<C: Encodable>: Encodable {
     var attributes: [String: AnyCodable]?
     var consent: C?
 
+    @usableFromInline
     init(
         stream: String,
         name: String? = nil,

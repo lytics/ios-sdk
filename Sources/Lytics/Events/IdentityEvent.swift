@@ -6,12 +6,14 @@
 
 import Foundation
 
+@usableFromInline
 struct IdentityEvent<I: Encodable, A: Encodable>: Encodable {
     var stream: String
     var name: String?
     var identifiers: I?
     var attributes: A?
 
+    @usableFromInline
     init(stream: String, name: String? = nil, identifiers: I? = nil, attributes: A? = nil) {
         self.stream = stream
         self.name = name
