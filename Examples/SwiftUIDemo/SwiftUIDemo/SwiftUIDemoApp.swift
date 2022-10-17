@@ -13,14 +13,19 @@ import SwiftUI
 struct SwiftUIDemoApp: App {
     init() {
         Lytics.shared.start { configuration in
-            configuration.apiKey = ""
+            configuration.apiKey = "at.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+            configuration.maxQueueSize = 1
+            configuration.logLevel = .debug
             // ...
         }
     }
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(
+                identity: DemoIdentity(
+                    userID: "Jane Doe",
+                    email: "j@mail.com"))
         }
     }
 }
