@@ -8,7 +8,7 @@ import AnyCodable
 import Foundation
 
 @usableFromInline
-struct ConsentEvent<C: Encodable>: Encodable {
+struct ConsentEvent<C: Encodable>: StreamEvent {
     var stream: String
     var name: String?
     var identifiers: [String: AnyCodable]?

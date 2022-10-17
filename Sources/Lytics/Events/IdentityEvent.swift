@@ -7,7 +7,7 @@
 import Foundation
 
 @usableFromInline
-struct IdentityEvent<I: Encodable, A: Encodable>: Encodable {
+struct IdentityEvent<I: Encodable, A: Encodable>: StreamEvent {
     var stream: String
     var name: String?
     var identifiers: I?
