@@ -25,6 +25,9 @@ public final class Lytics {
     @usableFromInline
     internal private(set) var defaultStream: String = ""
 
+    @usableFromInline
+    internal var eventPipeline: EventPipeline!
+
     /// A Boolean value indicating whether this instance has been started.
     public private(set) var hasStarted: Bool = false
 
@@ -61,7 +64,9 @@ public final class Lytics {
         logger.logLevel = configuration.logLevel
         defaultStream = configuration.defaultStream
 
-        // ...
+        eventPipeline = .live(
+            logger: logger,
+            configuration: configuration)
 
         hasStarted = true
     }
@@ -108,7 +113,7 @@ public extension Lytics {
                 identifiers: eventIdentifiers,
                 properties: properties)
 
-            // ...
+            await eventPipeline.event(event)
         }
     }
 
@@ -174,8 +179,7 @@ public extension Lytics {
                         identifiers: user.identifiers,
                         attributes: user.attributes)
 
-                    // ...
-
+                    await eventPipeline.event(event)
                 } else {
                     try await userManager.apply(
                         UserUpdate(identifiers: identifiers, attributes: attributes))
