@@ -11,13 +11,16 @@ import Foundation
 struct EventPipeline {
     let logger: LyticsLogger
     let eventQueue: EventQueueing
+    let uploader: Uploading
 
     init(
         logger: LyticsLogger,
-        eventQueue: EventQueueing
+        eventQueue: EventQueueing,
+        uploader: Uploading
     ) {
         self.logger = logger
         self.eventQueue = eventQueue
+        self.uploader = uploader
     }
 
     @usableFromInline
@@ -41,11 +44,14 @@ extension EventPipeline {
         logger: LyticsLogger,
         configuration: LyticsConfiguration
     ) -> Self {
-        EventPipeline(
+        let uploader = Uploader.live(logger: logger)
+
+        return EventPipeline(
             logger: logger,
             eventQueue: EventQueue.live(
                 logger: logger,
                 configuration: configuration,
-                upload: { _ in }))
+                upload: { await uploader.upload($0) }),
+            uploader: uploader)
     }
 }
