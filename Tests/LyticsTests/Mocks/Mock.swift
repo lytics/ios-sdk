@@ -34,3 +34,39 @@ enum Mock {
 
     static let url = URL(string: "https://api.lytics.io/collect/json/stream")!
 }
+
+extension Mock {
+    static func consentEvent(
+        stream: String,
+        name: String = "name"
+    ) -> ConsentEvent<TestConsent> {
+        .init(
+            stream: stream,
+            name: name,
+            identifiers: User1.identifiers,
+            attributes: User1.attributes,
+            consent: TestConsent.user1)
+    }
+
+    static func event(
+        stream: String,
+        name: String = "name"
+    ) -> Event<TestCart> {
+        .init(
+            stream: stream,
+            name: name,
+            identifiers: User1.identifiers,
+            properties: TestCart.user1)
+    }
+
+    static func identityEvent(
+        stream: String,
+        name: String = "name"
+    ) -> IdentityEvent<TestIdentifiers, TestAttributes> {
+        .init(
+            stream: stream,
+            name: name,
+            identifiers: TestIdentifiers.user1,
+            attributes: TestAttributes.user1)
+    }
+}
