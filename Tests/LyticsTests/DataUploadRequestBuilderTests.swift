@@ -24,38 +24,6 @@ final class DataUploadRequestBuilderTests: XCTestCase {
     }
 
     func testEncodeSingle() throws {
-        func assertOnStream1(_ object: [String: Any]) {
-            XCTAssertEqual(object["name"] as! String, name1)
-
-            let identifiers1 = object["identifiers"] as! [String: Any]
-            XCTAssertEqual(identifiers1["email"] as! String, User1.email)
-            XCTAssertEqual(identifiers1["userID"] as! Int, User1.userID)
-            let nested1 = identifiers1["nested"] as! [String: Any]
-            XCTAssertEqual(nested1["a"] as! Int, User1.a)
-            XCTAssertEqual(nested1["b"] as! String, User1.b)
-
-            let attributes = object["attributes"] as! [String: Any]
-            XCTAssertEqual(attributes["firstName"] as! String, User1.firstName)
-            XCTAssertEqual(attributes["titles"] as! [String], User1.titles)
-        }
-
-        func assertOnStream2(_ object: [String: Any]) {
-            XCTAssertEqual(object["name"] as! String, name2)
-
-            let identifiers2 = object["identifiers"] as! [String: Any]
-            XCTAssertEqual(identifiers2["email"] as! String, User1.email)
-            XCTAssertEqual(identifiers2["userID"] as! Int, User1.userID)
-            let nested2 = identifiers2["nested"] as! [String: Any]
-            XCTAssertEqual(nested2["a"] as! Int, User1.a)
-            XCTAssertEqual(nested2["b"] as! String, User1.b)
-
-            let consent = object["consent"] as! [String: Any]
-            XCTAssertEqual(consent["document"] as! String, TestConsent.user1.document)
-            XCTAssertEqual(consent["timestamp"] as! String, TestConsent.user1.timestamp)
-            XCTAssertEqual(consent["consented"] as! Bool, TestConsent.user1.consented)
-        }
-
-
         let events: [String: [any StreamEvent]] = [
             stream1: [
                 IdentityEvent(
@@ -80,17 +48,7 @@ final class DataUploadRequestBuilderTests: XCTestCase {
 
         let first = try JSONSerialization.jsonObject(with: requests.first!.body!) as! [String: Any]
         let last = try JSONSerialization.jsonObject(with: requests.last!.body!) as! [String: Any]
-        let firstName = first["name"] as! String
-
-        if firstName == name1 {
-            assertOnStream1(first)
-            assertOnStream2(last)
-        } else if firstName == name2 {
-            assertOnStream1(last)
-            assertOnStream2(first)
-        } else {
-            XCTFail("Request bodies do not match expectations")
-        }
+        assertOnEvents(first: first, last: last)
     }
 
     func testEncodeMultiple() throws {
@@ -116,33 +74,54 @@ final class DataUploadRequestBuilderTests: XCTestCase {
         let array = try JSONSerialization.jsonObject(with: requests.first!.body!) as! [[String: Any]]
         XCTAssertEqual(array.count, 2)
 
-        // Identity Event
         let first = array.first!
-        XCTAssertEqual(first["name"] as! String, name1)
+        let last = array.last!
+        assertOnEvents(first: first, last: last)
+    }
+}
 
-        let identifiers1 = first["identifiers"] as! [String: Any]
+ // MARK: - Helpers
+extension DataUploadRequestBuilderTests {
+    func  assertOnEvents(first: [String: Any], last: [String: Any]) {
+        let firstName = first["name"] as! String
+
+        if firstName == name1 {
+            assertOnIdentityEvent(first)
+            assertOnConsentEvent(last)
+        } else if firstName == name2 {
+            assertOnIdentityEvent(last)
+            assertOnConsentEvent(first)
+        } else {
+            XCTFail("Request bodies do not match expectations")
+        }
+    }
+
+    func assertOnIdentityEvent(_ object: [String: Any]) {
+        XCTAssertEqual(object["name"] as! String, name1)
+
+        let identifiers1 = object["identifiers"] as! [String: Any]
         XCTAssertEqual(identifiers1["email"] as! String, User1.email)
         XCTAssertEqual(identifiers1["userID"] as! Int, User1.userID)
         let nested1 = identifiers1["nested"] as! [String: Any]
         XCTAssertEqual(nested1["a"] as! Int, User1.a)
         XCTAssertEqual(nested1["b"] as! String, User1.b)
 
-        let attributes = first["attributes"] as! [String: Any]
+        let attributes = object["attributes"] as! [String: Any]
         XCTAssertEqual(attributes["firstName"] as! String, User1.firstName)
         XCTAssertEqual(attributes["titles"] as! [String], User1.titles)
+    }
 
-        // Consent Event
-        let last = array.last!
-        XCTAssertEqual(last["name"] as! String, name2)
+    func assertOnConsentEvent(_ object: [String: Any]) {
+        XCTAssertEqual(object["name"] as! String, name2)
 
-        let identifiers2 = last["identifiers"] as! [String: Any]
+        let identifiers2 = object["identifiers"] as! [String: Any]
         XCTAssertEqual(identifiers2["email"] as! String, User1.email)
         XCTAssertEqual(identifiers2["userID"] as! Int, User1.userID)
         let nested2 = identifiers2["nested"] as! [String: Any]
         XCTAssertEqual(nested2["a"] as! Int, User1.a)
         XCTAssertEqual(nested2["b"] as! String, User1.b)
 
-        let consent = last["consent"] as! [String: Any]
+        let consent = object["consent"] as! [String: Any]
         XCTAssertEqual(consent["document"] as! String, TestConsent.user1.document)
         XCTAssertEqual(consent["timestamp"] as! String, TestConsent.user1.timestamp)
         XCTAssertEqual(consent["consented"] as! Bool, TestConsent.user1.consented)
