@@ -33,3 +33,5 @@ struct Event<P: Encodable>: StreamEvent {
         case properties
     }
 }
+
+extension Event: Equatable where P: Equatable {}

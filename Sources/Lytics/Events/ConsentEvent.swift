@@ -37,3 +37,5 @@ struct ConsentEvent<C: Encodable>: StreamEvent {
         case consent
     }
 }
+
+extension ConsentEvent: Equatable where C: Equatable {}

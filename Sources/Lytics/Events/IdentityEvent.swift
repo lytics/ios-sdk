@@ -27,3 +27,5 @@ struct IdentityEvent<I: Encodable, A: Encodable>: StreamEvent {
         case attributes
     }
 }
+
+extension IdentityEvent: Equatable where I: Equatable, A: Equatable {}
