@@ -13,8 +13,8 @@ actor EventQueue: EventQueueing {
     private let uploadInterval: TimeInterval
     private let encoder: JSONEncoder
     private let requestBuilder: DataUploadRequestBuilder
+    private(set) var eventCount: UInt = 0
     private var events: [String: [any StreamEvent]] = [:]
-    private var eventCount: UInt = 0
     private var upload: ([Request<DataUploadResponse>]) async -> Void
     private var timerTask: Task<Void, Error>?
 
