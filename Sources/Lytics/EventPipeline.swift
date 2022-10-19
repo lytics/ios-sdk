@@ -34,11 +34,6 @@ struct EventPipeline {
     func event<C: Encodable>(_ consentEvent: ConsentEvent<C>) async {
         await eventQueue.enqueue(consentEvent)
     }
-
-    @usableFromInline
-    func event<P: Encodable>(_ screenEvent: ScreenEvent<P>) async {
-        await eventQueue.enqueue(screenEvent)
-    }
 }
 
 extension EventPipeline {
@@ -50,6 +45,7 @@ extension EventPipeline {
             logger: logger,
             eventQueue: EventQueue.live(
                 logger: logger,
-                configuration: configuration))
+                configuration: configuration,
+                upload: { _ in }))
     }
 }
