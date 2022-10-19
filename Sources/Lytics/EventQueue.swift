@@ -68,21 +68,20 @@ actor EventQueue: EventQueueing {
             return
         }
 
-        do {
-            let requests = try requestBuilder.requests(events)
-            events = [:]
+        let copy = events
+        resetEvents()
 
-            Task(priority: .medium) {
+        Task(priority: .medium) {
+            do {
+                let requests = try requestBuilder.requests(copy)
                 await upload(requests)
+            } catch {
+                logger.error(error.localizedDescription)
             }
-
-        } catch {
-            logger.error(error.localizedDescription)
         }
     }
 }
 
-// MARK: - Timer Management
 private extension EventQueue {
     func makeTimer(priority: TaskPriority = .background) -> Task<Void, Error> {
         Task.delayed(byTimeInterval: uploadInterval, priority: priority) { [weak self] in
@@ -93,6 +92,11 @@ private extension EventQueue {
     func cancelTimer() {
         timerTask?.cancel()
         timerTask = nil
+    }
+
+    func resetEvents() {
+        events = [:]
+        eventCount = 0
     }
 }
 
