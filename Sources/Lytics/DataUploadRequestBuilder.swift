@@ -12,6 +12,36 @@ struct DataUploadRequestBuilder {
 
 extension DataUploadRequestBuilder {
     static func live(apiKey: String) -> Self {
-        .init(requests: { _ in [] })
+        let encoder = JSONEncoder()
+        let requestBuilder = RequestBuilder.live(apiKey: apiKey)
+
+        return .init(
+            requests: {
+                try $0.reduce(into: [Request<DataUploadResponse>]()) { requests, element in
+                    do {
+                        var data = Data()
+                        switch element.value.count {
+                        case 0:
+                            break
+                        case 1:
+                            let event = element.value.first!
+                            data = try encoder.encode(event)
+                        default:
+                            data = try element.value.reduce(into: Data.openBracket) { data, value in
+                                if data.count > 1 {
+                                    data.append(.comma)
+                                }
+                                data.append(try encoder.encode(value))
+                            }
+                            data.append(.closedBracket)
+                        }
+
+                        requests.append(
+                            requestBuilder.dataUpload(
+                                stream: element.key,
+                                data: data))
+                    }
+                }
+            })
     }
 }
