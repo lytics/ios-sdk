@@ -8,13 +8,13 @@ import Foundation
 
 struct TestCart: Codable, Equatable {
     var orderId: String
-    var total: Int
+    var total: Float
 }
 
 extension TestCart {
     static var user1: Self {
         .init(
             orderId: "some-order-id",
-            total: 1995)
+            total: 19.95)
     }
 }
