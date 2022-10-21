@@ -94,6 +94,17 @@ actor Uploader: Uploading {
             }
         }
     }
+
+    /// Stores pending requests and cancels their upload tasks.
+    func storeRequests() {
+        shouldSend = false
+        pendingRequests.forEach { $0.value.uploadTask?.cancel() }
+
+        for (id, wrapper) in pendingRequests {
+            pendingRequests[id] = nil
+            openAndCache(wrapper)
+        }
+    }
 }
 
 private extension Uploader {
