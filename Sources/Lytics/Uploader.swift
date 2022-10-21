@@ -6,6 +6,7 @@
 
 import Foundation
 
+/// Uploads requests to the Lytics API.
 actor Uploader: Uploading {
 
     /// A wrapper for an in-progress request.
@@ -42,6 +43,14 @@ actor Uploader: Uploading {
     private let errorHandler: RequestFailureHandler
     private let cache: RequestCaching
     private var pendingRequests: [UUID: any RequestWrapping]
+
+    /// A Boolean value that indicates whether any requests passed to `upload(_:)` should be upload or stored immediately.
+    var shouldSend: Bool
+
+    /// The number of requests waiting to be uploaded.
+    var pendingRequestCount: Int {
+        pendingRequests.count
+    }
 
     init(
         logger: LyticsLogger,
