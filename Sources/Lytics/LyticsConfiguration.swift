@@ -41,10 +41,13 @@ public struct LyticsConfiguration: Equatable {
     /// Set to `0` to disable.
     public var maxQueueSize: Int = 10
 
+    /// The max number of times to try and resend an event on failure.
+    public var maxRetryCount: Int = 3
+
     /// Session timeout in seconds.
     ///
     /// This is the period from when the app enters the background and the session expires, starting a new session.
-    public var sessionDuration: Double = 1200
+    public var sessionDuration: TimeInterval = 1200
 
     /// Enable sandbox mode which adds a "sandbox" flag to all outbound events. This flag then enables those events to be
     /// processed in an alternative way or skipped entirely upon delivery to the Lytics collection APIs.
