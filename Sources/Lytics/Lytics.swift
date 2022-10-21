@@ -108,12 +108,9 @@ public extension Lytics {
             }
 
             let event = Event(
-                stream: stream ?? defaultStream,
-                name: name,
                 identifiers: eventIdentifiers,
                 properties: properties)
 
-            await eventPipeline.event(event)
         }
     }
 
@@ -174,12 +171,9 @@ public extension Lytics {
                         with: UserUpdate(identifiers: identifiers, attributes: attributes))
 
                     let event = IdentityEvent(
-                        stream: stream ?? defaultStream,
-                        name: name,
                         identifiers: user.identifiers,
                         attributes: user.attributes)
 
-                    await eventPipeline.event(event)
                 } else {
                     try await userManager.apply(
                         UserUpdate(identifiers: identifiers, attributes: attributes))
@@ -244,13 +238,10 @@ public extension Lytics {
                         with: UserUpdate(identifiers: identifiers, attributes: attributes))
 
                     let event = ConsentEvent(
-                        stream: stream ?? defaultStream,
-                        name: name,
                         identifiers: user.identifiers,
                         attributes: user.attributes,
                         consent: consent)
 
-                    await eventPipeline.event(event)
                 } else {
                     try await userManager.apply(
                         UserUpdate(identifiers: identifiers, attributes: attributes))
