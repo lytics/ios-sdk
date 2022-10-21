@@ -44,7 +44,11 @@ extension EventPipeline {
         logger: LyticsLogger,
         configuration: LyticsConfiguration
     ) -> Self {
-        let uploader = Uploader.live(logger: logger)
+        let requestCache = RequestCache.live
+        let uploader = Uploader.live(
+            logger: logger,
+            cache: requestCache,
+            maxRetryCount: configuration.maxRetryCount)
 
         return EventPipeline(
             logger: logger,
