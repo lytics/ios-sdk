@@ -23,6 +23,9 @@ public final class Lytics {
     internal let userManager = UserManager()
 
     @usableFromInline
+    internal var timestampProvider: () -> Millisecond = { Date().timeIntervalSince1970.milliseconds }
+
+    @usableFromInline
     internal private(set) var defaultStream: String = ""
 
     @usableFromInline
@@ -93,6 +96,7 @@ public extension Lytics {
             return
         }
 
+        let timestamp = timestampProvider()
         Task(priority: .background) {
             var eventIdentifiers = [String: AnyCodable]()
             if let identifiers {
@@ -107,10 +111,13 @@ public extension Lytics {
                 eventIdentifiers = await userManager.identifiers.mapValues(AnyCodable.init(_:))
             }
 
-            let event = Event(
-                identifiers: eventIdentifiers,
-                properties: properties)
-
+            await eventPipeline.event(
+                stream: stream ?? defaultStream,
+                timestamp: timestamp,
+                name: name,
+                event: Event(
+                    identifiers: eventIdentifiers,
+                    properties: properties))
         }
     }
 
@@ -164,16 +171,20 @@ public extension Lytics {
             return
         }
 
+        let timestamp = timestampProvider()
         Task(priority: .background) {
             do {
                 if shouldSend {
                     let user = try await userManager.update(
                         with: UserUpdate(identifiers: identifiers, attributes: attributes))
 
-                    let event = IdentityEvent(
-                        identifiers: user.identifiers,
-                        attributes: user.attributes)
-
+                    await eventPipeline.event(
+                        stream: stream ?? defaultStream,
+                        timestamp: timestamp,
+                        name: name,
+                        event: IdentityEvent(
+                            identifiers: user.identifiers,
+                            attributes: user.attributes))
                 } else {
                     try await userManager.apply(
                         UserUpdate(identifiers: identifiers, attributes: attributes))
@@ -231,17 +242,21 @@ public extension Lytics {
             return
         }
 
+        let timestamp = timestampProvider()
         Task(priority: .background) {
             do {
                 if shouldSend {
                     let user = try await userManager.update(
                         with: UserUpdate(identifiers: identifiers, attributes: attributes))
 
-                    let event = ConsentEvent(
-                        identifiers: user.identifiers,
-                        attributes: user.attributes,
-                        consent: consent)
-
+                    await eventPipeline.event(
+                        stream: stream ?? defaultStream,
+                        timestamp: timestamp,
+                        name: name,
+                        event: ConsentEvent(
+                            identifiers: user.identifiers,
+                            attributes: user.attributes,
+                            consent: consent))
                 } else {
                     try await userManager.apply(
                         UserUpdate(identifiers: identifiers, attributes: attributes))

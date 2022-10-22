@@ -10,32 +10,35 @@ import Foundation
 /// An event pipeline.
 struct EventPipeline {
     let logger: LyticsLogger
+    let sessionDidStart: (Millisecond) -> Bool
     let eventQueue: EventQueueing
     let uploader: Uploading
 
     init(
         logger: LyticsLogger,
+        sessionDidStart: @escaping (Millisecond) -> Bool,
         eventQueue: EventQueueing,
         uploader: Uploading
     ) {
         self.logger = logger
+        self.sessionDidStart = sessionDidStart
         self.eventQueue = eventQueue
         self.uploader = uploader
     }
 
     @usableFromInline
-    func event<P: Encodable>(_ event: Event<P>) async {
-        await eventQueue.enqueue(event)
-    }
-
-    @usableFromInline
-    func event<I: Encodable, A: Encodable>(_ identityEvent: IdentityEvent<I, A>) async {
-        await eventQueue.enqueue(identityEvent)
-    }
-
-    @usableFromInline
-    func event<C: Encodable>(_ consentEvent: ConsentEvent<C>) async {
-        await eventQueue.enqueue(consentEvent)
+    func event<E: Encodable>(
+        stream: String,
+        timestamp: Millisecond,
+        name: String?,
+        event: E
+    ) async {
+        await eventQueue.enqueue(
+            Payload(
+                stream: stream,
+                timestamp: timestamp,
+                sessionDidStart: sessionDidStart(timestamp) ? 1 : nil,
+                event: event))
     }
 }
 
@@ -52,6 +55,9 @@ extension EventPipeline {
 
         return EventPipeline(
             logger: logger,
+            sessionDidStart: { timestamp in
+                false
+            },
             eventQueue: EventQueue.live(
                 logger: logger,
                 configuration: configuration,
