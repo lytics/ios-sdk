@@ -32,10 +32,10 @@ final class EventQueueTests: XCTestCase {
 
         buildExpectation.isInverted = true
 
-        await sut.enqueue(Mock.consentEvent)
-        await sut.enqueue(Mock.event)
+        await sut.enqueue(Mock.payload(event: Mock.consentEvent))
+        await sut.enqueue(Mock.payload(event: Mock.event))
         buildExpectation.isInverted = false
-        await sut.enqueue(Mock.identityEvent)
+        await sut.enqueue(Mock.payload(event: Mock.identityEvent))
 
         await waitForExpectations(timeout: 1.0)
     }
@@ -56,9 +56,9 @@ final class EventQueueTests: XCTestCase {
             requestBuilder: requestBuilder,
             upload: { _ in })
 
-        await sut.enqueue(Mock.consentEvent)
-        await sut.enqueue(Mock.event)
-        await sut.enqueue(Mock.identityEvent)
+        await sut.enqueue(Mock.payload(event: Mock.consentEvent))
+        await sut.enqueue(Mock.payload(event: Mock.event))
+        await sut.enqueue(Mock.payload(event: Mock.identityEvent))
         await waitForExpectations(timeout: 2.0)
     }
 
@@ -78,7 +78,7 @@ final class EventQueueTests: XCTestCase {
             requestBuilder: requestBuilder,
             upload: { _ in })
 
-        await sut.enqueue(Mock.consentEvent)
+        await sut.enqueue(Mock.payload(event: Mock.consentEvent))
         await sut.flush()
 
         await waitForExpectations(timeout: 1.0)
@@ -102,7 +102,7 @@ final class EventQueueTests: XCTestCase {
         let hasTimerTaskBefore = await sut.hasTimerTask
         XCTAssert(!hasTimerTaskBefore)
 
-        await sut.enqueue(Mock.event)
+        await sut.enqueue(Mock.payload(event: Mock.event))
 
         let hasTimerTaskAfter = await sut.hasTimerTask
         XCTAssert(hasTimerTaskAfter)
@@ -127,7 +127,7 @@ final class EventQueueTests: XCTestCase {
             requestBuilder: requestBuilder,
             upload: { _ in })
 
-        await sut.enqueue(Mock.event)
+        await sut.enqueue(Mock.payload(event: Mock.event))
         await sut.flush()
 
         await waitForExpectations(timeout: 0.5)
@@ -156,7 +156,7 @@ final class EventQueueTests: XCTestCase {
             requestBuilder: requestBuilder,
             upload: upload)
 
-        await sut.enqueue(Mock.event)
+        await sut.enqueue(Mock.payload(event: Mock.event))
         await sut.flush()
 
         await waitForExpectations(timeout: 0.5)
@@ -182,9 +182,10 @@ final class EventQueueTests: XCTestCase {
             requestBuilder: requestBuilder,
             upload: { _ in })
 
-        await sut.enqueue(Mock.event(stream: stream1, name: name1))
-        await sut.enqueue(Mock.event(stream: stream2, name: name2))
-        await sut.enqueue(Mock.event(stream: stream1, name: name3))
+
+        await sut.enqueue(Mock.payload(stream: stream1, name: name1, event: Mock.event))
+        await sut.enqueue(Mock.payload(stream: stream2, name: name2, event: Mock.event))
+        await sut.enqueue(Mock.payload(stream: stream1, name: name3, event: Mock.event))
         await sut.flush()
 
         await waitForExpectations(timeout: 0.5)
