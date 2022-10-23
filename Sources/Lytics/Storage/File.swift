@@ -23,3 +23,12 @@ struct File {
         self.name = name
     }
 }
+
+extension File {
+    static func requests() throws -> Self {
+        .init(
+            directory: try FileManager.default.permanentURL(
+                subdirectory: Constants.requestStorageDirectory),
+            name: Constants.requestStorageFilename)
+    }
+}

@@ -7,7 +7,7 @@
 import Foundation
 
 /// A type that wraps a request.
-protocol RequestWrapping<Resp> {
+protocol RequestWrapping<Resp>: Codable {
     /// The type of the wrapped request's response.
     associatedtype Resp: Codable
 
