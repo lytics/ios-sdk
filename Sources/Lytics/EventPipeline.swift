@@ -47,7 +47,13 @@ extension EventPipeline {
         logger: LyticsLogger,
         configuration: LyticsConfiguration
     ) -> Self {
-        let requestCache = RequestCache.live
+        var requestCache: RequestCache?
+        do {
+            requestCache = try RequestCache.live()
+        } catch {
+            logger.error("Unable to create RequestCache: \(error)")
+        }
+
         let uploader = Uploader.live(
             logger: logger,
             cache: requestCache,

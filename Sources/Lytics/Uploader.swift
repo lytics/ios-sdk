@@ -64,7 +64,7 @@ actor Uploader: Uploading {
     private let decoder: JSONDecoder
     private let requestPerformer: RequestPerforming
     private let errorHandler: RequestFailureHandler
-    private let cache: RequestCaching
+    private let cache: RequestCaching?
     private var pendingRequests: [UUID: any RequestWrapping]
 
     /// A Boolean value that indicates whether any requests passed to `upload(_:)` should be upload or stored immediately.
@@ -80,7 +80,7 @@ actor Uploader: Uploading {
         decoder: JSONDecoder = .init(),
         requestPerformer: RequestPerforming,
         errorHandler: RequestFailureHandler,
-        cache: RequestCaching,
+        cache: RequestCaching?,
         shouldSend: Bool = true
     ) {
         self.logger = logger
@@ -98,7 +98,7 @@ actor Uploader: Uploading {
         guard shouldSend else {
             let wrapped: [any RequestWrapping] = requests.map { PendingRequest(request: $0) }
             do {
-                try cache.cache(wrapped)
+                try cache?.cache(wrapped)
             } catch {
                 logger.error("Unable to cache \(requests): \(error)")
             }
@@ -172,7 +172,7 @@ private extension Uploader {
     /// - Parameter wrapper: The instance wrapping the request to cache.
     func openAndCache<T: RequestWrapping>(_ wrapper: T) {
         do {
-            try cache.cache([wrapper])
+            try cache?.cache([wrapper])
         } catch {
             logger.error("Unable to cache \(wrapper): \(error)")
         }
@@ -216,7 +216,7 @@ private extension Uploader {
 extension Uploader {
     static func live(
         logger: LyticsLogger,
-        cache: RequestCaching,
+        cache: RequestCaching?,
         maxRetryCount: Int
     ) -> Uploader {
         .init(
