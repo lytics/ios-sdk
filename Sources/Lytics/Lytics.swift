@@ -31,6 +31,9 @@ public final class Lytics {
     internal private(set) var defaultStream: String = ""
 
     @usableFromInline
+    internal private(set) var appTrackingTransparency: AppTrackingTransparency!
+
+    @usableFromInline
     internal var eventPipeline: EventPipeline!
 
     /// A Boolean value indicating whether this instance has been started.
@@ -68,6 +71,8 @@ public final class Lytics {
 
         logger.logLevel = configuration.logLevel
         defaultStream = configuration.defaultStream
+
+        appTrackingTransparency = .live
 
         eventPipeline = .live(
             logger: logger,
@@ -388,15 +393,12 @@ public extension Lytics {
 
     /// Request access to IDFA.
     func requestTrackingAuthorization() async -> Bool {
-        let status = await ATTrackingManager.requestTrackingAuthorization()
-        switch status {
-        case .authorized:
-            return true
-        case .notDetermined, .restricted, .denied:
-            return false
-        @unknown default:
+        guard hasStarted else {
+            assertionFailure("Lytics must be started before using \(#function)")
             return false
         }
+
+        return await appTrackingTransparency.requestAuthorization()
     }
 
     /// Disable use of IDFA.
