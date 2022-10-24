@@ -193,9 +193,9 @@
 		C9DC54EE28EDC4D800EAD25E /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				C9DC54EF28EDC4D800EAD25E /* DemoIdentity.swift */,
-				C9DC54F028EDC4D800EAD25E /* DemoConsent.swift */,
 				C9DC54F128EDC4D800EAD25E /* DemoCart.swift */,
+				C9DC54F028EDC4D800EAD25E /* DemoConsent.swift */,
+				C9DC54EF28EDC4D800EAD25E /* DemoIdentity.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -203,11 +203,11 @@
 		C9DE3E13290717BF0047F502 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				C9DE3E2429071C220047F502 /* EventDetailView.swift */,
 				C9DE3E14290717F30047F502 /* EventsView.swift */,
 				C9DE3E15290717F30047F502 /* LoginView.swift */,
 				C9DE3E16290717F30047F502 /* ProfileView.swift */,
 				C9DE3E17290717F30047F502 /* RegisterView.swift */,
-				C9DE3E2429071C220047F502 /* EventDetailView.swift */,
 				C9DE3E18290717F30047F502 /* SettingsView.swift */,
 				C9DE3E19290717F30047F502 /* TabContainerView.swift */,
 			);
@@ -217,8 +217,8 @@
 		C9DE3E2629071D100047F502 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				C9DE3E2729071D290047F502 /* EventsViewModel.swift */,
 				C9DE3E2929071E2D0047F502 /* EventDetailViewModel.swift */,
+				C9DE3E2729071D290047F502 /* EventsViewModel.swift */,
 				C9DE3E2B29071E360047F502 /* LoginViewModel.swift */,
 				C9DE3E31290722A30047F502 /* ProfileViewModel.swift */,
 				C9DE3E2D29071E3E0047F502 /* RegisterViewModel.swift */,
