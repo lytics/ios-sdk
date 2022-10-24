@@ -9,16 +9,15 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @StateObject var viewModel: ProfileViewModel
 
-    public var body: some View {
+    var body: some View {
         Text("Profile")
     }
 }
 
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
-        ProfileView(
-        )
-        .previewLayout(.sizeThatFits)
+        ProfileView(viewModel: .init())
     }
 }

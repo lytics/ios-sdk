@@ -24,6 +24,11 @@
 		C9DE3E1D290717F30047F502 /* RegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E17290717F30047F502 /* RegisterView.swift */; };
 		C9DE3E1E290717F30047F502 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E18290717F30047F502 /* SettingsView.swift */; };
 		C9DE3E1F290717F30047F502 /* TabContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E19290717F30047F502 /* TabContainerView.swift */; };
+		C9DE3E2829071D290047F502 /* EventsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E2729071D290047F502 /* EventsViewModel.swift */; };
+		C9DE3E2C29071E360047F502 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E2B29071E360047F502 /* LoginViewModel.swift */; };
+		C9DE3E2E29071E3E0047F502 /* RegisterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E2D29071E3E0047F502 /* RegisterViewModel.swift */; };
+		C9DE3E3029071E4E0047F502 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E2F29071E4E0047F502 /* SettingsViewModel.swift */; };
+		C9DE3E32290722A30047F502 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E31290722A30047F502 /* ProfileViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +69,11 @@
 		C9DE3E17290717F30047F502 /* RegisterView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterView.swift; sourceTree = "<group>"; };
 		C9DE3E18290717F30047F502 /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		C9DE3E19290717F30047F502 /* TabContainerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabContainerView.swift; sourceTree = "<group>"; };
+		C9DE3E2729071D290047F502 /* EventsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsViewModel.swift; sourceTree = "<group>"; };
+		C9DE3E2B29071E360047F502 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
+		C9DE3E2D29071E3E0047F502 /* RegisterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewModel.swift; sourceTree = "<group>"; };
+		C9DE3E2F29071E4E0047F502 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		C9DE3E31290722A30047F502 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -196,6 +206,18 @@
 				C9DE3E19290717F30047F502 /* TabContainerView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		C9DE3E2629071D100047F502 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				C9DE3E2729071D290047F502 /* EventsViewModel.swift */,
+				C9DE3E2B29071E360047F502 /* LoginViewModel.swift */,
+				C9DE3E31290722A30047F502 /* ProfileViewModel.swift */,
+				C9DE3E2D29071E3E0047F502 /* RegisterViewModel.swift */,
+				C9DE3E2F29071E4E0047F502 /* SettingsViewModel.swift */,
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -333,12 +355,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				C9DE3E1D290717F30047F502 /* RegisterView.swift in Sources */,
+				C9DE3E2829071D290047F502 /* EventsViewModel.swift in Sources */,
 				C9DE3E1C290717F30047F502 /* ProfileView.swift in Sources */,
+				C9DE3E2E29071E3E0047F502 /* RegisterViewModel.swift in Sources */,
 				C94BDF3A28E923A9008FB4DE /* ContentView.swift in Sources */,
 				C9DE3E1B290717F30047F502 /* LoginView.swift in Sources */,
 				C94BDF3828E923A9008FB4DE /* SwiftUIDemoApp.swift in Sources */,
+				C9DE3E3029071E4E0047F502 /* SettingsViewModel.swift in Sources */,
 				C9DE3E1E290717F30047F502 /* SettingsView.swift in Sources */,
+				C9DE3E2C29071E360047F502 /* LoginViewModel.swift in Sources */,
 				C9DC54F228EDC4D800EAD25E /* DemoIdentity.swift in Sources */,
+				C9DE3E32290722A30047F502 /* ProfileViewModel.swift in Sources */,
 				C9DC54F328EDC4D800EAD25E /* DemoConsent.swift in Sources */,
 				C9DE3E1F290717F30047F502 /* TabContainerView.swift in Sources */,
 				C9DC54F428EDC4D800EAD25E /* DemoCart.swift in Sources */,

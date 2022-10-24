@@ -9,16 +9,15 @@
 import SwiftUI
 
 struct EventsView: View {
+    @StateObject var viewModel: EventsViewModel
 
-    public var body: some View {
+    var body: some View {
         Text("Events")
     }
 }
 
 struct EventsView_Previews: PreviewProvider {
     static var previews: some View {
-        EventsView(
-
-        )
+        EventsView(viewModel: .init())
     }
 }

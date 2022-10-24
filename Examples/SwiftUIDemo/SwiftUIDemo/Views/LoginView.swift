@@ -9,16 +9,15 @@
 import SwiftUI
 
 struct LoginView: View {
+    @StateObject var viewModel: LoginViewModel
 
-    public var body: some View {
+    var body: some View {
         Text("Login")
     }
 }
 
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
-        LoginView(
-        )
-        .previewLayout(.sizeThatFits)
+        LoginView(viewModel: .init())
     }
 }

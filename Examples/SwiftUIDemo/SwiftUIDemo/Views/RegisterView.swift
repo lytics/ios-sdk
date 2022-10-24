@@ -9,16 +9,15 @@
 import SwiftUI
 
 struct RegisterView: View {
+    @StateObject var viewModel: RegisterViewModel
 
-    public var body: some View {
+    var body: some View {
         Text("Register")
     }
 }
 
 struct RegisterView_Previews: PreviewProvider {
     static var previews: some View {
-        RegisterView(
-        )
-        .previewLayout(.sizeThatFits)
+        RegisterView(viewModel: .init())
     }
 }

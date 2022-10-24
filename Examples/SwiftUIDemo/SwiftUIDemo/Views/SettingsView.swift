@@ -9,15 +9,15 @@
 import SwiftUI
 
 struct SettingsView: View {
+    @StateObject var viewModel: SettingsViewModel
 
-    public var body: some View {
+    var body: some View {
         Text("Settings")
     }
 }
 
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsView(
-        )
+        SettingsView(viewModel: .init())
     }
 }

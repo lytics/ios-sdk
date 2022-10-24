@@ -18,30 +18,30 @@ struct TabContainerView: View {
 
     @State private var selectedTab: Tab = .events
 
-    public var body: some View {
+    var body: some View {
         TabView(selection: $selectedTab) {
-            EventsView()
+            EventsView(viewModel: .init())
                 .tag(0)
                 .tabItem {
                     Text("Events")
                     Image(systemName: "calendar")
                  }
 
-            LoginView()
+            LoginView(viewModel: .init())
                 .tag(1)
                 .tabItem {
                     Text("Login")
                     Image(systemName: "lock")
                  }
 
-            ProfileView()
+            ProfileView(viewModel: .init())
                 .tag(2)
                 .tabItem {
                     Text("Profile")
                     Image(systemName: "person.fill")
                  }
 
-            SettingsView()
+            SettingsView(viewModel: .init())
                 .tag(3)
                 .tabItem {
                     Text("Settings")
@@ -53,7 +53,6 @@ struct TabContainerView: View {
 
 struct TabContainerView_Previews: PreviewProvider {
     static var previews: some View {
-        TabContainerView(
-        )
+        TabContainerView()
     }
 }
