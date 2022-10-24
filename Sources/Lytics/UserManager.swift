@@ -33,8 +33,8 @@ actor UserManager: UserManaging {
     ) {
         self.encoder = encoder
         self.storage = storage
-        self.identifiers = storage.identifiers()
-        self.attributes = storage.attributes()
+        self.identifiers = storage.identifiers() ?? [:]
+        self.attributes = storage.attributes() ?? [:]
     }
 
     @discardableResult
