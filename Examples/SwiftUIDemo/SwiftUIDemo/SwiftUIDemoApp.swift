@@ -22,10 +22,7 @@ struct SwiftUIDemoApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView(
-                identity: DemoIdentity(
-                    userID: "Jane Doe",
-                    email: "j@mail.com"))
+            TabContainerView()
         }
     }
 }
