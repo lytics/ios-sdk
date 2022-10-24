@@ -11,6 +11,7 @@ import Foundation
 @usableFromInline
 actor UserManager: UserManaging {
     private let encoder: JSONEncoder
+    private let storage: UserStorage
 
     /// The user identifiers.
     @usableFromInline private(set) var identifiers: [String: Any]
@@ -19,22 +20,21 @@ actor UserManager: UserManaging {
     @usableFromInline private(set) var attributes: [String: Any]
 
     /// The current user.
-    var user: LyticsUser {
+    @usableFromInline var user: LyticsUser {
         .init(
             userType: .anonymous,
             identifiers: identifiers.mapValues(AnyCodable.init(_:)),
             attributes: attributes.mapValues(AnyCodable.init(_:)))
     }
 
-    @usableFromInline
     init(
-        encoder: JSONEncoder = .init(),
-        identifiers: [String: Any] = [:],
-        attributes: [String: Any] = [:]
+        encoder: JSONEncoder,
+        storage: UserStorage
     ) {
         self.encoder = encoder
-        self.identifiers = identifiers
-        self.attributes = attributes
+        self.storage = storage
+        self.identifiers = storage.identifiers()
+        self.attributes = storage.attributes()
     }
 
     @discardableResult
@@ -44,6 +44,7 @@ actor UserManager: UserManaging {
     /// - Returns: The updated identifiers.
     func updateIdentifiers<T: Encodable>(with other: T) throws -> [String: Any] {
         identifiers = identifiers.deepMerging(try(convert(other)))
+        storage.storeIdentifiers(identifiers)
         return identifiers
     }
 
@@ -54,6 +55,7 @@ actor UserManager: UserManaging {
     /// - Returns: The updated attributes.
     func updateAttributes<T: Encodable>(with other: T) throws -> [String: Any] {
         attributes = attributes.deepMerging(try convert(other))
+        storage.storeAttributes(attributes)
         return attributes
     }
 
@@ -107,4 +109,18 @@ actor UserManager: UserManaging {
         }
         return dictionary
     }
+}
+
+extension UserManager {
+    @usableFromInline static var live: Self {
+        .init(
+            encoder: JSONEncoder(),
+            storage: .live)
+    }
+
+    #if DEBUG
+    static let mock = UserManager(
+        encoder: JSONEncoder(),
+        storage: .mock)
+    #endif
 }
