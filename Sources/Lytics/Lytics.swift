@@ -383,6 +383,8 @@ public extension Lytics {
 
     /// Clear all stored user information.
     func reset() {
-        // ...
+        Task {
+            await userManager.clear()
+        }
     }
 }

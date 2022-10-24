@@ -40,4 +40,7 @@ protocol UserManaging: Actor {
     /// - Parameter userUpdate: The update.
     /// - Returns: The updated user.
     func update<A: Encodable, I: Encodable>(with userUpdate: UserUpdate<A, I>) throws -> LyticsUser
+
+    /// Clear all stored user information.
+    func clear()
 }

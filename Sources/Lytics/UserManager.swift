@@ -95,6 +95,13 @@ actor UserManager: UserManaging {
         return LyticsUser(identifiers: updatedIdentifiers, attributes: updatedAttributes)
     }
 
+    @usableFromInline
+    /// Clear all stored user information.
+    func clear() {
+        storage.storeAttributes([:])
+        storage.storeIdentifiers([:])
+    }
+
     private func convert<T: Encodable>(_ value: T) throws -> [String: Any] {
         let data = try encoder.encode(value)
         guard let dictionary = try JSONSerialization.jsonObject(
