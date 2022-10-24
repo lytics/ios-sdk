@@ -32,11 +32,72 @@ enum Assert {
     static func identifierEquality(_ object: [String: Any], expected: [String: Any]) {
         XCTAssertEqual(object["email"] as! String, expected["email"] as! String)
         XCTAssertEqual(object["userID"] as! Int, expected["userID"] as! Int)
-        
+
+        // Nested
         let nested = object["nested"] as! [String: Any]
         let expectedNested = expected["nested"] as! [String: Any]
         XCTAssertEqual(nested["a"] as! Int, expectedNested["a"] as! Int)
         XCTAssertEqual(nested["b"] as! String, expectedNested["b"] as! String)
+    }
+
+    static func payloadMemberEquality(_ object: [String: Any], expected: [String: Any]) {
+        XCTAssertEqual(object["name"] as! String, expected["name"] as! String)
+        XCTAssertEqual(object["_ts"] as! Int64, expected["_ts"] as! Int64)
+        XCTAssertEqual(object["_sesstart"] as! Int?, expected["_sesstart"] as! Int?)
+    }
+
+    // MARK: - Untyped Events
+
+    static func consentEventEquality(_ object: [String: Any], expected: [String: Any]) {
+        Assert.payloadMemberEquality(object, expected: expected)
+
+        // Identifiers
+        let objectIdentifiers = object["identifiers"] as! [String: Any]
+        let expectedIdentifiers = expected["identifiers"] as! [String: Any]
+        Assert.identifierEquality(objectIdentifiers, expected: expectedIdentifiers)
+
+        // Attributes
+        let objectAttributes = object["attributes"] as! [String: Any]?
+        let expectedAttributes = expected["attributes"] as! [String: Any]?
+        if let objectAttributes, let expectedAttributes {
+            Assert.attributeEquality(objectAttributes, expected: expectedAttributes)
+        } else {
+            XCTAssert(objectAttributes == nil)
+            XCTAssert(expectedAttributes == nil)
+        }
+
+        // Consent
+        let objectConsent = object["consent"] as! [String: Any]
+        let expectedConsent = expected["consent"] as! [String: Any]
+        Assert.consentEquality(objectConsent, expected: expectedConsent)
+    }
+
+    static func eventEquality(_ object: [String: Any], expected: [String: Any]) {
+        Assert.payloadMemberEquality(object, expected: expected)
+
+        // Identifiers
+        let objectIdentifiers = object["identifiers"] as! [String: Any]
+        let expectedIdentifiers = expected["identifiers"] as! [String: Any]
+        Assert.identifierEquality(objectIdentifiers, expected: expectedIdentifiers)
+
+        // Properties
+        let objectProperties = object["properties"] as! [String: Any]
+        let expectedProperties = expected["properties"] as! [String: Any]
+        Assert.cartEquality(objectProperties, expected: expectedProperties)
+    }
+
+    static func identityEventEquality(_ object: [String: Any], expected: [String: Any]) {
+        Assert.payloadMemberEquality(object, expected: expected)
+
+        // Identifiers
+        let objectIdentifiers = object["identifiers"] as! [String: Any]
+        let expectedIdentifiers = expected["identifiers"] as! [String: Any]
+        Assert.identifierEquality(objectIdentifiers, expected: expectedIdentifiers)
+
+        // Attributes
+        let objectAttributes = object["attributes"] as! [String: Any]
+        let expectedAttributes = expected["attributes"] as! [String: Any]
+        Assert.attributeEquality(objectAttributes, expected: expectedAttributes)
     }
 
     // MARK: - Typed
@@ -60,6 +121,8 @@ enum Assert {
     static func equality(_ object: [String: Any], with identifiers: TestIdentifiers) {
         XCTAssertEqual(object["email"] as? String, identifiers.email)
         XCTAssertEqual(object["userID"] as? Int, identifiers.userID)
+
+        // Nested
         let nested = object["nested"] as! [String: Any]
         XCTAssertEqual(nested["a"] as? Int, identifiers.nested?.a)
         XCTAssertEqual(nested["b"] as? String, identifiers.nested?.b)

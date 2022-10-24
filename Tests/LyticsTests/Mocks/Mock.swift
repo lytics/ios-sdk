@@ -87,4 +87,58 @@ extension Mock {
             name: name,
             event: event)
     }
+
+    static func payloadDictionary(
+        stream: String = Mock.stream(.one),
+        timestamp: Millisecond = Self.timestamp(.one),
+        sessionDidStart: Int? = nil,
+        name: String? = Mock.name(.one)
+    ) -> [String: Any] {
+        var dict: [String: Any] = [
+            "stream": stream,
+            "_ts": timestamp,
+        ]
+
+        if let sessionDidStart {
+            dict["_sesstart"] = sessionDidStart
+        }
+
+        if let name {
+            dict["name"] = name
+        }
+
+        return dict
+    }
+
+    static func consentEventDictionary(
+        payload: inout [String: Any],
+        identifiers: [String: Any]? = nil,
+        attributes: [String: Any]? = nil,
+        consent: [String: Any]? = nil
+    ) -> [String: Any] {
+        payload["identifiers"] = identifiers
+        payload["attributes"] = attributes
+        payload["consent"] = consent
+        return payload
+    }
+
+    static func eventDictionary(
+        payload: inout [String: Any],
+        identifiers: [String: Any]? = nil,
+        properties: [String: Any]? = nil
+    ) -> [String: Any] {
+        payload["identifiers"] = identifiers
+        payload["properties"] = properties
+        return payload
+    }
+
+    static func identityEventDictionary(
+        payload: inout [String: Any],
+        identifiers: [String: Any]? = nil,
+        attributes: [String: Any]? = nil
+    ) -> [String: Any] {
+        payload["identifiers"] = identifiers
+        payload["attributes"] = attributes
+        return payload
+    }
 }
