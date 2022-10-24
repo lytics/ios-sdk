@@ -325,7 +325,35 @@ public extension Lytics {
         identifiers: I?,
         properties: P?
     ) {
-        // ...
+        guard hasStarted else {
+            assertionFailure("Lytics must be started before using \(#function)")
+            return
+        }
+
+        let timestamp = timestampProvider()
+        Task(priority: .background) {
+            var eventIdentifiers = [String: AnyCodable]()
+            if let identifiers {
+                do {
+                    eventIdentifiers = try await userManager
+                        .updateIdentifiers(with: identifiers)
+                        .mapValues(AnyCodable.init(_:))
+                } catch {
+                    logger.error(error.localizedDescription)
+                }
+            } else {
+                eventIdentifiers = await userManager.identifiers.mapValues(AnyCodable.init(_:))
+            }
+
+            await eventPipeline.event(
+                stream: stream ?? defaultStream,
+                timestamp: timestamp,
+                name: name,
+                event: ScreenEvent(
+                    device: Device(),
+                    identifiers: eventIdentifiers,
+                    properties: properties))
+        }
     }
 
     @inlinable
