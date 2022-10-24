@@ -378,7 +378,9 @@ public extension Lytics {
 
     /// Force flush the event queue by sending all events in the queue immediately.
     func dispatch() {
-        // ...
+        Task {
+            await eventPipeline.dispatch()
+        }
     }
 
     /// Clear all stored user information.
