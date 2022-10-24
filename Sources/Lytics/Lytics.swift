@@ -4,7 +4,9 @@
 //  Created by Mathew Gacy on 9/12/22.
 //
 
+import AdSupport
 import AnyCodable
+import AppTrackingTransparency
 import Foundation
 
 public final class Lytics {
@@ -386,8 +388,15 @@ public extension Lytics {
 
     /// Request access to IDFA.
     func requestTrackingAuthorization() async -> Bool {
-        // ...
-        return false
+        let status = await ATTrackingManager.requestTrackingAuthorization()
+        switch status {
+        case .authorized:
+            return true
+        case .notDetermined, .restricted, .denied:
+            return false
+        @unknown default:
+            return false
+        }
     }
 
     /// Disable use of IDFA.
