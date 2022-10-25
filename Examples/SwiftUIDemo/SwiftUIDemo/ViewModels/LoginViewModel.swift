@@ -9,8 +9,23 @@
 import Foundation
 
 final class LoginViewModel:  ObservableObject {
+    @Published var email: String = ""
+    @Published var password: String = ""
 
-    init() {
-        // ...
+    init(email: String = "", password: String = "") {
+        self.email = email
+        self.password = password
+    }
+
+    func login() {
+        print("\(#function)")
+    }
+
+    func forgotPassword() {
+        print("\(#function)")
+    }
+
+    func register() {
+        print("\(#function)")
     }
 }

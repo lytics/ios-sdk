@@ -9,10 +9,64 @@
 import SwiftUI
 
 struct LoginView: View {
+    enum FocusField: Hashable {
+        case email
+        case password
+    }
+
+    @FocusState var focusedField: FocusField?
     @StateObject var viewModel: LoginViewModel
 
     var body: some View {
-        Text("Login")
+        VStack(alignment: .leading, spacing: 24) {
+            Text("Welcome!")
+                .bold()
+
+            VStack(spacing: 16) {
+                TextField(
+                    "Email Address",
+                    text: $viewModel.email)
+
+                SecureField(
+                    "Password",
+                    text: $viewModel.password)
+            }
+            .textFieldStyle(RoundedBorderTextFieldStyle())
+
+            Button(
+                action: {
+
+                },
+                label: {
+                    Text("Forgot password?")
+                })
+
+            Button(
+                action: {
+                    viewModel.login()
+                },
+                label: {
+                    Text("Login")
+                })
+            .buttonStyle(.primary())
+
+            HStack {
+                Spacer()
+
+                Text("Not a member?")
+
+                Button(
+                    action: {
+                        viewModel.register()
+                    },
+                    label: {
+                        Text("Register now.")
+                    })
+
+                Spacer()
+            }
+        }
+        .padding()
     }
 }
 
