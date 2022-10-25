@@ -9,13 +9,13 @@ import Foundation
 /// A type capable of storing requests.
 protocol RequestCaching {
 
-    /// Stores a request.
-    /// - Parameter request: The requests to store.
-    func cache<T: Codable>(_ request: Request<T>) throws
+    /// Caches a collection of wrapped requests.
+    /// - Parameter requests: The wrapped requests to cache.
+    func cache(_ requests: [any RequestWrapping]) throws
 
-    /// Loads stored requuests.
-    /// - Returns: The stored requests.
-    func load() throws -> [any RequestProtocol]
+    /// Loads cached requuests.
+    /// - Returns: The cached requests.
+    func load() throws -> [any RequestWrapping]?
 
     /// Deletes all cached requests.
     func deleteAll() throws

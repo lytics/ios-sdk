@@ -17,7 +17,7 @@ enum User1 {
     static let a = 1
     static let b = "2"
 
-    static let identifiers: [String: AnyCodable] = [
+    static let anyIdentifiers: [String: Any] = [
         "email": "someemail@lytics.com",
         "userID": 1234,
         "nested": [
@@ -26,8 +26,16 @@ enum User1 {
         ]
     ]
 
-    static let attributes: [String: AnyCodable] = [
+    static var identifiers: [String: AnyCodable] {
+        anyIdentifiers.mapValues(AnyCodable.init(_:))
+    }
+
+    static let anyAttributes: [String: Any] = [
         "firstName": "Jane",
         "titles": ["VP Product", "Reviewer"]
     ]
+
+    static var attributes: [String: AnyCodable] {
+        anyAttributes.mapValues(AnyCodable.init(_:))
+    }
 }

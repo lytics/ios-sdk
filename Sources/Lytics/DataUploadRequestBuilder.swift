@@ -27,13 +27,13 @@ extension DataUploadRequestBuilder {
                             let event = element.value.first!
                             data = try encoder.encode(event)
                         default:
-                            data = try element.value.reduce(into: Data.openBracket) { data, value in
+                            data = try element.value.reduce(into: Data([.leftSquareBracket])) { data, value in
                                 if data.count > 1 {
                                     data.append(.comma)
                                 }
                                 data.append(try encoder.encode(value))
                             }
-                            data.append(.closedBracket)
+                            data.append(.rightSquareBracket)
                         }
 
                         requests.append(

@@ -8,28 +8,54 @@ import Foundation
 
 /// Stores a collection of requests.
 struct RequestCache: RequestCaching {
+    let storage: Storage
 
-    /// Stores a request.
-    /// - Parameter request: The requests to store.
-    func cache<T: Codable>(_ request: Request<T>) throws {
-        // ...
+    init(storage: Storage) throws {
+        self.storage = storage
     }
 
-    /// Loads stored requuests.
-    /// - Returns: The stored requests.
-    func load() throws -> [any RequestProtocol] {
-        // ...
-        return []
+    /// Caches a collection of wrapped requests.
+    /// - Parameter requests: The wrapped requests to cache.
+    func cache(_ requests: [any RequestWrapping]) throws {
+        guard requests.isNotEmpty else {
+            return
+        }
+
+        var requestData = try JSONEncoder()
+            .encode(
+                CodableRequestContainer(requests: requests))
+
+        let currentData = try storage.read()
+        if var currentData, currentData.count > 2 {
+            try currentData.append(jsonArray: &requestData)
+            try storage.write(currentData)
+        } else {
+            try storage.write(requestData)
+        }
+    }
+
+    /// Loads cached requuests.
+    /// - Returns: The cached requests.
+    func load() throws -> [any RequestWrapping]? {
+        guard let data = try storage.read() else {
+            return nil
+        }
+
+        let decoded = try JSONDecoder()
+            .decode(CodableRequestContainer.self, from: data)
+        return decoded.requests
     }
 
     /// Deletes all cached requests.
     func deleteAll() throws {
-        // ...
+        try storage.clear()
     }
 }
 
 extension RequestCache {
-    static var live: Self {
-        .init()
+    static func live() throws -> Self {
+        try .init(
+            storage: try .live(
+                file: try .requests()))
     }
 }
