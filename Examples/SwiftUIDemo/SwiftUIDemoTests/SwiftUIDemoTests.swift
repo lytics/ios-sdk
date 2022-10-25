@@ -10,7 +10,7 @@ import XCTest
 @testable import SwiftUIDemo
 
 final class SwiftUIDemoTests: XCTestCase {
-    /*
+
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
@@ -32,12 +32,5 @@ final class SwiftUIDemoTests: XCTestCase {
         self.measure {
             // Put the code you want to measure the time of here.
         }
-    }
-     */
-    func testEncode() throws {
-        let events = Event.live
-        let data = try JSONEncoder().encode(events)
-        let jsonString = String(decoding: data, as: UTF8.self)
-        print(jsonString)
     }
 }
