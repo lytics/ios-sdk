@@ -11,6 +11,7 @@ actor EventQueue: EventQueueing {
     private let logger: LyticsLogger
     private let maxQueueSize: Int
     private let uploadInterval: TimeInterval
+    private let taskPriority: TaskPriority?
     private let encoder: JSONEncoder
     private let requestBuilder: DataUploadRequestBuilder
     private(set) var eventCount: UInt = 0
@@ -31,6 +32,7 @@ actor EventQueue: EventQueueing {
         logger: LyticsLogger,
         maxQueueSize: Int,
         uploadInterval: TimeInterval,
+        taskPriority: TaskPriority? = .medium,
         requestBuilder: DataUploadRequestBuilder,
         upload: @escaping ([Request<DataUploadResponse>]) async -> Void
     ) {
@@ -38,6 +40,7 @@ actor EventQueue: EventQueueing {
         self.logger = logger
         self.maxQueueSize = maxQueueSize
         self.uploadInterval = uploadInterval
+        self.taskPriority = taskPriority
         self.requestBuilder = requestBuilder
         self.upload = upload
     }
@@ -56,7 +59,7 @@ actor EventQueue: EventQueueing {
         if eventCount >= maxQueueSize {
             flush()
         } else if timerTask == nil {
-            timerTask = makeTimer()
+            timerTask = makeTimer(priority: taskPriority)
         }
     }
 
@@ -71,7 +74,7 @@ actor EventQueue: EventQueueing {
         let copy = events
         resetEvents()
 
-        Task(priority: .medium) {
+        Task(priority: taskPriority) {
             do {
                 let requests = try requestBuilder.requests(copy)
                 await upload(requests)
@@ -83,7 +86,7 @@ actor EventQueue: EventQueueing {
 }
 
 private extension EventQueue {
-    func makeTimer(priority: TaskPriority = .background) -> Task<Void, Error> {
+    func makeTimer(priority: TaskPriority? = nil) -> Task<Void, Error> {
         Task.delayed(byTimeInterval: uploadInterval, priority: priority) { [weak self] in
             await self?.flush()
         }
