@@ -27,8 +27,8 @@ struct ProfileView: View {
             }
             .padding(16)
         }
-        .onAppear {
-            viewModel.getUser()
+        .task {
+            await viewModel.getUser()
         }
     }
 }
