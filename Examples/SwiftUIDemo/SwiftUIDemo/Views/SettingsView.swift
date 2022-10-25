@@ -12,7 +12,15 @@ struct SettingsView: View {
     @StateObject var viewModel: SettingsViewModel
 
     var body: some View {
-        Text("Settings")
+        List {
+            Button(
+                action: {
+                    viewModel.reset()
+                },
+                label: {
+                    Text("Reset Demo App")
+                })
+        }
     }
 }
 

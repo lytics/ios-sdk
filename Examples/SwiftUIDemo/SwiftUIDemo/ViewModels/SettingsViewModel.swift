@@ -10,7 +10,7 @@ import Foundation
 
 final class SettingsViewModel: ObservableObject {
 
-    init() {
-        // ...
+    func reset() {
+        print("\(#function)")
     }
 }
