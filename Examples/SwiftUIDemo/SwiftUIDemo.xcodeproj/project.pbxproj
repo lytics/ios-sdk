@@ -31,9 +31,12 @@
 		C9DE3E2E29071E3E0047F502 /* RegisterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E2D29071E3E0047F502 /* RegisterViewModel.swift */; };
 		C9DE3E3029071E4E0047F502 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E2F29071E4E0047F502 /* SettingsViewModel.swift */; };
 		C9DE3E32290722A30047F502 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E31290722A30047F502 /* ProfileViewModel.swift */; };
+		C9DE3E3A29072B800047F502 /* EventRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E3929072B800047F502 /* EventRow.swift */; };
+		C9DE3E3C29072F410047F502 /* EventCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E3B29072F410047F502 /* EventCard.swift */; };
 		C9DE3E4429082EE90047F502 /* PrimaryButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E4329082EE90047F502 /* PrimaryButtonStyle.swift */; };
 		C9DE3E4629082EF50047F502 /* SecondaryButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E4529082EF50047F502 /* SecondaryButtonStyle.swift */; };
 		C9DE3E5029085BD80047F502 /* ChecklistToggleStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E4F29085BD80047F502 /* ChecklistToggleStyle.swift */; };
+		C9DE3E52290861680047F502 /* LocalEventsHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E51290861680047F502 /* LocalEventsHeader.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,9 +84,12 @@
 		C9DE3E2D29071E3E0047F502 /* RegisterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewModel.swift; sourceTree = "<group>"; };
 		C9DE3E2F29071E4E0047F502 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		C9DE3E31290722A30047F502 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
+		C9DE3E3929072B800047F502 /* EventRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventRow.swift; sourceTree = "<group>"; };
+		C9DE3E3B29072F410047F502 /* EventCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCard.swift; sourceTree = "<group>"; };
 		C9DE3E4329082EE90047F502 /* PrimaryButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButtonStyle.swift; sourceTree = "<group>"; };
 		C9DE3E4529082EF50047F502 /* SecondaryButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondaryButtonStyle.swift; sourceTree = "<group>"; };
 		C9DE3E4F29085BD80047F502 /* ChecklistToggleStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistToggleStyle.swift; sourceTree = "<group>"; };
+		C9DE3E51290861680047F502 /* LocalEventsHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalEventsHeader.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -209,6 +215,7 @@
 		C9DE3E13290717BF0047F502 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				C9DE3E3629072B0D0047F502 /* Components */,
 				C9DE3E4229082EC70047F502 /* View Styles */,
 				C9DE3E2429071C220047F502 /* EventDetailView.swift */,
 				C9DE3E14290717F30047F502 /* EventsView.swift */,
@@ -232,6 +239,16 @@
 				C9DE3E2F29071E4E0047F502 /* SettingsViewModel.swift */,
 			);
 			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		C9DE3E3629072B0D0047F502 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				C9DE3E3B29072F410047F502 /* EventCard.swift */,
+				C9DE3E3929072B800047F502 /* EventRow.swift */,
+				C9DE3E51290861680047F502 /* LocalEventsHeader.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 		C9DE3E4229082EC70047F502 /* View Styles */ = {
@@ -354,6 +371,7 @@
 			files = (
 				C94BDF3F28E923AB008FB4DE /* Preview Assets.xcassets in Resources */,
 				C94BDF3C28E923AB008FB4DE /* Assets.xcassets in Resources */,
+				C9DE3E48290844F70047F502 /* events.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -384,6 +402,7 @@
 				C9DE3E2E29071E3E0047F502 /* RegisterViewModel.swift in Sources */,
 				C94BDF3A28E923A9008FB4DE /* ContentView.swift in Sources */,
 				C9DE3E2A29071E2D0047F502 /* EventDetailViewModel.swift in Sources */,
+				C9DE3E3A29072B800047F502 /* EventRow.swift in Sources */,
 				C9DE3E4629082EF50047F502 /* SecondaryButtonStyle.swift in Sources */,
 				C9DE3E1B290717F30047F502 /* LoginView.swift in Sources */,
 				C94BDF3828E923A9008FB4DE /* SwiftUIDemoApp.swift in Sources */,
@@ -393,9 +412,11 @@
 				C9DE3E2C29071E360047F502 /* LoginViewModel.swift in Sources */,
 				C9DC54F228EDC4D800EAD25E /* DemoIdentity.swift in Sources */,
 				C9DE3E32290722A30047F502 /* ProfileViewModel.swift in Sources */,
+				C9DE3E52290861680047F502 /* LocalEventsHeader.swift in Sources */,
 				C9DE3E2529071C220047F502 /* EventDetailView.swift in Sources */,
 				C9DC54F328EDC4D800EAD25E /* DemoConsent.swift in Sources */,
 				C9DE3E1F290717F30047F502 /* TabContainerView.swift in Sources */,
+				C9DE3E3C29072F410047F502 /* EventCard.swift in Sources */,
 				C9DE3E5029085BD80047F502 /* ChecklistToggleStyle.swift in Sources */,
 				C9DC54F428EDC4D800EAD25E /* DemoCart.swift in Sources */,
 				C9DE3E1A290717F30047F502 /* EventsView.swift in Sources */,
