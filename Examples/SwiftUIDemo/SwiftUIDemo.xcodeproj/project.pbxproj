@@ -31,8 +31,10 @@
 		C9DE3E2E29071E3E0047F502 /* RegisterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E2D29071E3E0047F502 /* RegisterViewModel.swift */; };
 		C9DE3E3029071E4E0047F502 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E2F29071E4E0047F502 /* SettingsViewModel.swift */; };
 		C9DE3E32290722A30047F502 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E31290722A30047F502 /* ProfileViewModel.swift */; };
+		C9DE3E35290729150047F502 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E34290729150047F502 /* Event.swift */; };
 		C9DE3E3A29072B800047F502 /* EventRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E3929072B800047F502 /* EventRow.swift */; };
 		C9DE3E3C29072F410047F502 /* EventCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E3B29072F410047F502 /* EventCard.swift */; };
+		C9DE3E3E290734AB0047F502 /* EventService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E3D290734AB0047F502 /* EventService.swift */; };
 		C9DE3E41290735FA0047F502 /* Image+Assets.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E40290735FA0047F502 /* Image+Assets.swift */; };
 		C9DE3E4429082EE90047F502 /* PrimaryButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E4329082EE90047F502 /* PrimaryButtonStyle.swift */; };
 		C9DE3E4629082EF50047F502 /* SecondaryButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E4529082EF50047F502 /* SecondaryButtonStyle.swift */; };
@@ -89,8 +91,10 @@
 		C9DE3E2D29071E3E0047F502 /* RegisterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewModel.swift; sourceTree = "<group>"; };
 		C9DE3E2F29071E4E0047F502 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		C9DE3E31290722A30047F502 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
+		C9DE3E34290729150047F502 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		C9DE3E3929072B800047F502 /* EventRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventRow.swift; sourceTree = "<group>"; };
 		C9DE3E3B29072F410047F502 /* EventCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCard.swift; sourceTree = "<group>"; };
+		C9DE3E3D290734AB0047F502 /* EventService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventService.swift; sourceTree = "<group>"; };
 		C9DE3E40290735FA0047F502 /* Image+Assets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Image+Assets.swift"; sourceTree = "<group>"; };
 		C9DE3E4329082EE90047F502 /* PrimaryButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButtonStyle.swift; sourceTree = "<group>"; };
 		C9DE3E4529082EF50047F502 /* SecondaryButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondaryButtonStyle.swift; sourceTree = "<group>"; };
@@ -154,14 +158,15 @@
 			isa = PBXGroup;
 			children = (
 				C94BDF3728E923A9008FB4DE /* SwiftUIDemoApp.swift */,
-				C94BDF3928E923A9008FB4DE /* ContentView.swift */,
 				C9DE3E4B2908463A0047F502 /* Constants.swift */,
+				C94BDF3928E923A9008FB4DE /* ContentView.swift */,
+				C9DE3E3D290734AB0047F502 /* EventService.swift */,
 				C9DE3E3F290735EA0047F502 /* Extensions */,
+				C9DC54EE28EDC4D800EAD25E /* Models */,
+				C94BDF3D28E923AB008FB4DE /* Preview Content */,
+				C94BDF6628E9255E008FB4DE /* Resources */,
 				C9DE3E2629071D100047F502 /* ViewModels */,
 				C9DE3E13290717BF0047F502 /* Views */,
-				C9DC54EE28EDC4D800EAD25E /* Models */,
-				C94BDF6628E9255E008FB4DE /* Resources */,
-				C94BDF3D28E923AB008FB4DE /* Preview Content */,
 			);
 			path = SwiftUIDemo;
 			sourceTree = "<group>";
@@ -221,6 +226,7 @@
 				C9DC54F128EDC4D800EAD25E /* DemoCart.swift */,
 				C9DC54F028EDC4D800EAD25E /* DemoConsent.swift */,
 				C9DC54EF28EDC4D800EAD25E /* DemoIdentity.swift */,
+				C9DE3E34290729150047F502 /* Event.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -425,6 +431,8 @@
 				C9DE3E2E29071E3E0047F502 /* RegisterViewModel.swift in Sources */,
 				C94BDF3A28E923A9008FB4DE /* ContentView.swift in Sources */,
 				C9DE3E2A29071E2D0047F502 /* EventDetailViewModel.swift in Sources */,
+				C9DE3E3E290734AB0047F502 /* EventService.swift in Sources */,
+				C9DE3E35290729150047F502 /* Event.swift in Sources */,
 				C9DE3E3A29072B800047F502 /* EventRow.swift in Sources */,
 				C9DE3E4629082EF50047F502 /* SecondaryButtonStyle.swift in Sources */,
 				C9DE3E1B290717F30047F502 /* LoginView.swift in Sources */,
