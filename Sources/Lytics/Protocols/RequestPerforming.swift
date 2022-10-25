@@ -12,5 +12,5 @@ protocol RequestPerforming {
     /// Downloads the contents of a URL based on the specified request and delivers the response asynchronously.
     /// - Parameter request: The request to perform.
     /// - Returns: An asynchronously-delivered representation of the response.
-    func perform<T: RequestProtocol>(_ request: T) async throws -> Response<T.Resp>
+    func perform<R>(_ request: Request<R>) async throws -> Response<R>
 }
