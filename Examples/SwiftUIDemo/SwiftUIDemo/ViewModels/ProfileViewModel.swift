@@ -9,8 +9,13 @@
 import Foundation
 
 final class ProfileViewModel:  ObservableObject {
+    @Published var userJSON: String
 
-    init() {
-        // ...
+    init(userJSON: String = "") {
+        self.userJSON = userJSON
+    }
+
+    func getUser() {
+        userJSON = "{}"
     }
 }
