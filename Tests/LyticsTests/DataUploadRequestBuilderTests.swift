@@ -10,11 +10,6 @@ import Foundation
 import XCTest
 
 final class DataUploadRequestBuilderTests: XCTestCase {
-    let stream1 = "stream_1"
-    let stream2 = "stream_2"
-    let name1 = "name_1"
-    let name2 = "name_2"
-
     func testEncodeEmpty() throws {
         let events: [String: [any StreamEvent]] = [:]
 
@@ -25,21 +20,21 @@ final class DataUploadRequestBuilderTests: XCTestCase {
 
     func testEncodeSingle() throws {
         let events: [String: [any StreamEvent]] = [
-            stream1: [
+            Stream.one: [
                 Mock.payload(
-                    stream: stream1,
+                    stream: Stream.one,
                     timestamp: Timestamp.one,
                     sessionDidStart: 1,
-                    name: name1,
+                    name: Name.one,
                     event: IdentityEvent(
                         identifiers: User1.identifiers,
                         attributes: User1.attributes))
             ],
-            stream2: [
+            Stream.two: [
                 Mock.payload(
-                    stream: stream2,
+                    stream: Stream.two,
                     timestamp: Timestamp.two,
-                    name: name2,
+                    name: Name.two,
                     event: ConsentEvent(
                         identifiers: User1.identifiers,
                         consent: TestConsent.user1))
@@ -58,19 +53,19 @@ final class DataUploadRequestBuilderTests: XCTestCase {
 
     func testEncodeMultiple() throws {
         let events: [String: [any StreamEvent]] = [
-            stream1: [
+            Stream.one: [
                 Mock.payload(
-                    stream: stream1,
+                    stream: Stream.one,
                     timestamp: Timestamp.one,
                     sessionDidStart: 1,
-                    name: name1,
+                    name: Name.one,
                     event: IdentityEvent(
                         identifiers: User1.identifiers,
                         attributes: User1.attributes)),
                 Mock.payload(
-                    stream: stream2,
+                    stream: Stream.two,
                     timestamp: Timestamp.two,
-                    name: name2,
+                    name: Name.two,
                     event: ConsentEvent(
                         identifiers: User1.identifiers,
                         consent: TestConsent.user1))
@@ -95,10 +90,10 @@ extension DataUploadRequestBuilderTests {
     func  assertOnEvents(first: [String: Any], last: [String: Any]) {
         let firstName = first["name"] as! String
 
-        if firstName == name1 {
+        if firstName == Name.one {
             assertOnIdentityEvent(first)
             assertOnConsentEvent(last)
-        } else if firstName == name2 {
+        } else if firstName == Name.two {
             assertOnIdentityEvent(last)
             assertOnConsentEvent(first)
         } else {
@@ -107,7 +102,7 @@ extension DataUploadRequestBuilderTests {
     }
 
     func assertOnIdentityEvent(_ object: [String: Any]) {
-        XCTAssertEqual(object["name"] as! String, name1)
+        XCTAssertEqual(object["name"] as! String, Name.one)
 
         XCTAssertEqual(object["_ts"] as! Int64, Timestamp.one)
         XCTAssertEqual(object["_sesstart"] as! Int, 1)
@@ -125,7 +120,7 @@ extension DataUploadRequestBuilderTests {
     }
 
     func assertOnConsentEvent(_ object: [String: Any]) {
-        XCTAssertEqual(object["name"] as! String, name2)
+        XCTAssertEqual(object["name"] as! String, Name.two)
 
         XCTAssertEqual(object["_ts"] as! Int64, Timestamp.two)
 

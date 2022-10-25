@@ -8,11 +8,6 @@
 import XCTest
 
 final class EventQueueTests: XCTestCase {
-    let stream1 = "stream_1"
-    let stream2 = "stream_2"
-    let name1 = "name_1"
-    let name2 = "name_2"
-    let name3 = "name_3"
 
     func testFlushAfterMaxQueueSize() async throws {
         let buildExpectation = expectation(description: "Requests built")
@@ -183,20 +178,20 @@ final class EventQueueTests: XCTestCase {
             upload: { _ in })
 
 
-        await sut.enqueue(Mock.payload(stream: stream1, name: name1, event: Mock.event))
-        await sut.enqueue(Mock.payload(stream: stream2, name: name2, event: Mock.event))
-        await sut.enqueue(Mock.payload(stream: stream1, name: name3, event: Mock.event))
+        await sut.enqueue(Mock.payload(stream: Stream.one, name: Name.one, event: Mock.event))
+        await sut.enqueue(Mock.payload(stream: Stream.two, name: Name.two, event: Mock.event))
+        await sut.enqueue(Mock.payload(stream: Stream.one, name: Name.three, event: Mock.event))
         await sut.flush()
 
         await waitForExpectations(timeout: 0.5)
 
-        let stream1Events = events[stream1]!
+        let stream1Events = events[Stream.one]!
         XCTAssertEqual(stream1Events.count, 2)
-        XCTAssertEqual(stream1Events.first!.name, name1)
-        XCTAssertEqual(stream1Events.last!.name, name3)
+        XCTAssertEqual(stream1Events.first!.name, Name.one)
+        XCTAssertEqual(stream1Events.last!.name, Name.three)
 
-        let stream2Events = events[stream2]!
+        let stream2Events = events[Stream.two]!
         XCTAssertEqual(stream2Events.count, 1)
-        XCTAssertEqual(stream2Events.first!.name, name2)
+        XCTAssertEqual(stream2Events.first!.name, Name.two)
     }
 }
