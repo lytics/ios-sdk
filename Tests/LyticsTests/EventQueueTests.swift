@@ -56,6 +56,7 @@ final class EventQueueTests: XCTestCase {
             logger: .mock,
             maxQueueSize: 10,
             uploadInterval: 1,
+            taskPriority: .high,
             requestBuilder: requestBuilder,
             upload: { _ in })
 
