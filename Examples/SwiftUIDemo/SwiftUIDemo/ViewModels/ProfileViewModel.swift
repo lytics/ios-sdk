@@ -15,7 +15,7 @@ final class ProfileViewModel:  ObservableObject {
         self.userJSON = userJSON
     }
 
-    func getUser() {
+    func getUser() async {
         userJSON = "{}"
     }
 }

@@ -13,23 +13,22 @@ struct ProfileView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 16) {
+            VStack(spacing: 40) {
                 Image(systemName: "person.fill")
                     .resizable()
                     .frame(width: 80, height: 80)
-                    .padding(.bottom, 24)
 
-                Text("The following is an output of the current user’s stored data in JSON format:")
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("The following is an output of the current user’s stored data in JSON format:")
 
-                Text(viewModel.userJSON)
-                    .font(.system(.body, design: .monospaced))
-                    .frame(maxWidth: .infinity)
-                    .padding(.all, 8)
+                    Text(viewModel.userJSON)
+                        .font(.system(.body, design: .monospaced))
+                }
             }
             .padding(16)
         }
-        .onAppear {
-            viewModel.getUser()
+        .task {
+            await viewModel.getUser()
         }
     }
 }

@@ -19,14 +19,16 @@ struct EventDetailView: View {
                     .scaledToFit()
             }
 
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 20) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(viewModel.title)
+                        .font(.headline)
+
                     Text(viewModel.subtitle)
                 }
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Details")
+                    Text("DETAILS")
 
                     Text(viewModel.details)
                 }

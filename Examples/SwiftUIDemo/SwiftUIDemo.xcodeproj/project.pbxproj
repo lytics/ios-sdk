@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		C94BDF3828E923A9008FB4DE /* SwiftUIDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94BDF3728E923A9008FB4DE /* SwiftUIDemoApp.swift */; };
-		C94BDF3A28E923A9008FB4DE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94BDF3928E923A9008FB4DE /* ContentView.swift */; };
 		C94BDF3C28E923AB008FB4DE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C94BDF3B28E923AB008FB4DE /* Assets.xcassets */; };
 		C94BDF3F28E923AB008FB4DE /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C94BDF3E28E923AB008FB4DE /* Preview Assets.xcassets */; };
 		C94BDF4928E923AB008FB4DE /* SwiftUIDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94BDF4828E923AB008FB4DE /* SwiftUIDemoTests.swift */; };
@@ -66,7 +65,6 @@
 /* Begin PBXFileReference section */
 		C94BDF3428E923A9008FB4DE /* SwiftUIDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftUIDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C94BDF3728E923A9008FB4DE /* SwiftUIDemoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIDemoApp.swift; sourceTree = "<group>"; };
-		C94BDF3928E923A9008FB4DE /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		C94BDF3B28E923AB008FB4DE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C94BDF3E28E923AB008FB4DE /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		C94BDF4428E923AB008FB4DE /* SwiftUIDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftUIDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -159,7 +157,6 @@
 			children = (
 				C94BDF3728E923A9008FB4DE /* SwiftUIDemoApp.swift */,
 				C9DE3E4B2908463A0047F502 /* Constants.swift */,
-				C94BDF3928E923A9008FB4DE /* ContentView.swift */,
 				C9DE3E3D290734AB0047F502 /* EventService.swift */,
 				C9DE3E3F290735EA0047F502 /* Extensions */,
 				C9DC54EE28EDC4D800EAD25E /* Models */,
@@ -429,7 +426,6 @@
 				C9DE3E2829071D290047F502 /* EventsViewModel.swift in Sources */,
 				C9DE3E1C290717F30047F502 /* ProfileView.swift in Sources */,
 				C9DE3E2E29071E3E0047F502 /* RegisterViewModel.swift in Sources */,
-				C94BDF3A28E923A9008FB4DE /* ContentView.swift in Sources */,
 				C9DE3E2A29071E2D0047F502 /* EventDetailViewModel.swift in Sources */,
 				C9DE3E3E290734AB0047F502 /* EventService.swift in Sources */,
 				C9DE3E35290729150047F502 /* Event.swift in Sources */,
