@@ -14,7 +14,7 @@ struct SwiftUIDemoApp: App {
     init() {
         Lytics.shared.start { configuration in
             configuration.apiKey = "at.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-            configuration.maxQueueSize = 1
+            configuration.maxQueueSize = 5
             configuration.logLevel = .debug
             // ...
         }
@@ -22,7 +22,8 @@ struct SwiftUIDemoApp: App {
 
     var body: some Scene {
         WindowGroup {
-            TabContainerView()
+            TabContainerView(
+                eventService: .mock)
         }
     }
 }

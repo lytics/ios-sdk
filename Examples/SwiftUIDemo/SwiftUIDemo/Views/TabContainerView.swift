@@ -16,11 +16,12 @@ struct TabContainerView: View {
         case settings
     }
 
+    let eventService: EventService
     @State private var selectedTab: Tab = .events
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            EventsView(viewModel: .init())
+            EventsView(viewModel: .init(eventService: eventService))
                 .tag(0)
                 .tabItem {
                     Text("Events")
@@ -53,6 +54,7 @@ struct TabContainerView: View {
 
 struct TabContainerView_Previews: PreviewProvider {
     static var previews: some View {
-        TabContainerView()
+        TabContainerView(
+            eventService: .mock)
     }
 }
