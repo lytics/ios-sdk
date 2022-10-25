@@ -40,6 +40,10 @@ struct EventPipeline {
                 sessionDidStart: sessionDidStart(timestamp) ? 1 : nil,
                 event: event))
     }
+
+    func dispatch() async {
+        await eventQueue.flush()
+    }
 }
 
 extension EventPipeline {
