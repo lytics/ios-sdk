@@ -33,8 +33,13 @@
 		C9DE3E32290722A30047F502 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E31290722A30047F502 /* ProfileViewModel.swift */; };
 		C9DE3E3A29072B800047F502 /* EventRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E3929072B800047F502 /* EventRow.swift */; };
 		C9DE3E3C29072F410047F502 /* EventCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E3B29072F410047F502 /* EventCard.swift */; };
+		C9DE3E41290735FA0047F502 /* Image+Assets.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E40290735FA0047F502 /* Image+Assets.swift */; };
 		C9DE3E4429082EE90047F502 /* PrimaryButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E4329082EE90047F502 /* PrimaryButtonStyle.swift */; };
 		C9DE3E4629082EF50047F502 /* SecondaryButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E4529082EF50047F502 /* SecondaryButtonStyle.swift */; };
+		C9DE3E48290844F70047F502 /* events.json in Resources */ = {isa = PBXBuildFile; fileRef = C9DE3E47290844F70047F502 /* events.json */; };
+		C9DE3E4A290845AB0047F502 /* Bundle+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E49290845AB0047F502 /* Bundle+Utils.swift */; };
+		C9DE3E4C2908463A0047F502 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E4B2908463A0047F502 /* Constants.swift */; };
+		C9DE3E4E29085A330047F502 /* Collection+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E4D29085A330047F502 /* Collection+Utils.swift */; };
 		C9DE3E5029085BD80047F502 /* ChecklistToggleStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E4F29085BD80047F502 /* ChecklistToggleStyle.swift */; };
 		C9DE3E52290861680047F502 /* LocalEventsHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E51290861680047F502 /* LocalEventsHeader.swift */; };
 /* End PBXBuildFile section */
@@ -86,8 +91,13 @@
 		C9DE3E31290722A30047F502 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		C9DE3E3929072B800047F502 /* EventRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventRow.swift; sourceTree = "<group>"; };
 		C9DE3E3B29072F410047F502 /* EventCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCard.swift; sourceTree = "<group>"; };
+		C9DE3E40290735FA0047F502 /* Image+Assets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Image+Assets.swift"; sourceTree = "<group>"; };
 		C9DE3E4329082EE90047F502 /* PrimaryButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButtonStyle.swift; sourceTree = "<group>"; };
 		C9DE3E4529082EF50047F502 /* SecondaryButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondaryButtonStyle.swift; sourceTree = "<group>"; };
+		C9DE3E47290844F70047F502 /* events.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = events.json; sourceTree = "<group>"; };
+		C9DE3E49290845AB0047F502 /* Bundle+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Utils.swift"; sourceTree = "<group>"; };
+		C9DE3E4B2908463A0047F502 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		C9DE3E4D29085A330047F502 /* Collection+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+Utils.swift"; sourceTree = "<group>"; };
 		C9DE3E4F29085BD80047F502 /* ChecklistToggleStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistToggleStyle.swift; sourceTree = "<group>"; };
 		C9DE3E51290861680047F502 /* LocalEventsHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalEventsHeader.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -145,6 +155,8 @@
 			children = (
 				C94BDF3728E923A9008FB4DE /* SwiftUIDemoApp.swift */,
 				C94BDF3928E923A9008FB4DE /* ContentView.swift */,
+				C9DE3E4B2908463A0047F502 /* Constants.swift */,
+				C9DE3E3F290735EA0047F502 /* Extensions */,
 				C9DE3E2629071D100047F502 /* ViewModels */,
 				C9DE3E13290717BF0047F502 /* Views */,
 				C9DC54EE28EDC4D800EAD25E /* Models */,
@@ -198,6 +210,7 @@
 			isa = PBXGroup;
 			children = (
 				C94BDF3B28E923AB008FB4DE /* Assets.xcassets */,
+				C9DE3E47290844F70047F502 /* events.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -249,6 +262,16 @@
 				C9DE3E51290861680047F502 /* LocalEventsHeader.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		C9DE3E3F290735EA0047F502 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				C9DE3E40290735FA0047F502 /* Image+Assets.swift */,
+				C9DE3E49290845AB0047F502 /* Bundle+Utils.swift */,
+				C9DE3E4D29085A330047F502 /* Collection+Utils.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		C9DE3E4229082EC70047F502 /* View Styles */ = {
@@ -405,6 +428,9 @@
 				C9DE3E3A29072B800047F502 /* EventRow.swift in Sources */,
 				C9DE3E4629082EF50047F502 /* SecondaryButtonStyle.swift in Sources */,
 				C9DE3E1B290717F30047F502 /* LoginView.swift in Sources */,
+				C9DE3E4A290845AB0047F502 /* Bundle+Utils.swift in Sources */,
+				C9DE3E41290735FA0047F502 /* Image+Assets.swift in Sources */,
+				C9DE3E4E29085A330047F502 /* Collection+Utils.swift in Sources */,
 				C94BDF3828E923A9008FB4DE /* SwiftUIDemoApp.swift in Sources */,
 				C9DE3E4429082EE90047F502 /* PrimaryButtonStyle.swift in Sources */,
 				C9DE3E3029071E4E0047F502 /* SettingsViewModel.swift in Sources */,
@@ -420,6 +446,7 @@
 				C9DE3E5029085BD80047F502 /* ChecklistToggleStyle.swift in Sources */,
 				C9DC54F428EDC4D800EAD25E /* DemoCart.swift in Sources */,
 				C9DE3E1A290717F30047F502 /* EventsView.swift in Sources */,
+				C9DE3E4C2908463A0047F502 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

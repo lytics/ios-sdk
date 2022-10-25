@@ -1,0 +1,26 @@
+[
+  {
+    "id": 2,
+    "details": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eu ante at turpis blandit eleifend. Suspendisse potenti. Aenean et lacus sed urna tincidunt fermentum ut at elit. Praesent a augue lorem. Orci varius natoque penatibus et magnis dis parturient montes.",
+    "dateTime": "March 18th @ 8 P.M.",
+    "imageURL": "https://events.com/3",
+    "location": "Austin, TX",
+    "artist": "Alicia Keys"
+  },
+  {
+    "id": 3,
+    "details": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eu ante at turpis blandit eleifend. Suspendisse potenti. Aenean et lacus sed urna tincidunt fermentum ut at elit. Praesent a augue lorem. Orci varius natoque penatibus et magnis dis parturient montes.",
+    "dateTime": "March 18th @ 8 P.M.",
+    "imageURL": "https://events.com/4",
+    "location": "Oklahoma City, OK",
+    "artist": "Post Malone"
+  },
+  {
+    "id": 4,
+    "details": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eu ante at turpis blandit eleifend. Suspendisse potenti. Aenean et lacus sed urna tincidunt fermentum ut at elit. Praesent a augue lorem. Orci varius natoque penatibus et magnis dis parturient montes.",
+    "dateTime": "March 18th @ 8 P.M.",
+    "imageURL": "https://events.com/5",
+    "location": "Houston, TX",
+    "artist": "Doja Cat"
+  }
+]
