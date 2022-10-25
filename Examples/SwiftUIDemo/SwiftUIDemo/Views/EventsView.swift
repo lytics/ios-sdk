@@ -12,12 +12,60 @@ struct EventsView: View {
     @StateObject var viewModel: EventsViewModel
 
     var body: some View {
-        Text("Events")
+        NavigationStack {
+            VStack {
+                if let featuredEvent = viewModel.featuredEvent {
+                    VStack {
+                        LocalEventsHeader(
+                            action: { print("See More ...") })
+
+                        EventCard(
+                            title: featuredEvent.artist,
+                            subtitle: featuredEvent.location,
+                            image: .image2,
+                            action: {
+                                viewModel.buyTickets()
+                            })
+                    }
+                }
+
+                HStack {
+                    Text("Popular")
+                        .bold()
+
+                    Spacer()
+                }
+
+                ForEach(viewModel.events) { event in
+                    NavigationLink(value: event) {
+                        EventRow(
+                            title: event.artist,
+                            subtitle: event.location,
+                            image: .image2)
+                    }
+                }
+                .navigationDestination(for: Event.self) { event in
+                    EventDetailView(viewModel: .init(eventService: .mock, event: event))
+                }
+
+                Spacer()
+            }
+            .padding()
+            .onAppear {
+                viewModel.fetchEvents()
+            }
+            .background(.quaternary)
+        }
     }
 }
 
 struct EventsView_Previews: PreviewProvider {
     static var previews: some View {
-        EventsView(viewModel: .init())
+        EventsView(
+            viewModel: .init(
+                eventService: .mock,
+                featuredEvent: .mock,
+                events: [.mock]
+            ))
     }
 }
