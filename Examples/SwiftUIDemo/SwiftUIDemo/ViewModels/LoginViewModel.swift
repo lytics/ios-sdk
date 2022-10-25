@@ -12,6 +12,10 @@ final class LoginViewModel:  ObservableObject {
     @Published var email: String = ""
     @Published var password: String = ""
 
+    var loginIsEnabled: Bool {
+        email.isNotEmpty && password.isNotEmpty
+    }
+
     init(email: String = "", password: String = "") {
         self.email = email
         self.password = password
@@ -22,10 +26,6 @@ final class LoginViewModel:  ObservableObject {
     }
 
     func forgotPassword() {
-        print("\(#function)")
-    }
-
-    func register() {
         print("\(#function)")
     }
 }

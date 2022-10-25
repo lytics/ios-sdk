@@ -14,59 +14,83 @@ struct LoginView: View {
         case password
     }
 
+    enum Route: Hashable {
+        case register
+    }
+
     @FocusState var focusedField: FocusField?
     @StateObject var viewModel: LoginViewModel
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 24) {
-            Text("Welcome!")
-                .bold()
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 24) {
+                Text("Welcome!")
+                    .bold()
 
-            VStack(spacing: 16) {
-                TextField(
-                    "Email Address",
-                    text: $viewModel.email)
+                VStack(spacing: 16) {
+                    TextField(
+                        "Email Address",
+                        text: $viewModel.email)
+                    .focused($focusedField, equals: .email)
+                    .keyboardType(.emailAddress)
+                    .textContentType(.emailAddress)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                    .submitLabel(.next)
+                    .onSubmit {
+                        focusedField = .password
+                    }
 
-                SecureField(
-                    "Password",
-                    text: $viewModel.password)
-            }
-            .textFieldStyle(RoundedBorderTextFieldStyle())
+                    SecureField(
+                        "Password",
+                        text: $viewModel.password)
+                    .focused($focusedField, equals: .password)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                    .textContentType(.password)
 
-            Button(
-                action: {
-
-                },
-                label: {
-                    Text("Forgot password?")
-                })
-
-            Button(
-                action: {
-                    viewModel.login()
-                },
-                label: {
-                    Text("Login")
-                })
-            .buttonStyle(.primary())
-
-            HStack {
-                Spacer()
-
-                Text("Not a member?")
+                }
+                .textFieldStyle(RoundedBorderTextFieldStyle())
 
                 Button(
                     action: {
-                        viewModel.register()
+                        viewModel.forgotPassword()
                     },
                     label: {
-                        Text("Register now.")
+                        Text("Forgot password?")
                     })
 
-                Spacer()
+                Button(
+                    action: {
+                        focusedField = .none
+                        viewModel.login()
+                    },
+                    label: {
+                        Text("Login")
+                    })
+                .buttonStyle(.primary())
+                .disabled(!viewModel.loginIsEnabled)
+
+                HStack {
+                    Spacer()
+
+                    Text("Not a member?")
+
+                    NavigationLink(value: Route.register) {
+                        Text("Register now.")
+                    }
+
+                    Spacer()
+                }
+            }
+            .padding()
+            .navigationDestination(for: Route.self) { route in
+                switch route {
+                case .register:
+                    RegisterView(viewModel: .init())
+                }
             }
         }
-        .padding()
     }
 }
 

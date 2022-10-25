@@ -32,15 +32,34 @@ struct RegisterView: View {
                     Text("Name")
 
                     TextField("Name", text: $viewModel.name)
+                        .focused($focusedField, equals: .name)
+                        .autocorrectionDisabled()
+                        .submitLabel(.next)
+                        .onSubmit {
+                            focusedField = .email
+                        }
                 }
 
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Email Address")
 
                     TextField("Email Address", text: $viewModel.email)
+                        .focused($focusedField, equals: .email)
+                        .autocapitalization(.none)
+                        .textContentType(.emailAddress)
+                        .keyboardType(.emailAddress)
+                        .submitLabel(.next)
+                        .autocorrectionDisabled()
+                        .onSubmit {
+                            focusedField = .password
+                        }
                 }
 
                 SecureField("Create a password", text: $viewModel.password)
+                    .focused($focusedField, equals: .password)
+                    .autocapitalization(.none)
+                    .textContentType(.password)
+                    .autocorrectionDisabled()
             }
             .textFieldStyle(RoundedBorderTextFieldStyle())
 
@@ -61,6 +80,7 @@ struct RegisterView: View {
 
             Button(
                 action: {
+                    focusedField = .none
                     viewModel.register()
                 },
                 label: {
