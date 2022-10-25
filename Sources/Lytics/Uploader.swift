@@ -10,7 +10,7 @@ import Foundation
 actor Uploader: Uploading {
 
     /// A wrapper for an in-progress request.
-    final class PendingRequest<R: Codable>: RequestWrapping {
+    final class PendingRequest<R: Codable>: Codable, RequestWrapping {
 
         /// A unique value identifying the wrapped request.
         let id: UUID
@@ -35,13 +35,36 @@ actor Uploader: Uploading {
             self.retryCount = retryCount
             self.uploadTask = uploadTask
         }
+
+        init(from decoder: Decoder) throws {
+            let container: KeyedDecodingContainer<CodingKeys> = try decoder.container(
+                keyedBy: CodingKeys.self)
+
+            self.id = try container.decode(UUID.self, forKey: .id)
+            self.request = try container.decode(Request<R>.self, forKey: .request)
+            self.retryCount = 0
+            self.uploadTask = nil
+        }
+
+        final func encode(to encoder: Encoder) throws {
+            var container: KeyedEncodingContainer<CodingKeys> = encoder.container(
+                keyedBy: CodingKeys.self)
+
+            try container.encode(self.id, forKey: .id)
+            try container.encode(self.request, forKey: .request)
+        }
+
+        private enum CodingKeys: CodingKey {
+            case id
+            case request
+        }
     }
 
     private let logger: LyticsLogger
     private let decoder: JSONDecoder
     private let requestPerformer: RequestPerforming
     private let errorHandler: RequestFailureHandler
-    private let cache: RequestCaching
+    private let cache: RequestCaching?
     private var pendingRequests: [UUID: any RequestWrapping]
 
     /// A Boolean value that indicates whether any requests passed to `upload(_:)` should be upload or stored immediately.
@@ -57,7 +80,7 @@ actor Uploader: Uploading {
         decoder: JSONDecoder = .init(),
         requestPerformer: RequestPerforming,
         errorHandler: RequestFailureHandler,
-        cache: RequestCaching,
+        cache: RequestCaching?,
         shouldSend: Bool = true
     ) {
         self.logger = logger
@@ -73,12 +96,11 @@ actor Uploader: Uploading {
     /// - Parameter requests: The requests to upload.
     func upload<T: Codable>(_ requests: [Request<T>]) {
         guard shouldSend else {
-            for request in requests {
-                do {
-                    try cache.cache(request)
-                } catch {
-                    logger.error("Unable to cache \(request): \(error)")
-                }
+            let wrapped: [any RequestWrapping] = requests.map { PendingRequest(request: $0) }
+            do {
+                try cache?.cache(wrapped)
+            } catch {
+                logger.error("Unable to cache \(requests): \(error)")
             }
 
             return
@@ -150,7 +172,7 @@ private extension Uploader {
     /// - Parameter wrapper: The instance wrapping the request to cache.
     func openAndCache<T: RequestWrapping>(_ wrapper: T) {
         do {
-            try cache.cache(wrapper.request)
+            try cache?.cache([wrapper])
         } catch {
             logger.error("Unable to cache \(wrapper): \(error)")
         }
@@ -194,7 +216,7 @@ private extension Uploader {
 extension Uploader {
     static func live(
         logger: LyticsLogger,
-        cache: RequestCaching,
+        cache: RequestCaching?,
         maxRetryCount: Int
     ) -> Uploader {
         .init(

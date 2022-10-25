@@ -14,7 +14,6 @@ final class DataUploadRequestBuilderTests: XCTestCase {
     let stream2 = "stream_2"
     let name1 = "name_1"
     let name2 = "name_2"
-    let timestamp2 = Mock.timestamp + 1000
 
     func testEncodeEmpty() throws {
         let events: [String: [any StreamEvent]] = [:]
@@ -29,7 +28,7 @@ final class DataUploadRequestBuilderTests: XCTestCase {
             stream1: [
                 Mock.payload(
                     stream: stream1,
-                    timestamp: Mock.timestamp,
+                    timestamp: Mock.timestamp(.one),
                     sessionDidStart: 1,
                     name: name1,
                     event: IdentityEvent(
@@ -39,7 +38,7 @@ final class DataUploadRequestBuilderTests: XCTestCase {
             stream2: [
                 Mock.payload(
                     stream: stream2,
-                    timestamp: timestamp2,
+                    timestamp: Mock.timestamp(.two),
                     name: name2,
                     event: ConsentEvent(
                         identifiers: User1.identifiers,
@@ -62,7 +61,7 @@ final class DataUploadRequestBuilderTests: XCTestCase {
             stream1: [
                 Mock.payload(
                     stream: stream1,
-                    timestamp: Mock.timestamp,
+                    timestamp: Mock.timestamp(.one),
                     sessionDidStart: 1,
                     name: name1,
                     event: IdentityEvent(
@@ -70,7 +69,7 @@ final class DataUploadRequestBuilderTests: XCTestCase {
                         attributes: User1.attributes)),
                 Mock.payload(
                     stream: stream2,
-                    timestamp: timestamp2,
+                    timestamp: Mock.timestamp(.two),
                     name: name2,
                     event: ConsentEvent(
                         identifiers: User1.identifiers,
@@ -110,7 +109,7 @@ extension DataUploadRequestBuilderTests {
     func assertOnIdentityEvent(_ object: [String: Any]) {
         XCTAssertEqual(object["name"] as! String, name1)
 
-        XCTAssertEqual(object["_ts"] as! Int64, Mock.timestamp)
+        XCTAssertEqual(object["_ts"] as! Int64, Mock.timestamp(.one))
         XCTAssertEqual(object["_sesstart"] as! Int, 1)
 
         let identifiers1 = object["identifiers"] as! [String: Any]
@@ -128,7 +127,7 @@ extension DataUploadRequestBuilderTests {
     func assertOnConsentEvent(_ object: [String: Any]) {
         XCTAssertEqual(object["name"] as! String, name2)
 
-        XCTAssertEqual(object["_ts"] as! Int64, timestamp2)
+        XCTAssertEqual(object["_ts"] as! Int64, Mock.timestamp(.two))
 
         let identifiers2 = object["identifiers"] as! [String: Any]
         XCTAssertEqual(identifiers2["email"] as! String, User1.email)
