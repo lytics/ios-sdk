@@ -12,12 +12,48 @@ struct EventDetailView: View {
     @StateObject var viewModel: EventDetailViewModel
 
     var body: some View {
-        Text("Event Detail")
+        VStack(alignment: .leading, spacing: 10) {
+            if let image = viewModel.image {
+                image
+                    .resizable()
+                    .scaledToFit()
+            }
+
+            VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(viewModel.title)
+                    Text(viewModel.subtitle)
+                }
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Details")
+
+                    Text(viewModel.details)
+                }
+
+                Button(
+                    action: {
+                        viewModel.buyTickets()
+                    },
+                    label: {
+                        Text("Buy Tickets")
+                    })
+                .buttonStyle(.secondary())
+            }
+            .padding(.horizontal)
+
+            Spacer()
+        }
+        .onAppear {
+            viewModel.fetchImage()
+        }
     }
 }
 
 struct EventDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        EventDetailView(viewModel: .init())
+        EventDetailView(viewModel: .init(
+            eventService: .mock,
+            event: .mock))
     }
 }
