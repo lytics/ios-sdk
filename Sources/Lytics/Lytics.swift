@@ -20,7 +20,7 @@ public final class Lytics {
     internal var logger: LyticsLogger = .live
 
     @usableFromInline
-    internal let userManager = UserManager()
+    internal var userManager: UserManager = .live
 
     @usableFromInline
     internal var timestampProvider: () -> Millisecond = { Date().timeIntervalSince1970.milliseconds }
@@ -378,11 +378,15 @@ public extension Lytics {
 
     /// Force flush the event queue by sending all events in the queue immediately.
     func dispatch() {
-        // ...
+        Task {
+            await eventPipeline.dispatch()
+        }
     }
 
     /// Clear all stored user information.
     func reset() {
-        // ...
+        Task {
+            await userManager.clear()
+        }
     }
 }

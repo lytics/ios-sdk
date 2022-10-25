@@ -13,6 +13,10 @@ extension UserDefaults {
         bool(forKey: key.rawValue)
     }
 
+    func dictionary(for key: UserDefaultsKey) -> [String: Any]? {
+        dictionary(forKey: key.rawValue)
+    }
+
     func int64(for key: UserDefaultsKey) -> Int64 {
         object(forKey: key.rawValue) as? Int64 ?? 0
     }
@@ -30,6 +34,10 @@ extension UserDefaults {
 extension UserDefaults {
 
     func set(_ value: Bool, for key: UserDefaultsKey) {
+        set(value, forKey: key.rawValue)
+    }
+
+    func set(_ value: [String: Any], for key: UserDefaultsKey) {
         set(value, forKey: key.rawValue)
     }
 
