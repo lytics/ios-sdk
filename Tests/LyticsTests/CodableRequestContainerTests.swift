@@ -10,20 +10,20 @@ import XCTest
 
 final class CodableRequestContainerTests: XCTestCase {
     let identityEvent = Mock.payload(
-        stream: Mock.stream(.one),
-        timestamp: Mock.timestamp(.one),
+        stream: Stream.one,
+        timestamp: Timestamp.one,
         sessionDidStart: 1,
-        name: Mock.name(.one),
+        name: Name.one,
         event: IdentityEvent(
             identifiers: User1.identifiers,
             attributes: User1.attributes))
 
     var identityEventDictionary: [String: Any] {
         var payload = Mock.payloadDictionary(
-            stream: Mock.stream(.one),
-            timestamp: Mock.timestamp(.one),
+            stream: Stream.one,
+            timestamp: Timestamp.one,
             sessionDidStart: 1,
-            name: Mock.name(.one))
+            name: Name.one)
 
         return Mock.identityEventDictionary(
             payload: &payload,
@@ -32,18 +32,18 @@ final class CodableRequestContainerTests: XCTestCase {
     }
 
     let consentEvent = Mock.payload(
-        stream: Mock.stream(.two),
-        timestamp: Mock.timestamp(.two),
-        name: Mock.name(.two),
+        stream: Stream.two,
+        timestamp: Timestamp.two,
+        name: Name.two,
         event: ConsentEvent(
             identifiers: User1.identifiers,
             consent: TestConsent.user1))
 
     var consentEventDictionary: [String: Any] {
         var payload = Mock.payloadDictionary(
-            stream: Mock.stream(.two),
-            timestamp: Mock.timestamp(.two),
-            name: Mock.name(.two))
+            stream: Stream.two,
+            timestamp: Timestamp.two,
+            name: Name.two)
 
         return Mock.consentEventDictionary(
             payload: &payload,
@@ -57,10 +57,10 @@ final class CodableRequestContainerTests: XCTestCase {
 
     var events: [String: [any StreamEvent]] {
         [
-            Mock.stream(.one): [
+            Stream.one: [
                 identityEvent
             ],
-            Mock.stream(.two): [
+            Stream.two: [
                 consentEvent
             ]
         ]
@@ -90,10 +90,10 @@ final class CodableRequestContainerTests: XCTestCase {
         let body2 = try JSONSerialization.jsonObject(with: wrapper2.request.body!) as! [String: Any]
 
         switch wrapper1.request.url.lastPathComponent {
-        case Mock.stream(.one):
+        case Stream.one:
             Assert.identityEventEquality(body1, expected: identityEventDictionary)
             Assert.consentEventEquality(body2, expected: consentEventDictionary)
-        case Mock.stream(.two):
+        case Stream.two:
             Assert.identityEventEquality(body2, expected: identityEventDictionary)
             Assert.consentEventEquality(body1, expected: consentEventDictionary)
         default:
