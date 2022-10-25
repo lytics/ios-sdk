@@ -7,7 +7,7 @@
 import Foundation
 
 struct DemoConsent: Codable, Equatable {
-    var document: String
-    var timestamp: String
+    var documents: [String]
+    var timestamp: String?
     var consented: Bool
 }
