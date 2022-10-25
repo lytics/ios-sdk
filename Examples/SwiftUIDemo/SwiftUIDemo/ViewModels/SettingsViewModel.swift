@@ -7,10 +7,11 @@
 //
 
 import Foundation
+import Lytics
 
 final class SettingsViewModel: ObservableObject {
 
     func reset() {
-        print("\(#function)")
+        Lytics.shared.reset()
     }
 }
