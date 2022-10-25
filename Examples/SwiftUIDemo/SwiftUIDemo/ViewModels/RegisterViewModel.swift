@@ -9,8 +9,34 @@
 import Foundation
 
 final class RegisterViewModel:  ObservableObject {
+    @Published var name: String
+    @Published var email: String
+    @Published var password: String
+    @Published var agreedToTerms: Bool
+    @Published var enableIDFA: Bool
 
-    init() {
-        // ...
+    var registerIsEnabled: Bool {
+        name.isNotEmpty &&
+        email.isNotEmpty &&
+        password.isNotEmpty &&
+        agreedToTerms
+    }
+
+    init(
+        name: String = "",
+        email: String = "",
+        password: String = "",
+        agreedToTerms: Bool = false,
+        enableIDFA: Bool = false
+    ) {
+        self.name = name
+        self.email = email
+        self.password = password
+        self.agreedToTerms = agreedToTerms
+        self.enableIDFA = enableIDFA
+    }
+
+    func register() {
+        print("\(#function)")
     }
 }
