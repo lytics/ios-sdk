@@ -31,6 +31,9 @@
 		C9DE3E2E29071E3E0047F502 /* RegisterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E2D29071E3E0047F502 /* RegisterViewModel.swift */; };
 		C9DE3E3029071E4E0047F502 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E2F29071E4E0047F502 /* SettingsViewModel.swift */; };
 		C9DE3E32290722A30047F502 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E31290722A30047F502 /* ProfileViewModel.swift */; };
+		C9DE3E4429082EE90047F502 /* PrimaryButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E4329082EE90047F502 /* PrimaryButtonStyle.swift */; };
+		C9DE3E4629082EF50047F502 /* SecondaryButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E4529082EF50047F502 /* SecondaryButtonStyle.swift */; };
+		C9DE3E5029085BD80047F502 /* ChecklistToggleStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E4F29085BD80047F502 /* ChecklistToggleStyle.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,6 +81,9 @@
 		C9DE3E2D29071E3E0047F502 /* RegisterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewModel.swift; sourceTree = "<group>"; };
 		C9DE3E2F29071E4E0047F502 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		C9DE3E31290722A30047F502 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
+		C9DE3E4329082EE90047F502 /* PrimaryButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButtonStyle.swift; sourceTree = "<group>"; };
+		C9DE3E4529082EF50047F502 /* SecondaryButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondaryButtonStyle.swift; sourceTree = "<group>"; };
+		C9DE3E4F29085BD80047F502 /* ChecklistToggleStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistToggleStyle.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -203,6 +209,7 @@
 		C9DE3E13290717BF0047F502 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				C9DE3E4229082EC70047F502 /* View Styles */,
 				C9DE3E2429071C220047F502 /* EventDetailView.swift */,
 				C9DE3E14290717F30047F502 /* EventsView.swift */,
 				C9DE3E15290717F30047F502 /* LoginView.swift */,
@@ -225,6 +232,16 @@
 				C9DE3E2F29071E4E0047F502 /* SettingsViewModel.swift */,
 			);
 			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		C9DE3E4229082EC70047F502 /* View Styles */ = {
+			isa = PBXGroup;
+			children = (
+				C9DE3E4329082EE90047F502 /* PrimaryButtonStyle.swift */,
+				C9DE3E4F29085BD80047F502 /* ChecklistToggleStyle.swift */,
+				C9DE3E4529082EF50047F502 /* SecondaryButtonStyle.swift */,
+			);
+			path = "View Styles";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -367,8 +384,10 @@
 				C9DE3E2E29071E3E0047F502 /* RegisterViewModel.swift in Sources */,
 				C94BDF3A28E923A9008FB4DE /* ContentView.swift in Sources */,
 				C9DE3E2A29071E2D0047F502 /* EventDetailViewModel.swift in Sources */,
+				C9DE3E4629082EF50047F502 /* SecondaryButtonStyle.swift in Sources */,
 				C9DE3E1B290717F30047F502 /* LoginView.swift in Sources */,
 				C94BDF3828E923A9008FB4DE /* SwiftUIDemoApp.swift in Sources */,
+				C9DE3E4429082EE90047F502 /* PrimaryButtonStyle.swift in Sources */,
 				C9DE3E3029071E4E0047F502 /* SettingsViewModel.swift in Sources */,
 				C9DE3E1E290717F30047F502 /* SettingsView.swift in Sources */,
 				C9DE3E2C29071E360047F502 /* LoginViewModel.swift in Sources */,
@@ -377,6 +396,7 @@
 				C9DE3E2529071C220047F502 /* EventDetailView.swift in Sources */,
 				C9DC54F328EDC4D800EAD25E /* DemoConsent.swift in Sources */,
 				C9DE3E1F290717F30047F502 /* TabContainerView.swift in Sources */,
+				C9DE3E5029085BD80047F502 /* ChecklistToggleStyle.swift in Sources */,
 				C9DC54F428EDC4D800EAD25E /* DemoCart.swift in Sources */,
 				C9DE3E1A290717F30047F502 /* EventsView.swift in Sources */,
 			);
