@@ -31,8 +31,8 @@ public struct LyticsUser: Codable, Equatable {
     ///   - attributes: Additional information about a user.
     public init(
         userType: UserType = .anonymous,
-        identifiers: [String : AnyCodable] = [:],
-        attributes: [String : AnyCodable] = [:]
+        identifiers: [String: AnyCodable] = [:],
+        attributes: [String: AnyCodable] = [:]
     ) {
         self.userType = userType
         self.identifiers = identifiers
@@ -48,8 +48,8 @@ public extension LyticsUser {
     ///   - attributes: Additional information about a user.
     init(
         userType: UserType = .anonymous,
-        identifiers: [String : Any] = [:],
-        attributes: [String : Any] = [:]
+        identifiers: [String: Any] = [:],
+        attributes: [String: Any] = [:]
     ) {
         self.userType = userType
         self.identifiers = identifiers.mapValues(AnyCodable.init(_:))
