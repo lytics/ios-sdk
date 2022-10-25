@@ -8,6 +8,14 @@
 import XCTest
 
 final class EventQueueTests: XCTestCase {
+    enum Timeout {
+        /// 0.5 seconds.
+        static let short: TimeInterval = 0.5
+        /// 1.0 seconds.
+        static let medium: TimeInterval = 1.0
+        /// 4.0 seconds.
+        static let long: TimeInterval = 4.0
+    }
 
     func testFlushAfterMaxQueueSize() async throws {
         let buildExpectation = expectation(description: "Requests built")
@@ -32,7 +40,7 @@ final class EventQueueTests: XCTestCase {
         buildExpectation.isInverted = false
         await sut.enqueue(Mock.payload(event: Mock.identityEvent))
 
-        await waitForExpectations(timeout: 1.0)
+        await waitForExpectations(timeout: Timeout.medium)
     }
 
     func testFlushAfterUploadInterval() async throws {
@@ -54,7 +62,7 @@ final class EventQueueTests: XCTestCase {
         await sut.enqueue(Mock.payload(event: Mock.consentEvent))
         await sut.enqueue(Mock.payload(event: Mock.event))
         await sut.enqueue(Mock.payload(event: Mock.identityEvent))
-        await waitForExpectations(timeout: 2.0)
+        await waitForExpectations(timeout: Timeout.long)
     }
 
     func testManualFlush() async throws {
@@ -76,7 +84,7 @@ final class EventQueueTests: XCTestCase {
         await sut.enqueue(Mock.payload(event: Mock.consentEvent))
         await sut.flush()
 
-        await waitForExpectations(timeout: 1.0)
+        await waitForExpectations(timeout: Timeout.medium)
         let isEmpty = await sut.isEmpty
         XCTAssert(isEmpty)
         let eventCount = await sut.eventCount
@@ -125,7 +133,7 @@ final class EventQueueTests: XCTestCase {
         await sut.enqueue(Mock.payload(event: Mock.event))
         await sut.flush()
 
-        await waitForExpectations(timeout: 0.5)
+        await waitForExpectations(timeout: Timeout.short)
     }
 
     func testEventsUploaded() async throws {
@@ -154,7 +162,7 @@ final class EventQueueTests: XCTestCase {
         await sut.enqueue(Mock.payload(event: Mock.event))
         await sut.flush()
 
-        await waitForExpectations(timeout: 0.5)
+        await waitForExpectations(timeout: Timeout.short)
 
         XCTAssertEqual(uploadedRequests, requests)
     }
@@ -183,7 +191,7 @@ final class EventQueueTests: XCTestCase {
         await sut.enqueue(Mock.payload(stream: Stream.one, name: Name.three, event: Mock.event))
         await sut.flush()
 
-        await waitForExpectations(timeout: 0.5)
+        await waitForExpectations(timeout: Timeout.short)
 
         let stream1Events = events[Stream.one]!
         XCTAssertEqual(stream1Events.count, 2)
