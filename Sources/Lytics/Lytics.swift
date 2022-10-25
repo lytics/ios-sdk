@@ -16,11 +16,20 @@ public final class Lytics {
         return instance
     }()
 
+    @usableFromInline
     internal var logger: LyticsLogger = .live
 
-    internal let userManager = UserManager()
+    @usableFromInline
+    internal var userManager: UserManager = .live
 
+    @usableFromInline
+    internal var timestampProvider: () -> Millisecond = { Date().timeIntervalSince1970.milliseconds }
+
+    @usableFromInline
     internal private(set) var defaultStream: String = ""
+
+    @usableFromInline
+    internal var eventPipeline: EventPipeline!
 
     /// A Boolean value indicating whether this instance has been started.
     public private(set) var hasStarted: Bool = false
@@ -58,7 +67,9 @@ public final class Lytics {
         logger.logLevel = configuration.logLevel
         defaultStream = configuration.defaultStream
 
-        // ...
+        eventPipeline = .live(
+            logger: logger,
+            configuration: configuration)
 
         hasStarted = true
     }
@@ -67,6 +78,7 @@ public final class Lytics {
 // MARK: - Events
 public extension Lytics {
 
+    @inlinable
     /// Track a custom event.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
@@ -84,6 +96,7 @@ public extension Lytics {
             return
         }
 
+        let timestamp = timestampProvider()
         Task(priority: .background) {
             var eventIdentifiers = [String: AnyCodable]()
             if let identifiers {
@@ -98,16 +111,17 @@ public extension Lytics {
                 eventIdentifiers = await userManager.identifiers.mapValues(AnyCodable.init(_:))
             }
 
-            let event = Event(
+            await eventPipeline.event(
                 stream: stream ?? defaultStream,
+                timestamp: timestamp,
                 name: name,
-                identifiers: eventIdentifiers,
-                properties: properties)
-
-            // ...
+                event: Event(
+                    identifiers: eventIdentifiers,
+                    properties: properties))
         }
     }
 
+    @inlinable
     /// Track a custom event.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
@@ -121,6 +135,7 @@ public extension Lytics {
         track(stream: stream, name: name, identifiers: Optional.never, properties: properties)
     }
 
+    @inlinable
     /// Track a custom event.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
@@ -132,6 +147,7 @@ public extension Lytics {
         track(stream: stream, name: name, identifiers: Optional.never, properties: Optional.never)
     }
 
+    @inlinable
     /// Update the user properties and optionally emit an identity event.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
@@ -155,20 +171,20 @@ public extension Lytics {
             return
         }
 
+        let timestamp = timestampProvider()
         Task(priority: .background) {
             do {
                 if shouldSend {
                     let user = try await userManager.update(
                         with: UserUpdate(identifiers: identifiers, attributes: attributes))
 
-                    let event = IdentityEvent(
+                    await eventPipeline.event(
                         stream: stream ?? defaultStream,
+                        timestamp: timestamp,
                         name: name,
-                        identifiers: user.identifiers,
-                        attributes: user.attributes)
-
-                    // ...
-
+                        event: IdentityEvent(
+                            identifiers: user.identifiers,
+                            attributes: user.attributes))
                 } else {
                     try await userManager.apply(
                         UserUpdate(identifiers: identifiers, attributes: attributes))
@@ -179,6 +195,7 @@ public extension Lytics {
         }
     }
 
+    @inlinable
     /// Update the user properties and optionally emit an identity event.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
@@ -199,6 +216,7 @@ public extension Lytics {
             shouldSend: shouldSend)
     }
 
+    @inlinable
     /// Update a user consent properties and optionally emit a special event that represents an app user's explicit consent.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
@@ -224,20 +242,21 @@ public extension Lytics {
             return
         }
 
+        let timestamp = timestampProvider()
         Task(priority: .background) {
             do {
                 if shouldSend {
                     let user = try await userManager.update(
                         with: UserUpdate(identifiers: identifiers, attributes: attributes))
 
-                    let event = ConsentEvent(
+                    await eventPipeline.event(
                         stream: stream ?? defaultStream,
+                        timestamp: timestamp,
                         name: name,
-                        identifiers: user.identifiers,
-                        attributes: user.attributes,
-                        consent: consent)
-
-                    // ...
+                        event: ConsentEvent(
+                            identifiers: user.identifiers,
+                            attributes: user.attributes,
+                            consent: consent))
                 } else {
                     try await userManager.apply(
                         UserUpdate(identifiers: identifiers, attributes: attributes))
@@ -248,6 +267,7 @@ public extension Lytics {
         }
     }
 
+    @inlinable
     /// Update a user consent properties and optionally emit a special event that represents an app user's explicit consent.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
@@ -271,6 +291,7 @@ public extension Lytics {
             shouldSend: shouldSend)
     }
 
+    @inlinable
     /// Update a user consent properties and optionally emit a special event that represents an app user's explicit consent.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
@@ -292,6 +313,7 @@ public extension Lytics {
             shouldSend: shouldSend)
     }
 
+    @inlinable
     /// Emit an event representing a screen or page view. Device properties are injected into the payload before emitting.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
@@ -306,6 +328,7 @@ public extension Lytics {
         // ...
     }
 
+    @inlinable
     /// Emit an event representing a screen or page view. Device properties are injected into the payload before emitting.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
@@ -355,11 +378,15 @@ public extension Lytics {
 
     /// Force flush the event queue by sending all events in the queue immediately.
     func dispatch() {
-        // ...
+        Task {
+            await eventPipeline.dispatch()
+        }
     }
 
     /// Clear all stored user information.
     func reset() {
-        // ...
+        Task {
+            await userManager.clear()
+        }
     }
 }

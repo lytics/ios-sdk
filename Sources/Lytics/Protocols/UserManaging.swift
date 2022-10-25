@@ -8,6 +8,7 @@ import AnyCodable
 import Foundation
 
 /// A type that manages user identifiers and attributes.
+@usableFromInline
 protocol UserManaging: Actor {
 
     /// The user identifiers.
@@ -39,4 +40,7 @@ protocol UserManaging: Actor {
     /// - Parameter userUpdate: The update.
     /// - Returns: The updated user.
     func update<A: Encodable, I: Encodable>(with userUpdate: UserUpdate<A, I>) throws -> LyticsUser
+
+    /// Clear all stored user information.
+    func clear()
 }

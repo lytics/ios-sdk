@@ -16,3 +16,12 @@ struct TestIdentifiers: Codable, Equatable {
     var userID: Int?
     var nested: Nested?
 }
+
+extension TestIdentifiers {
+    static var user1: Self {
+        .init(
+            email: User1.email,
+            userID: User1.userID,
+            nested: Nested(a: User1.a, b: User1.b))
+    }
+}
