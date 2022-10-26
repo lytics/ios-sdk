@@ -4,37 +4,33 @@
 //  Created by Mathew Gacy on 9/12/22.
 //
 
-import AdSupport
 import AnyCodable
-import AppTrackingTransparency
 import Foundation
 
 public final class Lytics {
 
     /// The shared instance.
     public static let shared: Lytics = {
-        let instance = Lytics()
-        // ...
-        return instance
+        Lytics()
     }()
 
     @usableFromInline
     internal var logger: LyticsLogger = .live
 
     @usableFromInline
-    internal var userManager: UserManager = .live
+    internal var userManager: UserManager!
 
     @usableFromInline
     internal var timestampProvider: () -> Millisecond = { Date().timeIntervalSince1970.milliseconds }
-
-    @usableFromInline
-    internal private(set) var defaultStream: String = ""
 
     @usableFromInline
     internal private(set) var appTrackingTransparency: AppTrackingTransparency!
 
     @usableFromInline
     internal var eventPipeline: EventPipeline!
+
+    @usableFromInline
+    internal private(set) var defaultStream: String = ""
 
     /// A Boolean value indicating whether this instance has been started.
     public private(set) var hasStarted: Bool = false
@@ -46,16 +42,24 @@ public final class Lytics {
 
     /// A Boolean value indicating whether IDFA is enabled.
     public var isIDFAEnabled: Bool {
-        false
+        guard hasStarted else {
+            assertionFailure("Lytics must be started before accessing `isIDFAEnabled`.")
+            return false
+        }
+
+        return appTrackingTransparency.idfa() != nil
     }
 
     /// The current Lytics user.
-    public private(set) var user: LyticsUser
+    public var user: LyticsUser {
+        get async {
+            guard hasStarted else {
+                assertionFailure("Lytics must be started before accessing `user`.")
+                return .init()
+            }
 
-    internal init(
-        user: LyticsUser = .init()
-    ) {
-        self.user = user
+            return await userManager.user
+        }
     }
 
     /// Configure this Lytics SDK instance.
@@ -72,6 +76,7 @@ public final class Lytics {
         logger.logLevel = configuration.logLevel
         defaultStream = configuration.defaultStream
 
+        userManager = .live(configuration: configuration)
         appTrackingTransparency = .live
 
         eventPipeline = .live(
@@ -90,11 +95,13 @@ public extension Lytics {
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
+    ///   - timestamp: A an optional custom timestamp for the event.
     ///   - identifiers: A value representing additional identifiers to associate with this event.
     ///   - properties: A value  representing the event properties.
     func track<I: Encodable, P: Encodable>(
         stream: String? = nil,
         name: String? = nil,
+        timestamp: Millisecond? = nil,
         identifiers: I?,
         properties: P?
     ) {
@@ -103,7 +110,7 @@ public extension Lytics {
             return
         }
 
-        let timestamp = timestampProvider()
+        let timestamp = timestamp ?? timestampProvider()
         Task(priority: .background) {
             var eventIdentifiers = [String: AnyCodable]()
             if let identifiers {
@@ -133,13 +140,20 @@ public extension Lytics {
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
+    ///   - timestamp: A an optional custom timestamp for the event.
     ///   - event: A value representing the event properties.
     func track<P: Encodable>(
         stream: String? = nil,
         name: String? = nil,
+        timestamp: Millisecond? = nil,
         properties: P?
     ) {
-        track(stream: stream, name: name, identifiers: Optional.never, properties: properties)
+        track(
+            stream: stream,
+            name: name,
+            timestamp: timestamp,
+            identifiers: Optional.never,
+            properties: properties)
     }
 
     @inlinable
@@ -147,11 +161,18 @@ public extension Lytics {
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
+    ///   - timestamp: A an optional custom timestamp for the event.
     func track(
         stream: String? = nil,
-        name: String? = nil
+        name: String? = nil,
+        timestamp: Millisecond? = nil
     ) {
-        track(stream: stream, name: name, identifiers: Optional.never, properties: Optional.never)
+        track(
+            stream: stream,
+            name: name,
+            timestamp: timestamp,
+            identifiers: Optional.never,
+            properties: Optional.never)
     }
 
     @inlinable
@@ -159,12 +180,14 @@ public extension Lytics {
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
+    ///   - timestamp: A an optional custom timestamp for the event.
     ///   - identifiers: A value representing user identifiers.
     ///   - attributes: A value representing additional information about a user.
     ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
     func identify<I: Encodable, A: Encodable>(
         stream: String? = nil,
         name: String? = nil,
+        timestamp: Millisecond? = nil,
         identifiers: I?,
         attributes: A?,
         shouldSend: Bool = true
@@ -178,7 +201,7 @@ public extension Lytics {
             return
         }
 
-        let timestamp = timestampProvider()
+        let timestamp = timestamp ?? timestampProvider()
         Task(priority: .background) {
             do {
                 if shouldSend {
@@ -207,17 +230,20 @@ public extension Lytics {
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
+    ///   - timestamp: A an optional custom timestamp for the event.
     ///   - identifiers: A value representing user identifiers.
     ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
     func identify<I: Encodable>(
         stream: String? = nil,
         name: String? = nil,
+        timestamp: Millisecond? = nil,
         identifiers: I?,
         shouldSend: Bool = true
     ) {
         identify(
             stream: stream,
             name: name,
+            timestamp: timestamp,
             identifiers: identifiers,
             attributes: Optional.never,
             shouldSend: shouldSend)
@@ -228,6 +254,7 @@ public extension Lytics {
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
+    ///   - timestamp: A an optional custom timestamp for the event.
     ///   - identifiers: A value representing additional identifiers to associate with this event.
     ///   - attributes: A value representing additional information about a user.
     ///   - consent: A value representing consent properties.
@@ -235,6 +262,7 @@ public extension Lytics {
     func consent<I: Encodable, A: Encodable, C: Encodable>(
         stream: String? = nil,
         name: String? = nil,
+        timestamp: Millisecond? = nil,
         identifiers: I?,
         attributes: A?,
         consent: C?,
@@ -249,7 +277,7 @@ public extension Lytics {
             return
         }
 
-        let timestamp = timestampProvider()
+        let timestamp = timestamp ?? timestampProvider()
         Task(priority: .background) {
             do {
                 if shouldSend {
@@ -279,12 +307,14 @@ public extension Lytics {
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
+    ///   - timestamp: A an optional custom timestamp for the event.
     ///   - attributes: A value representing additional information about a user.
     ///   - consent: A value representing consent properties.
     ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
     func consent<A: Encodable, C: Encodable>(
         stream: String? = nil,
         name: String? = nil,
+        timestamp: Millisecond? = nil,
         attributes: A?,
         consent: C?,
         shouldSend: Bool = true
@@ -292,6 +322,7 @@ public extension Lytics {
         self.consent(
             stream: stream,
             name: name,
+            timestamp: timestamp,
             identifiers: Optional.never,
             attributes: attributes,
             consent: consent,
@@ -303,17 +334,20 @@ public extension Lytics {
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
+    ///   - timestamp: A an optional custom timestamp for the event.
     ///   - consent: A value representing consent properties.
     ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
     func consent<C: Encodable>(
         stream: String? = nil,
         name: String? = nil,
+        timestamp: Millisecond? = nil,
         consent: C?,
         shouldSend: Bool = true
     ) {
         self.consent(
             stream: stream,
             name: name,
+            timestamp: timestamp,
             identifiers: Optional.never,
             attributes: Optional.never,
             consent: consent,
@@ -325,10 +359,12 @@ public extension Lytics {
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
+    ///   - timestamp: A an optional custom timestamp for the event.
     ///   - properties: A value representing the event properties.
     func screen<I: Encodable, P: Encodable>(
         stream: String? = nil,
         name: String? = nil,
+        timestamp: Millisecond? = nil,
         identifiers: I?,
         properties: P?
     ) {
@@ -337,7 +373,7 @@ public extension Lytics {
             return
         }
 
-        let timestamp = timestampProvider()
+        let timestamp = timestamp ?? timestampProvider()
         Task(priority: .background) {
             var eventIdentifiers = [String: AnyCodable]()
             if let identifiers {
@@ -368,13 +404,20 @@ public extension Lytics {
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
+    ///   - timestamp: A an optional custom timestamp for the event.
     ///   - properties: A value representing the event properties.
     func screen<P: Encodable>(
         stream: String? = nil,
         name: String? = nil,
+        timestamp: Millisecond? = nil,
         properties: P?
     ) {
-        screen(stream: stream, name: name, identifiers: Optional.never, properties: properties)
+        screen(
+            stream: stream,
+            name: name,
+            timestamp: timestamp,
+            identifiers: Optional.never,
+            properties: properties)
     }
 }
 
@@ -383,12 +426,12 @@ public extension Lytics {
 
     /// Opt the user in to event collection.
     func optIn() {
-        // ...
+        logger.debug("Opt in")
     }
 
     /// Opt the user out of event collection.
     func optOut() {
-        // ...
+        logger.debug("Opt out")
     }
 
     /// Request access to IDFA.
@@ -398,12 +441,14 @@ public extension Lytics {
             return false
         }
 
+        logger.debug("Requesting tracking authorization ...")
         return await appTrackingTransparency.requestAuthorization()
     }
 
     /// Disable use of IDFA.
     func disableTracking() {
-        // ...
+        logger.debug("Disable tracking")
+        appTrackingTransparency.disableIDFA()
     }
 }
 
@@ -417,6 +462,7 @@ public extension Lytics {
 
     /// Force flush the event queue by sending all events in the queue immediately.
     func dispatch() {
+        logger.debug("Dispatch events")
         Task {
             await eventPipeline.dispatch()
         }
@@ -424,6 +470,7 @@ public extension Lytics {
 
     /// Clear all stored user information.
     func reset() {
+        logger.debug("Reset")
         Task {
             await userManager.clear()
         }
