@@ -143,4 +143,21 @@ final class UserManagerTests: XCTestCase {
         Assert.attributeEquality(attributes, expected: expectedAttributes)
         Assert.identifierEquality(identifiers, expected: expectedIdentifiers)
     }
+
+    func testCreateIdentifiersOnInit() async throws {
+        let anonymousIdentityKey = "id"
+
+        let storage = UserStorage.mock(
+            identifiers: { nil }
+        )
+
+        let sut = UserManager(
+            configuration: .init(anonymousIdentityKey: anonymousIdentityKey),
+            encoder: .init(),
+            idProvider: { Mock.uuidString },
+            storage: storage)
+
+        let identifiers = await sut.identifiers as! [String: String]
+        XCTAssertEqual(identifiers, [anonymousIdentityKey: Mock.uuidString])
+    }
 }

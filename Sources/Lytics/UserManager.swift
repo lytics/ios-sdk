@@ -7,9 +7,22 @@
 import AnyCodable
 import Foundation
 
-/// An object that manages the current user's identity.
 @usableFromInline
+/// An object that manages the current user's identity.
 actor UserManager: UserManaging {
+
+    /// Configurable `UserManager` properties.
+    struct Configuration: Equatable {
+
+        /// The key that represents the core identifier to be used in api calls.
+        public var primaryIdentityKey: String = "_uid"
+
+        /// The key which we use to store the anonymous identifier.
+        public var anonymousIdentityKey: String = "_uid"
+    }
+
+    private let configuration: Configuration
+    private let idProvider: () -> String
     private let encoder: JSONEncoder
     private let storage: UserStorage
 
@@ -27,13 +40,24 @@ actor UserManager: UserManaging {
     }
 
     init(
+        configuration: Configuration = .init(),
         encoder: JSONEncoder,
+        idProvider: @escaping () -> String = { UUID().uuidString },
         storage: UserStorage
     ) {
+        self.configuration = configuration
         self.encoder = encoder
+        self.idProvider = idProvider
         self.storage = storage
-        self.identifiers = storage.identifiers() ?? [:]
         self.attributes = storage.attributes() ?? [:]
+
+        if let identifiers = storage.identifiers() {
+            self.identifiers = identifiers
+        } else {
+            let identifiers = [configuration.anonymousIdentityKey: idProvider()]
+            storage.storeIdentifiers(identifiers)
+            self.identifiers = identifiers
+        }
     }
 
     @discardableResult
@@ -97,11 +121,20 @@ actor UserManager: UserManaging {
     @usableFromInline
     /// Clear all stored user information.
     func clear() {
-        storage.storeAttributes([:])
-        storage.storeIdentifiers([:])
-    }
+        attributes = [:]
+        storage.storeAttributes(attributes)
 
-    private func convert<T: Encodable>(_ value: T) throws -> [String: Any] {
+        identifiers = [configuration.anonymousIdentityKey: idProvider()]
+        storage.storeIdentifiers(identifiers)
+    }
+}
+
+private extension UserManager {
+
+    /// Returns a dictionary representation of a model.
+    /// - Parameter value: The model to convert.
+    /// - Returns: A dictionary representation of `value`.
+    func convert<T: Encodable>(_ value: T) throws -> [String: Any] {
         let data = try encoder.encode(value)
         guard let dictionary = try JSONSerialization.jsonObject(
             with: data,
@@ -118,14 +151,20 @@ actor UserManager: UserManaging {
 }
 
 extension UserManager {
-    @usableFromInline static var live: Self {
+    @usableFromInline
+    static func live(configuration: LyticsConfiguration) -> UserManager {
         .init(
+            configuration: Configuration(
+                primaryIdentityKey: configuration.primaryIdentityKey,
+                anonymousIdentityKey: configuration.anonymousIdentityKey),
             encoder: JSONEncoder(),
+            idProvider: { UUID().uuidString },
             storage: .live)
     }
 
     #if DEBUG
     static let mock = UserManager(
+        configuration: .init(),
         encoder: JSONEncoder(),
         storage: .mock())
     #endif

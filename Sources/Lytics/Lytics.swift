@@ -13,16 +13,14 @@ public final class Lytics {
 
     /// The shared instance.
     public static let shared: Lytics = {
-        let instance = Lytics()
-        // ...
-        return instance
+        Lytics()
     }()
 
     @usableFromInline
     internal var logger: LyticsLogger = .live
 
     @usableFromInline
-    internal var userManager: UserManager = .live
+    internal var userManager: UserManager!
 
     @usableFromInline
     internal var timestampProvider: () -> Millisecond = { Date().timeIntervalSince1970.milliseconds }
@@ -50,12 +48,15 @@ public final class Lytics {
     }
 
     /// The current Lytics user.
-    public private(set) var user: LyticsUser
+    public var user: LyticsUser {
+        get async {
+            guard hasStarted else {
+                assertionFailure("Lytics must be started before accessing `user`.")
+                return .init()
+            }
 
-    internal init(
-        user: LyticsUser = .init()
-    ) {
-        self.user = user
+            return await userManager.user
+        }
     }
 
     /// Configure this Lytics SDK instance.
@@ -72,6 +73,7 @@ public final class Lytics {
         logger.logLevel = configuration.logLevel
         defaultStream = configuration.defaultStream
 
+        userManager = .live(configuration: configuration)
         appTrackingTransparency = .live
 
         eventPipeline = .live(
