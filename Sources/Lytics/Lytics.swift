@@ -4,9 +4,7 @@
 //  Created by Mathew Gacy on 9/12/22.
 //
 
-import AdSupport
 import AnyCodable
-import AppTrackingTransparency
 import Foundation
 
 public final class Lytics {
@@ -44,7 +42,12 @@ public final class Lytics {
 
     /// A Boolean value indicating whether IDFA is enabled.
     public var isIDFAEnabled: Bool {
-        false
+        guard hasStarted else {
+            assertionFailure("Lytics must be started before accessing `isIDFAEnabled`.")
+            return false
+        }
+
+        return appTrackingTransparency.idfa() != nil
     }
 
     /// The current Lytics user.
