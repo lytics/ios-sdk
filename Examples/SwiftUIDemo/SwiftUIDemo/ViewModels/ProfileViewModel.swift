@@ -17,7 +17,7 @@ final class ProfileViewModel:  ObservableObject {
         return encoder
     }
 
-    @Published var userJSON: String
+    @Published private(set) var userJSON: String
 
     init(userJSON: String = "") {
         self.userJSON = userJSON

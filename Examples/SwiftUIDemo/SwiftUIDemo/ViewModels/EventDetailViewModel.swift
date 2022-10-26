@@ -10,12 +10,12 @@ import Foundation
 import SwiftUI
 
 final class EventDetailViewModel:  ObservableObject {
-    let eventService: EventService
-    let event: Event
-    @Published var title: String = ""
-    @Published var subtitle: String = ""
-    @Published var details: String = ""
-    @Published var image: Image?
+    private let eventService: EventService
+    private let event: Event
+    @Published private(set) var title: String
+    @Published private(set) var subtitle: String
+    @Published private(set) var details: String
+    @Published private(set) var image: Image?
 
     internal init(
         eventService: EventService,
