@@ -448,6 +448,7 @@ public extension Lytics {
     /// Disable use of IDFA.
     func disableTracking() {
         logger.debug("Disable tracking")
+        appTrackingTransparency.disableIDFA()
     }
 }
 
