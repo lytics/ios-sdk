@@ -48,7 +48,6 @@ struct LoginView: View {
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
                     .textContentType(.password)
-
                 }
                 .textFieldStyle(RoundedBorderTextFieldStyle())
 
