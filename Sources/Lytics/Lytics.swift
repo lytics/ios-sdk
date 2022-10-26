@@ -426,12 +426,24 @@ public extension Lytics {
 
     /// Opt the user in to event collection.
     func optIn() {
+        guard hasStarted else {
+            assertionFailure("Lytics must be started before using \(#function)")
+            return
+        }
+
         logger.debug("Opt in")
+        eventPipeline.optIn()
     }
 
     /// Opt the user out of event collection.
     func optOut() {
+        guard hasStarted else {
+            assertionFailure("Lytics must be started before using \(#function)")
+            return
+        }
+
         logger.debug("Opt out")
+        eventPipeline.optOut()
     }
 
     /// Request access to IDFA.
@@ -471,6 +483,7 @@ public extension Lytics {
     /// Clear all stored user information.
     func reset() {
         logger.debug("Reset")
+        optOut()
         Task {
             await userManager.clear()
         }
