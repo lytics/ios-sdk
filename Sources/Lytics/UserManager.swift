@@ -128,6 +128,6 @@ extension UserManager {
     #if DEBUG
     static let mock = UserManager(
         encoder: JSONEncoder(),
-        storage: .mock)
+        storage: .mock())
     #endif
 }
