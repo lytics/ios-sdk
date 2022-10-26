@@ -13,17 +13,20 @@ struct EventPipeline {
     let sessionDidStart: (Millisecond) -> Bool
     let eventQueue: EventQueueing
     let uploader: Uploading
+    let userSettings: UserSettings
 
     init(
         logger: LyticsLogger,
         sessionDidStart: @escaping (Millisecond) -> Bool,
         eventQueue: EventQueueing,
-        uploader: Uploading
+        uploader: Uploading,
+        userSettings: UserSettings
     ) {
         self.logger = logger
         self.sessionDidStart = sessionDidStart
         self.eventQueue = eventQueue
         self.uploader = uploader
+        self.userSettings = userSettings
     }
 
     @usableFromInline
@@ -33,12 +36,27 @@ struct EventPipeline {
         name: String?,
         event: E
     ) async {
+        guard userSettings.getOptIn() else {
+            logger.info("User is not opted in; discarding event \(event)")
+            return
+        }
+
         await eventQueue.enqueue(
             Payload(
                 stream: stream,
                 timestamp: timestamp,
                 sessionDidStart: sessionDidStart(timestamp) ? 1 : nil,
                 event: event))
+    }
+
+    @usableFromInline
+    func optIn() {
+        userSettings.setOptIn(true)
+    }
+
+    @usableFromInline
+    func optOut() {
+        userSettings.setOptIn(false)
     }
 
     func dispatch() async {
@@ -74,6 +92,7 @@ extension EventPipeline {
                 logger: logger,
                 configuration: configuration,
                 upload: { await uploader.upload($0) }),
-            uploader: uploader)
+            uploader: uploader,
+            userSettings: .live)
     }
 }

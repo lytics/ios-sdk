@@ -426,12 +426,24 @@ public extension Lytics {
 
     /// Opt the user in to event collection.
     func optIn() {
+        guard hasStarted else {
+            assertionFailure("Lytics must be started before using \(#function)")
+            return
+        }
+
         logger.debug("Opt in")
+        eventPipeline.optIn()
     }
 
     /// Opt the user out of event collection.
     func optOut() {
+        guard hasStarted else {
+            assertionFailure("Lytics must be started before using \(#function)")
+            return
+        }
+
         logger.debug("Opt out")
+        eventPipeline.optOut()
     }
 
     /// Request access to IDFA.
@@ -442,7 +454,24 @@ public extension Lytics {
         }
 
         logger.debug("Requesting tracking authorization ...")
-        return await appTrackingTransparency.requestAuthorization()
+        let didAuthorize = await appTrackingTransparency.requestAuthorization()
+
+        if didAuthorize {
+            guard let idfa = appTrackingTransparency.idfa() else {
+                logger.error("Unable to get IDFA despite authorization")
+                return didAuthorize
+            }
+
+            let update: [String: AnyCodable] = [Constants.idfaKey: AnyCodable(idfa)]
+
+            do {
+                try await userManager.updateIdentifiers(with: update)
+            } catch {
+                logger.error("\(error)")
+            }
+        }
+
+        return didAuthorize
     }
 
     /// Disable use of IDFA.
@@ -471,6 +500,8 @@ public extension Lytics {
     /// Clear all stored user information.
     func reset() {
         logger.debug("Reset")
+        optOut()
+        disableTracking()
         Task {
             await userManager.clear()
         }
