@@ -7,10 +7,11 @@
 //
 
 import Foundation
+import Lytics
 
-final class LoginViewModel:  ObservableObject {
-    @Published var email: String = ""
-    @Published var password: String = ""
+final class LoginViewModel: ObservableObject {
+    @Published var email: String
+    @Published var password: String
 
     var loginIsEnabled: Bool {
         email.isNotEmpty && password.isNotEmpty
@@ -22,7 +23,12 @@ final class LoginViewModel:  ObservableObject {
     }
 
     func login() {
-        print("\(#function)")
+        guard loginIsEnabled else {
+            return
+        }
+
+        Lytics.shared.identify(
+            identifiers: DemoIdentity(email: email))
     }
 
     func forgotPassword() {
