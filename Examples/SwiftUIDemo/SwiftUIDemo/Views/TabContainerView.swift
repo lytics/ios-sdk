@@ -22,32 +22,32 @@ struct TabContainerView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             EventsView(viewModel: .init(eventService: eventService))
-                .tag(0)
                 .tabItem {
                     Text("Events")
                     Image(systemName: "calendar")
                  }
+                .tag(Tab.events)
 
             LoginView(viewModel: .init())
-                .tag(1)
                 .tabItem {
                     Text("Login")
                     Image(systemName: "lock")
                  }
+                .tag(Tab.login)
 
             ProfileView(viewModel: .init())
-                .tag(2)
                 .tabItem {
                     Text("Profile")
                     Image(systemName: "person.fill")
                  }
+                .tag(Tab.profile)
 
             SettingsView(viewModel: .init())
-                .tag(3)
                 .tabItem {
                     Text("Settings")
                     Image(systemName: "gearshape.fill")
                  }
+                .tag(Tab.settings)
         }
     }
 }
