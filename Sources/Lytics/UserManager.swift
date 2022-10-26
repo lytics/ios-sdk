@@ -22,7 +22,6 @@ actor UserManager: UserManaging {
     /// The current user.
     @usableFromInline var user: LyticsUser {
         .init(
-            userType: .anonymous,
             identifiers: identifiers.mapValues(AnyCodable.init(_:)),
             attributes: attributes.mapValues(AnyCodable.init(_:)))
     }
