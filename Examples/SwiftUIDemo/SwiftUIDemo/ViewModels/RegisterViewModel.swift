@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Lytics
 
 final class RegisterViewModel:  ObservableObject {
     @Published var name: String
@@ -37,6 +38,33 @@ final class RegisterViewModel:  ObservableObject {
     }
 
     func register() {
-        print("\(#function)")
+        guard registerIsEnabled else {
+            return
+        }
+
+        let consent = DemoConsent(
+            documents: ["terms_aug_2022", "privacy_may_2022"],
+            consented: true)
+
+        let identity = DemoIdentity(
+            email: email,
+            name: name)
+
+        if enableIDFA {
+            Task {
+                let didAuthorize = await Lytics.shared.requestTrackingAuthorization()
+                if didAuthorize {
+                    print("Authorized")
+                } else {
+                    print("Denied")
+                }
+
+                Lytics.shared.identify(identifiers: identity)
+                Lytics.shared.consent(consent: consent)
+            }
+        } else {
+            Lytics.shared.identify(identifiers: identity)
+            Lytics.shared.consent(consent: consent)
+        }
     }
 }
