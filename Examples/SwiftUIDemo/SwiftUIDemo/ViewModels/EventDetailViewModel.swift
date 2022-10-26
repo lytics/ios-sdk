@@ -6,6 +6,7 @@
 //  Copyright © 2022 Lytics. All rights reserved.
 //
 
+import Lytics
 import Foundation
 import SwiftUI
 
@@ -27,7 +28,10 @@ final class EventDetailViewModel: ObservableObject {
     }
 
     func onAppear() {
-        print("\(#function)")
+        Lytics.shared.track(
+            properties: DemoTapEvent(
+                artistID: event.artist.id,
+                eventID: event.id))
     }
 
     func buyTickets() {
