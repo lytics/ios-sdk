@@ -26,13 +26,13 @@ public final class Lytics {
     internal var timestampProvider: () -> Millisecond = { Date().timeIntervalSince1970.milliseconds }
 
     @usableFromInline
-    internal private(set) var defaultStream: String = ""
-
-    @usableFromInline
     internal private(set) var appTrackingTransparency: AppTrackingTransparency!
 
     @usableFromInline
     internal var eventPipeline: EventPipeline!
+
+    @usableFromInline
+    internal private(set) var defaultStream: String = ""
 
     /// A Boolean value indicating whether this instance has been started.
     public private(set) var hasStarted: Bool = false
