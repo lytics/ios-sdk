@@ -37,7 +37,7 @@ struct EventCard: View {
             }
             .padding(16)
         }
-        .background(.background)
+        .background(Color.cardBackground)
         .cornerRadius(16)
     }
 }

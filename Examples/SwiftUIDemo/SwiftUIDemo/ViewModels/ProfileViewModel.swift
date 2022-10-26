@@ -7,15 +7,29 @@
 //
 
 import Foundation
+import Lytics
 
+@MainActor
 final class ProfileViewModel:  ObservableObject {
-    @Published var userJSON: String
+    private static var encoder: JSONEncoder {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+        return encoder
+    }
+
+    @Published private(set) var userJSON: String
 
     init(userJSON: String = "") {
         self.userJSON = userJSON
     }
 
     func getUser() async {
-        userJSON = "{}"
+        let userModel = await Lytics.shared.user
+        do {
+            let userData = try Self.encoder.encode(userModel)
+            userJSON = String(decoding: userData, as: UTF8.self)
+        } catch {
+            print("Error encoding user model: \(error)")
+        }
     }
 }
