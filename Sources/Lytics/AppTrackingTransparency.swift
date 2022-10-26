@@ -10,15 +10,25 @@ import AppTrackingTransparency
 @usableFromInline
 struct AppTrackingTransparency {
     @usableFromInline var authorizationStatus: () -> ATTrackingManager.AuthorizationStatus
+    @usableFromInline var disableIDFA: () -> Void
+    @usableFromInline var enableIDFA: () -> Void
     @usableFromInline var idfa: () -> String?
     @usableFromInline var requestAuthorization: () async -> Bool
 }
 
 extension AppTrackingTransparency {
     @usableFromInline static var live: Self {
-        .init(
+        let userDefaults = UserDefaults.standard
+
+        return AppTrackingTransparency(
             authorizationStatus: {
                 ATTrackingManager.trackingAuthorizationStatus
+            },
+            disableIDFA: {
+                userDefaults.set(false, for: .idfaIsEnabled)
+            },
+            enableIDFA: {
+                userDefaults.set(true, for: .idfaIsEnabled)
             },
             idfa: {
                 guard ATTrackingManager.trackingAuthorizationStatus == .authorized else {
@@ -33,9 +43,10 @@ extension AppTrackingTransparency {
                 let status = await ATTrackingManager.requestTrackingAuthorization()
                 switch status {
                 case .authorized:
-//                    userDefaults.set(true, for: .idfaIsEnabled)
+                    userDefaults.set(true, for: .idfaIsEnabled)
                     return true
                 case .notDetermined, .restricted, .denied:
+                    userDefaults.set(false, for: .idfaIsEnabled)
                     return false
                 @unknown default:
                     return false

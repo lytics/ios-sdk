@@ -33,10 +33,17 @@ extension UserStorage {
     }
 
     #if DEBUG
-    static let mock = UserStorage(
-        attributes: { [:] },
-        identifiers: { [:] },
-        storeAttributes: { _ in },
-        storeIdentifiers: { _ in })
+    static func mock(
+        attributes: @escaping () -> [String: Any]? = { [:] },
+        identifiers: @escaping () -> [String: Any]? = { [:] },
+        storeAttributes: @escaping ([String: Any]) -> Void = { _ in },
+        storeIdentifiers: @escaping ([String: Any]) -> Void = { _ in }
+    ) -> UserStorage {
+        .init(
+            attributes: attributes,
+            identifiers: identifiers,
+            storeAttributes: storeAttributes,
+            storeIdentifiers: storeIdentifiers)
+    }
     #endif
 }
