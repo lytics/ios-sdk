@@ -22,7 +22,7 @@ struct EventsView: View {
                         EventCard(
                             title: featuredEvent.artist.name,
                             subtitle: featuredEvent.location,
-                            image: .image2,
+                            imageURL: featuredEvent.imageURL,
                             action: {
                                 viewModel.buyTickets()
                             })
@@ -41,7 +41,7 @@ struct EventsView: View {
                         EventRow(
                             title: event.artist.name,
                             subtitle: event.location,
-                            image: .image2)
+                            imageURL: event.imageURL)
                     }
                 }
                 .navigationDestination(for: Event.self) { event in

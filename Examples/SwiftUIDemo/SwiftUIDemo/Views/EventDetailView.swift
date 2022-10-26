@@ -13,11 +13,7 @@ struct EventDetailView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            if let image = viewModel.image {
-                image
-                    .resizable()
-                    .scaledToFit()
-            }
+            RemoteImage(url: viewModel.imageURL, contentMode: .fit)
 
             VStack(alignment: .leading, spacing: 20) {
                 VStack(alignment: .leading, spacing: 4) {
@@ -47,7 +43,7 @@ struct EventDetailView: View {
             Spacer()
         }
         .onAppear {
-            viewModel.fetchImage()
+            viewModel.onAppear()
         }
     }
 }

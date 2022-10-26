@@ -9,27 +9,13 @@
 import Foundation
 import SwiftUI
 
-final class EventDetailViewModel:  ObservableObject {
-    let eventService: EventService
-    let event: Event
-    @Published var title: String = ""
-    @Published var subtitle: String = ""
-    @Published var details: String = ""
-    @Published var image: Image?
-
-    internal init(
-        eventService: EventService,
-        event: Event,
-        title: String = "",
-        subtitle: String = "",
-        details: String = ""
-    ) {
-        self.eventService = eventService
-        self.event = event
-        self.title = title
-        self.subtitle = subtitle
-        self.details = details
-    }
+final class EventDetailViewModel: ObservableObject {
+    private let eventService: EventService
+    private let event: Event
+    @Published private(set) var title: String
+    @Published private(set) var subtitle: String
+    @Published private(set) var details: String
+    @Published private(set) var imageURL: URL
 
     init(eventService: EventService, event: Event) {
         self.eventService = eventService
@@ -37,10 +23,11 @@ final class EventDetailViewModel:  ObservableObject {
         self.title = event.artist.name
         self.subtitle = event.dateTime
         self.details = event.details
+        self.imageURL = event.imageURL
     }
 
-    func fetchImage() {
-        image = eventService.image(event.imageURL)
+    func onAppear() {
+        print("\(#function)")
     }
 
     func buyTickets() {
