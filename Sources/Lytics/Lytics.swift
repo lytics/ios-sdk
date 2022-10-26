@@ -92,11 +92,13 @@ public extension Lytics {
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
+    ///   - timestamp: A an optional custom timestamp for the event.
     ///   - identifiers: A value representing additional identifiers to associate with this event.
     ///   - properties: A value  representing the event properties.
     func track<I: Encodable, P: Encodable>(
         stream: String? = nil,
         name: String? = nil,
+        timestamp: Millisecond? = nil,
         identifiers: I?,
         properties: P?
     ) {
@@ -105,7 +107,7 @@ public extension Lytics {
             return
         }
 
-        let timestamp = timestampProvider()
+        let timestamp = timestamp ?? timestampProvider()
         Task(priority: .background) {
             var eventIdentifiers = [String: AnyCodable]()
             if let identifiers {
@@ -135,13 +137,20 @@ public extension Lytics {
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
+    ///   - timestamp: A an optional custom timestamp for the event.
     ///   - event: A value representing the event properties.
     func track<P: Encodable>(
         stream: String? = nil,
         name: String? = nil,
+        timestamp: Millisecond? = nil,
         properties: P?
     ) {
-        track(stream: stream, name: name, identifiers: Optional.never, properties: properties)
+        track(
+            stream: stream,
+            name: name,
+            timestamp: timestamp,
+            identifiers: Optional.never,
+            properties: properties)
     }
 
     @inlinable
@@ -149,11 +158,18 @@ public extension Lytics {
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
+    ///   - timestamp: A an optional custom timestamp for the event.
     func track(
         stream: String? = nil,
-        name: String? = nil
+        name: String? = nil,
+        timestamp: Millisecond? = nil
     ) {
-        track(stream: stream, name: name, identifiers: Optional.never, properties: Optional.never)
+        track(
+            stream: stream,
+            name: name,
+            timestamp: timestamp,
+            identifiers: Optional.never,
+            properties: Optional.never)
     }
 
     @inlinable
@@ -161,12 +177,14 @@ public extension Lytics {
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
+    ///   - timestamp: A an optional custom timestamp for the event.
     ///   - identifiers: A value representing user identifiers.
     ///   - attributes: A value representing additional information about a user.
     ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
     func identify<I: Encodable, A: Encodable>(
         stream: String? = nil,
         name: String? = nil,
+        timestamp: Millisecond? = nil,
         identifiers: I?,
         attributes: A?,
         shouldSend: Bool = true
@@ -180,7 +198,7 @@ public extension Lytics {
             return
         }
 
-        let timestamp = timestampProvider()
+        let timestamp = timestamp ?? timestampProvider()
         Task(priority: .background) {
             do {
                 if shouldSend {
@@ -209,17 +227,20 @@ public extension Lytics {
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
+    ///   - timestamp: A an optional custom timestamp for the event.
     ///   - identifiers: A value representing user identifiers.
     ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
     func identify<I: Encodable>(
         stream: String? = nil,
         name: String? = nil,
+        timestamp: Millisecond? = nil,
         identifiers: I?,
         shouldSend: Bool = true
     ) {
         identify(
             stream: stream,
             name: name,
+            timestamp: timestamp,
             identifiers: identifiers,
             attributes: Optional.never,
             shouldSend: shouldSend)
@@ -230,6 +251,7 @@ public extension Lytics {
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
+    ///   - timestamp: A an optional custom timestamp for the event.
     ///   - identifiers: A value representing additional identifiers to associate with this event.
     ///   - attributes: A value representing additional information about a user.
     ///   - consent: A value representing consent properties.
@@ -237,6 +259,7 @@ public extension Lytics {
     func consent<I: Encodable, A: Encodable, C: Encodable>(
         stream: String? = nil,
         name: String? = nil,
+        timestamp: Millisecond? = nil,
         identifiers: I?,
         attributes: A?,
         consent: C?,
@@ -251,7 +274,7 @@ public extension Lytics {
             return
         }
 
-        let timestamp = timestampProvider()
+        let timestamp = timestamp ?? timestampProvider()
         Task(priority: .background) {
             do {
                 if shouldSend {
@@ -281,12 +304,14 @@ public extension Lytics {
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
+    ///   - timestamp: A an optional custom timestamp for the event.
     ///   - attributes: A value representing additional information about a user.
     ///   - consent: A value representing consent properties.
     ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
     func consent<A: Encodable, C: Encodable>(
         stream: String? = nil,
         name: String? = nil,
+        timestamp: Millisecond? = nil,
         attributes: A?,
         consent: C?,
         shouldSend: Bool = true
@@ -294,6 +319,7 @@ public extension Lytics {
         self.consent(
             stream: stream,
             name: name,
+            timestamp: timestamp,
             identifiers: Optional.never,
             attributes: attributes,
             consent: consent,
@@ -305,17 +331,20 @@ public extension Lytics {
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
+    ///   - timestamp: A an optional custom timestamp for the event.
     ///   - consent: A value representing consent properties.
     ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
     func consent<C: Encodable>(
         stream: String? = nil,
         name: String? = nil,
+        timestamp: Millisecond? = nil,
         consent: C?,
         shouldSend: Bool = true
     ) {
         self.consent(
             stream: stream,
             name: name,
+            timestamp: timestamp,
             identifiers: Optional.never,
             attributes: Optional.never,
             consent: consent,
@@ -327,10 +356,12 @@ public extension Lytics {
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
+    ///   - timestamp: A an optional custom timestamp for the event.
     ///   - properties: A value representing the event properties.
     func screen<I: Encodable, P: Encodable>(
         stream: String? = nil,
         name: String? = nil,
+        timestamp: Millisecond? = nil,
         identifiers: I?,
         properties: P?
     ) {
@@ -339,7 +370,7 @@ public extension Lytics {
             return
         }
 
-        let timestamp = timestampProvider()
+        let timestamp = timestamp ?? timestampProvider()
         Task(priority: .background) {
             var eventIdentifiers = [String: AnyCodable]()
             if let identifiers {
@@ -370,13 +401,20 @@ public extension Lytics {
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
+    ///   - timestamp: A an optional custom timestamp for the event.
     ///   - properties: A value representing the event properties.
     func screen<P: Encodable>(
         stream: String? = nil,
         name: String? = nil,
+        timestamp: Millisecond? = nil,
         properties: P?
     ) {
-        screen(stream: stream, name: name, identifiers: Optional.never, properties: properties)
+        screen(
+            stream: stream,
+            name: name,
+            timestamp: timestamp,
+            identifiers: Optional.never,
+            properties: properties)
     }
 }
 
