@@ -47,7 +47,7 @@ struct EventCard: View {
 struct EventCard_Previews: PreviewProvider {
     static var previews: some View {
         EventCard(
-            title: Event.mock.artist,
+            title: Event.mock.artist.name,
             subtitle: Event.mock.location,
             image: .image2,
             action: {})

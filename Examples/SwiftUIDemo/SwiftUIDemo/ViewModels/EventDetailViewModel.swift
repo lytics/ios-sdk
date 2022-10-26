@@ -34,7 +34,7 @@ final class EventDetailViewModel:  ObservableObject {
     init(eventService: EventService, event: Event) {
         self.eventService = eventService
         self.event = event
-        self.title = event.artist
+        self.title = event.artist.name
         self.subtitle = event.dateTime
         self.details = event.details
     }

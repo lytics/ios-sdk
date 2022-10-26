@@ -20,7 +20,7 @@ struct EventsView: View {
                             action: { print("See More ...") })
 
                         EventCard(
-                            title: featuredEvent.artist,
+                            title: featuredEvent.artist.name,
                             subtitle: featuredEvent.location,
                             image: .image2,
                             action: {
@@ -39,7 +39,7 @@ struct EventsView: View {
                 ForEach(viewModel.events) { event in
                     NavigationLink(value: event) {
                         EventRow(
-                            title: event.artist,
+                            title: event.artist.name,
                             subtitle: event.location,
                             image: .image2)
                     }

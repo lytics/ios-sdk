@@ -42,7 +42,7 @@ struct EventRow: View {
 struct EventRow_Previews: PreviewProvider {
     static var previews: some View {
         EventRow(
-            title: Event.mock.artist,
+            title: Event.mock.artist.name,
             subtitle: Event.mock.location,
             image: .image3)
         .padding()
