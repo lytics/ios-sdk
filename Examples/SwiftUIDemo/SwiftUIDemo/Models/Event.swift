@@ -9,8 +9,13 @@
 import Foundation
 
 struct Event: Codable, Equatable, Hashable, Identifiable {
+    struct Artist: Codable, Equatable, Hashable, Identifiable {
+        var id: Int
+        var name: String
+    }
+
     var id: Int
-    var artist: String
+    var artist: Artist
     var dateTime: String
     var details: String
     var location: String
@@ -20,8 +25,8 @@ struct Event: Codable, Equatable, Hashable, Identifiable {
 extension Event {
     static var mock: Self {
         .init(
-            id: 1,
-            artist: "Maroon 5",
+            id: 2,
+            artist: Artist(id: 102, name: "Maroon 5"),
             dateTime: "March 18th @ 8 P.M.",
             details: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eu ante at turpis blandit eleifend. Suspendisse potenti. Aenean et lacus sed urna tincidunt fermentum ut at elit. Praesent a augue lorem. Orci varius natoque penatibus et magnis dis parturient montes.",
             location: "Dallas, TX",

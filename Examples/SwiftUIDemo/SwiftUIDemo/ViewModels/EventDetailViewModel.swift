@@ -9,38 +9,25 @@
 import Foundation
 import SwiftUI
 
-final class EventDetailViewModel:  ObservableObject {
+final class EventDetailViewModel: ObservableObject {
     private let eventService: EventService
     private let event: Event
     @Published private(set) var title: String
     @Published private(set) var subtitle: String
     @Published private(set) var details: String
-    @Published private(set) var image: Image?
-
-    internal init(
-        eventService: EventService,
-        event: Event,
-        title: String = "",
-        subtitle: String = "",
-        details: String = ""
-    ) {
-        self.eventService = eventService
-        self.event = event
-        self.title = title
-        self.subtitle = subtitle
-        self.details = details
-    }
+    @Published private(set) var imageURL: URL
 
     init(eventService: EventService, event: Event) {
         self.eventService = eventService
         self.event = event
-        self.title = event.artist
+        self.title = event.artist.name
         self.subtitle = event.dateTime
         self.details = event.details
+        self.imageURL = event.imageURL
     }
 
-    func fetchImage() {
-        image = eventService.image(event.imageURL)
+    func onAppear() {
+        print("\(#function)")
     }
 
     func buyTickets() {

@@ -11,14 +11,12 @@ import SwiftUI
 struct EventCard: View {
     let title: String
     let subtitle: String
-    let image: Image
+    let imageURL: URL
     let action: () -> Void
 
     var body: some View {
         VStack(spacing: 16) {
-            image
-                .resizable()
-                .aspectRatio(contentMode: .fill)
+            RemoteImage(url: imageURL, contentMode: .fill)
                 .frame(height: 120, alignment: .top)
                 .clipped()
 
@@ -47,9 +45,9 @@ struct EventCard: View {
 struct EventCard_Previews: PreviewProvider {
     static var previews: some View {
         EventCard(
-            title: Event.mock.artist,
+            title: Event.mock.artist.name,
             subtitle: Event.mock.location,
-            image: .image2,
+            imageURL: Event.mock.imageURL,
             action: {})
         .previewLayout(.sizeThatFits)
     }

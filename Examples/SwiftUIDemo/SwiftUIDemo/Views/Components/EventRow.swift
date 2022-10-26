@@ -11,13 +11,11 @@ import SwiftUI
 struct EventRow: View {
     let title: String
     let subtitle: String
-    let image: Image
+    let imageURL: URL
 
     var body: some View {
         HStack(spacing: 16) {
-            image
-                .resizable()
-                .scaledToFill()
+            RemoteImage(url: imageURL)
                 .frame(width: 80, height: 69)
 
             VStack(alignment: .leading, spacing: 4) {
@@ -27,7 +25,6 @@ struct EventRow: View {
                 Text(subtitle)
             }
             .foregroundColor(.primary)
-
 
             Spacer()
 
@@ -42,9 +39,9 @@ struct EventRow: View {
 struct EventRow_Previews: PreviewProvider {
     static var previews: some View {
         EventRow(
-            title: Event.mock.artist,
+            title: Event.mock.artist.name,
             subtitle: Event.mock.location,
-            image: .image3)
+            imageURL: Event.mock.imageURL)
         .padding()
         .previewLayout(.sizeThatFits)
     }
