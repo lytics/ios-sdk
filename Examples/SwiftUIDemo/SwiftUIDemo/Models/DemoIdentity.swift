@@ -7,11 +7,7 @@
 import Foundation
 
 struct DemoIdentity: Codable, Equatable {
-    var userID: String
-    var email: String
-
-    init(userID: String = "", email: String = "") {
-        self.userID = userID
-        self.email = email
-    }
+    var email: String? = nil
+    var name: String? = nil
+    var userID: String? = nil
 }
