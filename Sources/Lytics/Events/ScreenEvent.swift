@@ -10,6 +10,7 @@ import Foundation
 @usableFromInline
 struct ScreenEvent<P: Encodable>: Encodable {
     var device: Device
+    var eventType: String = "sc"
     var identifiers: [String: AnyCodable]?
     var properties: P?
 
@@ -22,6 +23,13 @@ struct ScreenEvent<P: Encodable>: Encodable {
         self.device = device
         self.identifiers = identifiers
         self.properties = properties
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case device
+        case eventType = "_e"
+        case identifiers
+        case properties
     }
 }
 
