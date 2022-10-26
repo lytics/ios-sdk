@@ -426,12 +426,12 @@ public extension Lytics {
 
     /// Opt the user in to event collection.
     func optIn() {
-        // ...
+        logger.debug("Opt in")
     }
 
     /// Opt the user out of event collection.
     func optOut() {
-        // ...
+        logger.debug("Opt out")
     }
 
     /// Request access to IDFA.
@@ -441,12 +441,13 @@ public extension Lytics {
             return false
         }
 
+        logger.debug("Requesting tracking authorization ...")
         return await appTrackingTransparency.requestAuthorization()
     }
 
     /// Disable use of IDFA.
     func disableTracking() {
-        // ...
+        logger.debug("Disable tracking")
     }
 }
 
@@ -460,6 +461,7 @@ public extension Lytics {
 
     /// Force flush the event queue by sending all events in the queue immediately.
     func dispatch() {
+        logger.debug("Dispatch events")
         Task {
             await eventPipeline.dispatch()
         }
@@ -467,6 +469,7 @@ public extension Lytics {
 
     /// Clear all stored user information.
     func reset() {
+        logger.debug("Reset")
         Task {
             await userManager.clear()
         }

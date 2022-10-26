@@ -207,6 +207,7 @@ private extension Uploader {
             }
 
         case .store:
+            logger.debug("Storing request \(wrapper.id)")
             remove(id: id)
             openAndCache(wrapper)
         }
