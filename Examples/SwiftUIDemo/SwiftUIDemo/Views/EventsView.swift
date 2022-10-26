@@ -54,7 +54,6 @@ struct EventsView: View {
             .onAppear {
                 viewModel.fetchEvents()
             }
-            .background(.quaternary)
         }
     }
 }

@@ -31,7 +31,7 @@ struct EventRow: View {
             Image(systemName: "chevron.right")
                 .padding()
         }
-        .background(.background)
+        .background(Color.cardBackground)
         .cornerRadius(16)
     }
 }
