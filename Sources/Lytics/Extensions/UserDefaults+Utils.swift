@@ -37,7 +37,7 @@ extension UserDefaults {
         set(value, forKey: key.rawValue)
     }
 
-    func set(_ value: [String: Any], for key: UserDefaultsKey) {
+    func set(_ value: [String: Any]?, for key: UserDefaultsKey) {
         set(value, forKey: key.rawValue)
     }
 

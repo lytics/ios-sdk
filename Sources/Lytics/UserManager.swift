@@ -36,7 +36,7 @@ actor UserManager: UserManaging {
     @usableFromInline var user: LyticsUser {
         .init(
             identifiers: identifiers.mapValues(AnyCodable.init(_:)),
-            attributes: attributes.mapValues(AnyCodable.init(_:)))
+            attributes: attributes?.mapValues(AnyCodable.init(_:)))
     }
 
     init(
@@ -100,7 +100,7 @@ actor UserManager: UserManaging {
     /// - Parameter userUpdate: The update.
     /// - Returns: The updated user.
     func update<I: Encodable, A: Encodable>(with userUpdate: UserUpdate<I, A>) throws -> LyticsUser {
-        let updatedAttributes: [String: Any]
+        let updatedAttributes: [String: Any]?
         let updatedIdentifiers: [String: Any]
 
         if let attributesUpdate = userUpdate.attributes {
