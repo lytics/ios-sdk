@@ -9,10 +9,6 @@
 import SwiftUI
 
 public extension Image {
-    static let image2 = Image("image2", bundle: .main)
-    static let image3 = Image("image3", bundle: .main)
-    static let image4 = Image("image4", bundle: .main)
-    static let image5 = Image("image5", bundle: .main)
     static let aliciaKeys = Image("alicia_keys", bundle: .main)
     static let aliciaKeysThumbnail = Image("alicia_keys_thumbnail", bundle: .main)
     static let dojaCat = Image("doja_cat", bundle: .main)
