@@ -16,9 +16,17 @@ final class UserManagerTests: XCTestCase {
         let a = 1
         let b = "2"
 
+        var storedIdentifiers: [String: Any]? = [:]
+        var storedAttributes: [String: Any]? = nil
+        let storage = UserStorage.mock(
+            attributes: { storedAttributes },
+            identifiers: { storedIdentifiers },
+            storeAttributes: { storedAttributes = $0 },
+            storeIdentifiers: { storedIdentifiers = $0 })
+
         let sut = UserManager(
             encoder: .init(),
-            storage: .mock())
+            storage: storage)
 
         let firstResult = try await sut.update(
             with: UserUpdate(
@@ -91,15 +99,15 @@ final class UserManagerTests: XCTestCase {
         )
     }
 
-    func testUpdateIdentifiersStorage() async throws {
-        var storage = UserStorage.mock()
-
+    func testUpdatedIdentifiersAreStored() async throws {
         var storedIdentifiers: [String: Any]!
         let storeExpectation = expectation(description: "Identifiers were stored")
-        storage.storeIdentifiers = { identifiers in
-            storedIdentifiers = identifiers
-            storeExpectation.fulfill()
-        }
+        let storage = UserStorage.mock(
+            identifiers: { [:] },
+            storeIdentifiers: { identifiers in
+                storedIdentifiers = identifiers
+                storeExpectation.fulfill()
+            })
 
         let sut = UserManager(encoder: .init(), storage: storage)
 
@@ -109,7 +117,7 @@ final class UserManagerTests: XCTestCase {
         Assert.identifierEquality(storedIdentifiers, expected: User1.anyIdentifiers)
     }
 
-    func testUpdateAttributesStorage() async throws {
+    func testUpdatedAttributesAreStored() async throws {
         var storedAttributes: [String: Any]!
         let storeExpectation = expectation(description: "Attributes were stored")
         let storage = UserStorage.mock(
@@ -140,7 +148,7 @@ final class UserManagerTests: XCTestCase {
         let attributes = await sut.attributes
         let identifiers = await sut.identifiers
 
-        Assert.attributeEquality(attributes, expected: expectedAttributes)
+        Assert.attributeEquality(attributes!, expected: expectedAttributes)
         Assert.identifierEquality(identifiers, expected: expectedIdentifiers)
     }
 
