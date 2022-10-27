@@ -42,6 +42,8 @@ final class RegisterViewModel:  ObservableObject {
             return
         }
 
+        Lytics.shared.optIn()
+
         let consent = DemoConsent(
             documents: ["terms_aug_2022", "privacy_may_2022"],
             consented: true)
