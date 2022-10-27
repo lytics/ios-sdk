@@ -15,6 +15,7 @@ final class RegisterViewModel:  ObservableObject {
     @Published var password: String
     @Published var agreedToTerms: Bool
     @Published var enableIDFA: Bool
+    var onComplete: () -> Void
 
     var registerIsEnabled: Bool {
         name.isNotEmpty &&
@@ -28,13 +29,15 @@ final class RegisterViewModel:  ObservableObject {
         email: String = "",
         password: String = "",
         agreedToTerms: Bool = false,
-        enableIDFA: Bool = false
+        enableIDFA: Bool = false,
+        onComplete: @escaping () -> Void = {}
     ) {
         self.name = name
         self.email = email
         self.password = password
         self.agreedToTerms = agreedToTerms
         self.enableIDFA = enableIDFA
+        self.onComplete = onComplete
     }
 
     func register() {
@@ -63,10 +66,12 @@ final class RegisterViewModel:  ObservableObject {
 
                 Lytics.shared.identify(identifiers: identity)
                 Lytics.shared.consent(consent: consent)
+                onComplete()
             }
         } else {
             Lytics.shared.identify(identifiers: identity)
             Lytics.shared.consent(consent: consent)
+            onComplete()
         }
     }
 }
