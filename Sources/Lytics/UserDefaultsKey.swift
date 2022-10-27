@@ -9,6 +9,14 @@ import Foundation
 /// Keys used to store data in `UserDefaults`.
 enum UserDefaultsKey: String {
 
+    /// Whether the user opted in to tracking.
+    case didOptIn = "did_opt_in"
+
+    /// Whether IDFA usage has been enabled.
+    ///
+    /// This is separate from the OS `ATTrackingManager.trackingAuthorizationStatus`.
+    case idfaIsEnabled = "idfa_is_enabled"
+
     /// The most recent event timestamp.
     case lastEventTimestamp = "last_event_timestamp"
 

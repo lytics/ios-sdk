@@ -18,7 +18,7 @@ final class UserManagerTests: XCTestCase {
 
         let sut = UserManager(
             encoder: .init(),
-            storage: .mock)
+            storage: .mock())
 
         let firstResult = try await sut.update(
             with: UserUpdate(
@@ -92,7 +92,7 @@ final class UserManagerTests: XCTestCase {
     }
 
     func testUpdateIdentifiersStorage() async throws {
-        var storage = UserStorage.mock
+        var storage = UserStorage.mock()
 
         var storedIdentifiers: [String: Any]!
         let storeExpectation = expectation(description: "Identifiers were stored")
@@ -110,14 +110,14 @@ final class UserManagerTests: XCTestCase {
     }
 
     func testUpdateAttributesStorage() async throws {
-        var storage = UserStorage.mock
-
         var storedAttributes: [String: Any]!
         let storeExpectation = expectation(description: "Attributes were stored")
-        storage.storeAttributes = { attributes in
-            storedAttributes = attributes
-            storeExpectation.fulfill()
-        }
+        let storage = UserStorage.mock(
+            storeAttributes: { attributes in
+                storedAttributes = attributes
+                storeExpectation.fulfill()
+            }
+        )
 
         let sut = UserManager(encoder: .init(), storage: storage)
 
@@ -130,10 +130,10 @@ final class UserManagerTests: XCTestCase {
     func testLoadStoredOnInit() async throws {
         let expectedAttributes = User1.anyAttributes
         let expectedIdentifiers = User1.anyIdentifiers
-
-        var storage = UserStorage.mock
-        storage.attributes = { expectedAttributes }
-        storage.identifiers = { expectedIdentifiers }
+        let storage = UserStorage.mock(
+            attributes: { expectedAttributes },
+            identifiers: { expectedIdentifiers }
+        )
 
         let sut = UserManager(encoder: .init(), storage: storage)
 
@@ -142,5 +142,22 @@ final class UserManagerTests: XCTestCase {
 
         Assert.attributeEquality(attributes, expected: expectedAttributes)
         Assert.identifierEquality(identifiers, expected: expectedIdentifiers)
+    }
+
+    func testCreateIdentifiersOnInit() async throws {
+        let anonymousIdentityKey = "id"
+
+        let storage = UserStorage.mock(
+            identifiers: { nil }
+        )
+
+        let sut = UserManager(
+            configuration: .init(anonymousIdentityKey: anonymousIdentityKey),
+            encoder: .init(),
+            idProvider: { Mock.uuidString },
+            storage: storage)
+
+        let identifiers = await sut.identifiers as! [String: String]
+        XCTAssertEqual(identifiers, [anonymousIdentityKey: Mock.uuidString])
     }
 }

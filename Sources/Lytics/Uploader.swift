@@ -107,13 +107,8 @@ actor Uploader: Uploading {
         }
 
         for request in requests {
-            let id = UUID()
-            let wrapper = PendingRequest(id: id, request: request)
-            pendingRequests[id] = wrapper
-
-            wrapper.uploadTask = Task.detached(priority: .utility) { [weak self] in
-                await self?.send(request: request, id: id)
-            }
+            var wrapper = PendingRequest(request: request)
+            add(&wrapper)
         }
     }
 
@@ -127,11 +122,34 @@ actor Uploader: Uploading {
             openAndCache(wrapper)
         }
     }
+
+    /// Loads stored requests and send them.
+    func loadRequests() throws {
+        guard let wrapped = try cache?.load() else  {
+            return
+        }
+
+        logger.debug("Retrying stored requests: \(wrapped)")
+
+        for idx in wrapped.indices {
+            var wrapper = wrapped[idx]
+            add(&wrapper)
+        }
+
+        try cache?.deleteAll()
+    }
 }
 
 private extension Uploader {
 
-    /// Removes a wrapped request from ``requests`` and cancels its task.
+    /// Adds a request wrapper to `pendingRequests` and creates its upload task.
+    /// - Parameter wrapper: The instance wrapping the request to upload.
+    func add<T: RequestWrapping>(_ wrapper: inout T) {
+        pendingRequests[wrapper.id] = wrapper
+        wrapper.uploadTask = makeUploadTask(id: wrapper.id, request: wrapper.request)
+    }
+
+    /// Removes a wrapped request from `pendingRequests` and cancels its upload task.
     /// - Parameter id: The unique value identifying the wrapper of the request to be removed.
     func remove(id: UUID) {
         pendingRequests[id]?.uploadTask?.cancel()
@@ -152,6 +170,12 @@ private extension Uploader {
             logger.debug("\(response)")
 
             remove(id: id)
+
+            do {
+                try loadRequests()
+            } catch {
+                logger.error("Error while trying to restart stored requests: \(error)")
+            }
         } catch {
             handleError(error, id: id)
         }
@@ -175,6 +199,16 @@ private extension Uploader {
             try cache?.cache([wrapper])
         } catch {
             logger.error("Unable to cache \(wrapper): \(error)")
+        }
+    }
+
+    /// Returns a task to send a request.
+    /// - Parameters:
+    ///   - id: The unique identifier of the request's wrapper.
+    ///   - request: The request to send.
+    func makeUploadTask<T: Codable>(id: UUID, request: Request<T>) -> Task<Void, Never> {
+        Task.detached(priority: .utility) { [weak self] in
+            await self?.send(request: request, id: id)
         }
     }
 
@@ -207,6 +241,7 @@ private extension Uploader {
             }
 
         case .store:
+            logger.debug("Storing request \(wrapper.id)")
             remove(id: id)
             openAndCache(wrapper)
         }

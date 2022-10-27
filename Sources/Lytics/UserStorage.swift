@@ -7,8 +7,8 @@
 import Foundation
 
 struct UserStorage {
-    var attributes: () -> [String: Any]
-    var identifiers: () -> [String: Any]
+    var attributes: () -> [String: Any]?
+    var identifiers: () -> [String: Any]?
     var storeAttributes: ([String: Any]) -> Void
     var storeIdentifiers: ([String: Any]) -> Void
 }
@@ -19,10 +19,10 @@ extension UserStorage {
 
         return .init(
             attributes: {
-                userDefaults.dictionary(for: .userAttributes) ?? [:]
+                userDefaults.dictionary(for: .userAttributes)
             },
             identifiers: {
-                userDefaults.dictionary(for: .userIdentifiers) ?? [:]
+                userDefaults.dictionary(for: .userIdentifiers)
             },
             storeAttributes: { attributes in
                 userDefaults.set(attributes, for: .userAttributes)
@@ -33,10 +33,17 @@ extension UserStorage {
     }
 
     #if DEBUG
-    static let mock = UserStorage(
-        attributes: { [:] },
-        identifiers: { [:] },
-        storeAttributes: { _ in },
-        storeIdentifiers: { _ in })
+    static func mock(
+        attributes: @escaping () -> [String: Any]? = { [:] },
+        identifiers: @escaping () -> [String: Any]? = { [:] },
+        storeAttributes: @escaping ([String: Any]) -> Void = { _ in },
+        storeIdentifiers: @escaping ([String: Any]) -> Void = { _ in }
+    ) -> UserStorage {
+        .init(
+            attributes: attributes,
+            identifiers: identifiers,
+            storeAttributes: storeAttributes,
+            storeIdentifiers: storeIdentifiers)
+    }
     #endif
 }

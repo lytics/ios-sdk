@@ -28,6 +28,8 @@ enum Mock {
         method: .post,
         url: url)
 
+    static let uuidString = "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"
+
     static let url = URL(string: "https://api.lytics.io/collect/json/stream")!
 }
 
