@@ -8,3 +8,20 @@ You can add the Lytics SDK to an Xcode project by addint it as a package depende
 2. Enter `https://github.com/lytics/ios-sdk` into the package repository URL text field and click **Add Package**
 3. Add the **Lytics** package product to your application target
 
+
+## Usage
+
+### Configuration
+
+
+## Sending Data
+
+
+### Identity Events
+
+
+### Track Custom Events
+
+
+### Screen Events
+
