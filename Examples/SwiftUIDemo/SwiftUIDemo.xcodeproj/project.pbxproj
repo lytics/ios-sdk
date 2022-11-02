@@ -48,6 +48,7 @@
 		C9DE3E5029085BD80047F502 /* ChecklistToggleStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E4F29085BD80047F502 /* ChecklistToggleStyle.swift */; };
 		C9DE3E52290861680047F502 /* LocalEventsHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E51290861680047F502 /* LocalEventsHeader.swift */; };
 		C9DE3E552908CBA10047F502 /* DemoTapEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E542908CBA10047F502 /* DemoTapEvent.swift */; };
+		C9F44BD32912B9E6006998BD /* DemoAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F44BD22912B9E6006998BD /* DemoAttributes.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -112,6 +113,7 @@
 		C9DE3E4F29085BD80047F502 /* ChecklistToggleStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistToggleStyle.swift; sourceTree = "<group>"; };
 		C9DE3E51290861680047F502 /* LocalEventsHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalEventsHeader.swift; sourceTree = "<group>"; };
 		C9DE3E542908CBA10047F502 /* DemoTapEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoTapEvent.swift; sourceTree = "<group>"; };
+		C9F44BD22912B9E6006998BD /* DemoAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoAttributes.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -231,6 +233,7 @@
 		C9DC54EE28EDC4D800EAD25E /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				C9F44BD22912B9E6006998BD /* DemoAttributes.swift */,
 				C9DC54F128EDC4D800EAD25E /* DemoCart.swift */,
 				C9DC54F028EDC4D800EAD25E /* DemoConsent.swift */,
 				C9DC54EF28EDC4D800EAD25E /* DemoIdentity.swift */,
@@ -456,6 +459,7 @@
 				C94BF00729096F00007E1C25 /* RemoteImage.swift in Sources */,
 				C9DE3E3029071E4E0047F502 /* SettingsViewModel.swift in Sources */,
 				C9DE3E1E290717F30047F502 /* SettingsView.swift in Sources */,
+				C9F44BD32912B9E6006998BD /* DemoAttributes.swift in Sources */,
 				C9DE3E2C29071E360047F502 /* LoginViewModel.swift in Sources */,
 				C9DC54F228EDC4D800EAD25E /* DemoIdentity.swift in Sources */,
 				C9DE3E552908CBA10047F502 /* DemoTapEvent.swift in Sources */,

@@ -8,6 +8,5 @@ import Foundation
 
 struct DemoIdentity: Codable, Equatable {
     var email: String? = nil
-    var name: String? = nil
     var userID: String? = nil
 }
