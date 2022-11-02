@@ -37,7 +37,11 @@ public final class Lytics {
 
     /// A Boolean value indicating whether the user has opted into event collection.
     public var isOptedIn: Bool {
-        false
+        guard hasStarted else {
+            assertionFailure("Lytics must be started before accessing `isOptedIn`.")
+            return false
+        }
+        return eventPipeline.isOptedIn
     }
 
     /// A Boolean value indicating whether IDFA is enabled.

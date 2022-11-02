@@ -15,6 +15,10 @@ struct EventPipeline {
     let uploader: Uploading
     let userSettings: UserSettings
 
+    var isOptedIn: Bool {
+        userSettings.getOptIn()
+    }
+
     init(
         logger: LyticsLogger,
         sessionDidStart: @escaping (Millisecond) -> Bool,
