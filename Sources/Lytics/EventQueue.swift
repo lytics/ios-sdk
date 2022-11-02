@@ -53,6 +53,8 @@ actor EventQueue: EventQueueing {
     /// Adds an event to the queue.
     /// - Parameter event: the event to add.
     func enqueue<E: StreamEvent>(_ event: E) {
+        logger.debug("Enqueueing event: \(event)")
+
         events[event.stream, default: []].append(event)
         eventCount += 1
 
