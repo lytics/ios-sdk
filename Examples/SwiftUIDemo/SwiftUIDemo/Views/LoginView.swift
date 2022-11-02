@@ -86,7 +86,8 @@ struct LoginView: View {
             .navigationDestination(for: Route.self) { route in
                 switch route {
                 case .register:
-                    RegisterView(viewModel: .init())
+                    RegisterView(viewModel: .init(
+                        onComplete: viewModel.onComplete))
                 }
             }
         }

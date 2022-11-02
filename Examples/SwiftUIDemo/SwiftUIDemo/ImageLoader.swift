@@ -32,20 +32,16 @@ extension ImageLoader {
     static var mock: Self {
         .init(
             fetch: { url in
-                let task = Task.delayed(byTimeInterval: 0.5) {
-                    switch url.lastPathComponent {
-                    case "3":
-                        return Image.image3
-                    case "4":
-                        return Image.image4
-                    case "5":
-                        return Image.image5
-                    default:
-                        return Image.image2
-                    }
+                switch url.lastPathComponent {
+                case "3":
+                    return Image.aliciaKeys
+                case "4":
+                    return Image.postMalone
+                case "5":
+                    return Image.dojaCat
+                default:
+                    return Image.maroon5
                 }
-
-                return await task.value
             }
         )
     }

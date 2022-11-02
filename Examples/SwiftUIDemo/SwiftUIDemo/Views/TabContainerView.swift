@@ -28,7 +28,9 @@ struct TabContainerView: View {
                  }
                 .tag(Tab.events)
 
-            LoginView(viewModel: .init())
+            LoginView(viewModel: .init(onComplete: {
+                self.selectedTab = .events
+            }))
                 .tabItem {
                     Text("Login")
                     Image(systemName: "lock")
