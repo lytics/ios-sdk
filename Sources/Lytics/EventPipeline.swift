@@ -46,6 +46,7 @@ struct EventPipeline {
                 stream: stream,
                 timestamp: timestamp,
                 sessionDidStart: sessionDidStart(timestamp) ? 1 : nil,
+                name: name,
                 event: event))
     }
 
