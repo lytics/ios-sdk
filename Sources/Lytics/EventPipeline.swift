@@ -89,9 +89,7 @@ extension EventPipeline {
         return EventPipeline(
             logger: logger,
             sessionDidStart: { timestamp in
-                let lastTimestamp = UserDefaults.standard.int64(for: .lastEventTimestamp)
-                UserDefaults.standard.set(timestamp, for: .lastEventTimestamp)
-                return timestamp - lastTimestamp > configuration.sessionDuration.milliseconds
+                SessionTracker.markInteraction(timestamp) > configuration.sessionDuration.milliseconds
             },
             eventQueue: EventQueue.live(
                 logger: logger,
