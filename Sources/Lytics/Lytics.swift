@@ -15,13 +15,13 @@ public final class Lytics {
     }()
 
     @usableFromInline
-    internal var logger: LyticsLogger = .live
+    internal private(set) var logger: LyticsLogger = .live
 
     @usableFromInline
-    internal var userManager: UserManaging!
+    internal private(set) var userManager: UserManaging!
 
     @usableFromInline
-    internal var timestampProvider: () -> Millisecond = { Date().timeIntervalSince1970.milliseconds }
+    internal private(set) var timestampProvider: () -> Millisecond = { Date().timeIntervalSince1970.milliseconds }
 
     @usableFromInline
     internal private(set) var appTrackingTransparency: AppTrackingTransparency!
