@@ -14,6 +14,8 @@ public final class Lytics {
         Lytics()
     }()
 
+    private var appEventTracker: AppEventTracking!
+
     @usableFromInline
     internal private(set) var logger: LyticsLogger = .live
 
@@ -86,6 +88,15 @@ public final class Lytics {
         eventPipeline = EventPipeline.live(
             logger: logger,
             configuration: configuration)
+
+        appEventTracker = AppEventTracker.live(
+            configuration: configuration,
+            logger: logger,
+            userManager: userManager,
+            eventPipeline: eventPipeline)
+
+        appEventTracker.startTracking(
+            lifecycleEvents: NotificationCenter.default.lifecycleEvents())
 
         hasStarted = true
     }
