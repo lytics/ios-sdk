@@ -18,7 +18,7 @@ public final class Lytics {
     internal var logger: LyticsLogger = .live
 
     @usableFromInline
-    internal var userManager: UserManager!
+    internal var userManager: UserManaging!
 
     @usableFromInline
     internal var timestampProvider: () -> Millisecond = { Date().timeIntervalSince1970.milliseconds }
@@ -76,7 +76,7 @@ public final class Lytics {
         logger.logLevel = configuration.logLevel
         defaultStream = configuration.defaultStream
 
-        userManager = .live(configuration: configuration)
+        userManager = UserManager.live(configuration: configuration)
         appTrackingTransparency = .live
 
         eventPipeline = .live(
