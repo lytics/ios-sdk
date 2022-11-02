@@ -12,14 +12,20 @@ import Lytics
 final class LoginViewModel: ObservableObject {
     @Published var email: String
     @Published var password: String
+    var onComplete: () -> Void
 
     var loginIsEnabled: Bool {
         email.isNotEmpty && password.isNotEmpty
     }
 
-    init(email: String = "", password: String = "") {
+    init(
+        email: String = "",
+        password: String = "",
+        onComplete: @escaping () -> Void = {}
+    ) {
         self.email = email
         self.password = password
+        self.onComplete = onComplete
     }
 
     func login() {
@@ -29,6 +35,8 @@ final class LoginViewModel: ObservableObject {
 
         Lytics.shared.identify(
             identifiers: DemoIdentity(email: email))
+
+        onComplete()
     }
 
     func forgotPassword() {
