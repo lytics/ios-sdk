@@ -27,7 +27,7 @@ public final class Lytics {
     internal private(set) var appTrackingTransparency: AppTrackingTransparency!
 
     @usableFromInline
-    internal var eventPipeline: EventPipeline!
+    internal private(set) var eventPipeline: EventPipelineProtocol!
 
     @usableFromInline
     internal private(set) var defaultStream: String = ""
@@ -35,7 +35,7 @@ public final class Lytics {
     /// A Boolean value indicating whether this instance has been started.
     public private(set) var hasStarted: Bool = false
 
-    /// A Boolean value indicating whether the user has opted into event collection.
+    /// A Boolean value indicating whether the user has opted in to event collection.
     public var isOptedIn: Bool {
         guard hasStarted else {
             assertionFailure("Lytics must be started before accessing `isOptedIn`.")
@@ -83,7 +83,7 @@ public final class Lytics {
         userManager = UserManager.live(configuration: configuration)
         appTrackingTransparency = .live
 
-        eventPipeline = .live(
+        eventPipeline = EventPipeline.live(
             logger: logger,
             configuration: configuration)
 

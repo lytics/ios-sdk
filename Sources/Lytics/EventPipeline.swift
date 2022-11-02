@@ -8,13 +8,15 @@ import Foundation
 
 @usableFromInline
 /// An event pipeline.
-struct EventPipeline {
+struct EventPipeline: EventPipelineProtocol {
     private let logger: LyticsLogger
     private let sessionDidStart: (Millisecond) -> Bool
     private let eventQueue: EventQueueing
     private let uploader: Uploading
     private let userSettings: UserSettings
 
+    @usableFromInline
+    /// A Boolean value indicating whether the user has opted in to event collection.
     var isOptedIn: Bool {
         userSettings.getOptIn()
     }
@@ -34,6 +36,12 @@ struct EventPipeline {
     }
 
     @usableFromInline
+    /// Adds an event to the event pipeline.
+    /// - Parameters:
+    ///   - stream: The DataType, or "Table" of type of data being uploaded.
+    ///   - timestamp: The event timestamp.
+    ///   - name: The event name.
+    ///   - event: The event.
     func event<E: Encodable>(
         stream: String,
         timestamp: Millisecond,
@@ -55,15 +63,19 @@ struct EventPipeline {
     }
 
     @usableFromInline
+    /// Opt the user in to event collection.
     func optIn() {
         userSettings.setOptIn(true)
     }
 
     @usableFromInline
+    /// Opt the user out of event collection.
     func optOut() {
         userSettings.setOptIn(false)
     }
 
+    @usableFromInline
+    /// Force flush the event queue by sending all events in the queue immediately.
     func dispatch() async {
         await eventQueue.flush()
     }
