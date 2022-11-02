@@ -63,19 +63,19 @@ struct EventPipeline: EventPipelineProtocol {
     }
 
     @usableFromInline
-    /// Opt the user in to event collection.
+    /// Opts the user in to event collection.
     func optIn() {
         userSettings.setOptIn(true)
     }
 
     @usableFromInline
-    /// Opt the user out of event collection.
+    /// Opts the user out of event collection.
     func optOut() {
         userSettings.setOptIn(false)
     }
 
     @usableFromInline
-    /// Force flush the event queue by sending all events in the queue immediately.
+    /// Force flushes the event queue by sending all events in the queue immediately.
     func dispatch() async {
         await eventQueue.flush()
     }
