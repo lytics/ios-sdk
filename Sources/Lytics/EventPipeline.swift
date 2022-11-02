@@ -9,11 +9,11 @@ import Foundation
 @usableFromInline
 /// An event pipeline.
 struct EventPipeline {
-    let logger: LyticsLogger
-    let sessionDidStart: (Millisecond) -> Bool
-    let eventQueue: EventQueueing
-    let uploader: Uploading
-    let userSettings: UserSettings
+    private let logger: LyticsLogger
+    private let sessionDidStart: (Millisecond) -> Bool
+    private let eventQueue: EventQueueing
+    private let uploader: Uploading
+    private let userSettings: UserSettings
 
     var isOptedIn: Bool {
         userSettings.getOptIn()
