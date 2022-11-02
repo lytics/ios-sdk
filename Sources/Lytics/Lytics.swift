@@ -78,7 +78,7 @@ public final class Lytics {
         configure(&configuration)
 
         logger.logLevel = configuration.logLevel
-        defaultStream = configuration.defaultStream
+        defaultStream = configuration.defaultStream.isNotEmpty ? configuration.defaultStream : Constants.defaultStream
 
         userManager = UserManager.live(configuration: configuration)
         appTrackingTransparency = .live
