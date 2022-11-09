@@ -10,7 +10,7 @@ import Foundation
 enum AppLifecycleEvent {
     ///  The application became active.
     case didBecomeActive
-    /// THe application entered the background.
+    /// The application entered the background.
     case didEnterBackground
     /// The application will terminate.
     case willTerminate
