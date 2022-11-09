@@ -18,4 +18,5 @@ enum Constants {
     static let appInstallEventName = "App Install"
     static let appOpenEventName =  "App Open"
     static let appUpdateEventName = "App Update"
+    static let defaultAppVersion = "0.0"
 }

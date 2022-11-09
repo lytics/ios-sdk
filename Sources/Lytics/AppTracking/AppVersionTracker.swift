@@ -27,7 +27,7 @@ extension AppVersionTracker {
             checkVersion: {
                 let lastVersion = defaults.string(for: .lastVersionNumber)
 
-                let currentVersion = Bundle.main.releaseVersionNumber ?? "0.0"
+                let currentVersion = Bundle.main.releaseVersionNumber ?? Constants.defaultAppVersion
                 defaults.set(currentVersion, for: .lastVersionNumber)
 
                 if lastVersion == nil {
