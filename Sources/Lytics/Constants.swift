@@ -13,4 +13,9 @@ enum Constants {
 
     static let defaultStream: String = "ios_sdk"
     static let idfaKey: String = "idfa"
+
+    static let appBackgroundEventName = "App Background"
+    static let appInstallEventName = "App Install"
+    static let appOpenEventName =  "App Open"
+    static let appUpdateEventName = "App Update"
 }
