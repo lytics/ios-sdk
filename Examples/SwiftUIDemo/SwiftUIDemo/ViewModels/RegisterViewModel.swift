@@ -52,7 +52,9 @@ final class RegisterViewModel:  ObservableObject {
             consented: true)
 
         let identity = DemoIdentity(
-            email: email,
+            email: email)
+
+        let attributes = DemoAttributes(
             name: name)
 
         if enableIDFA {
@@ -64,13 +66,19 @@ final class RegisterViewModel:  ObservableObject {
                     print("Denied")
                 }
 
-                Lytics.shared.identify(identifiers: identity)
-                Lytics.shared.consent(consent: consent)
+                Lytics.shared.identify(
+                    identifiers: identity,
+                    attributes: attributes)
+                Lytics.shared.consent(
+                    consent: consent)
                 onComplete()
             }
         } else {
-            Lytics.shared.identify(identifiers: identity)
-            Lytics.shared.consent(consent: consent)
+            Lytics.shared.identify(
+                identifiers: identity,
+                attributes: attributes)
+            Lytics.shared.consent(
+                consent: consent)
             onComplete()
         }
     }
