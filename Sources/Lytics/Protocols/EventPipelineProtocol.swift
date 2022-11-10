@@ -20,7 +20,7 @@ protocol EventPipelineProtocol {
     ///   - name: The event name.
     ///   - event: The event.
     func event<E: Encodable>(
-        stream: String,
+        stream: String?,
         timestamp: Millisecond,
         name: String?,
         event: E

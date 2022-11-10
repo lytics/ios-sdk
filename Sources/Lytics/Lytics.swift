@@ -31,9 +31,6 @@ public final class Lytics {
     @usableFromInline
     internal private(set) var eventPipeline: EventPipelineProtocol!
 
-    @usableFromInline
-    internal private(set) var defaultStream: String = ""
-
     /// A Boolean value indicating whether this instance has been started.
     public private(set) var hasStarted: Bool = false
 
@@ -80,7 +77,6 @@ public final class Lytics {
         configure(&configuration)
 
         logger.logLevel = configuration.logLevel
-        defaultStream = configuration.defaultStream.isNotEmpty ? configuration.defaultStream : Constants.defaultStream
 
         userManager = UserManager.live(configuration: configuration)
         appTrackingTransparency = .live
@@ -141,7 +137,7 @@ public extension Lytics {
             }
 
             await eventPipeline.event(
-                stream: stream ?? defaultStream,
+                stream: stream,
                 timestamp: timestamp,
                 name: name,
                 event: Event(
@@ -224,7 +220,7 @@ public extension Lytics {
                         with: UserUpdate(identifiers: identifiers, attributes: attributes))
 
                     await eventPipeline.event(
-                        stream: stream ?? defaultStream,
+                        stream: stream,
                         timestamp: timestamp,
                         name: name,
                         event: IdentityEvent(
@@ -300,7 +296,7 @@ public extension Lytics {
                         with: UserUpdate(identifiers: identifiers, attributes: attributes))
 
                     await eventPipeline.event(
-                        stream: stream ?? defaultStream,
+                        stream: stream,
                         timestamp: timestamp,
                         name: name,
                         event: ConsentEvent(
@@ -404,7 +400,7 @@ public extension Lytics {
             }
 
             await eventPipeline.event(
-                stream: stream ?? defaultStream,
+                stream: stream,
                 timestamp: timestamp,
                 name: name,
                 event: ScreenEvent(

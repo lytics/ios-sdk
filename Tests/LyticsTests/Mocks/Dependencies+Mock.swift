@@ -18,3 +18,13 @@ extension LyticsLogger {
         .init(log: { _, _, _, _, _ in })
     }
 }
+
+extension UserSettings {
+    static let optedInMock = Self(
+        getOptIn: { true },
+        setOptIn: { _ in })
+
+    static let optedOutMock = Self(
+        getOptIn: { false },
+        setOptIn: { _ in })
+}

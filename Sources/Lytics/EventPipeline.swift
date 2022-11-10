@@ -9,6 +9,7 @@ import Foundation
 @usableFromInline
 /// An event pipeline.
 struct EventPipeline: EventPipelineProtocol {
+    private let defaultStream: String
     private let logger: LyticsLogger
     private let sessionDidStart: (Millisecond) -> Bool
     private let eventQueue: EventQueueing
@@ -22,12 +23,14 @@ struct EventPipeline: EventPipelineProtocol {
     }
 
     init(
+        defaultStream: String,
         logger: LyticsLogger,
         sessionDidStart: @escaping (Millisecond) -> Bool,
         eventQueue: EventQueueing,
         uploader: Uploading,
         userSettings: UserSettings
     ) {
+        self.defaultStream = defaultStream.isNotEmpty ? defaultStream : Constants.defaultStream
         self.logger = logger
         self.sessionDidStart = sessionDidStart
         self.eventQueue = eventQueue
@@ -43,7 +46,7 @@ struct EventPipeline: EventPipelineProtocol {
     ///   - name: The event name.
     ///   - event: The event.
     func event<E: Encodable>(
-        stream: String,
+        stream: String?,
         timestamp: Millisecond,
         name: String?,
         event: E
@@ -55,7 +58,7 @@ struct EventPipeline: EventPipelineProtocol {
 
         await eventQueue.enqueue(
             Payload(
-                stream: stream,
+                stream: stream.nonEmpty(default: defaultStream),
                 timestamp: timestamp,
                 sessionDidStart: sessionDidStart(timestamp) ? 1 : nil,
                 name: name,
@@ -99,6 +102,7 @@ extension EventPipeline {
             maxRetryCount: configuration.maxRetryCount)
 
         return EventPipeline(
+            defaultStream: configuration.defaultStream,
             logger: logger,
             sessionDidStart: { timestamp in
                 SessionTracker.markInteraction(timestamp) > configuration.sessionDuration.milliseconds
