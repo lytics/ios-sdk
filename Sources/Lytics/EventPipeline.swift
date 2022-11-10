@@ -8,20 +8,29 @@ import Foundation
 
 @usableFromInline
 /// An event pipeline.
-struct EventPipeline {
-    let logger: LyticsLogger
-    let sessionDidStart: (Millisecond) -> Bool
-    let eventQueue: EventQueueing
-    let uploader: Uploading
-    let userSettings: UserSettings
+struct EventPipeline: EventPipelineProtocol {
+    private let defaultStream: String
+    private let logger: LyticsLogger
+    private let sessionDidStart: (Millisecond) -> Bool
+    private let eventQueue: EventQueueing
+    private let uploader: Uploading
+    private let userSettings: UserSettings
+
+    @usableFromInline
+    /// A Boolean value indicating whether the user has opted in to event collection.
+    var isOptedIn: Bool {
+        userSettings.getOptIn()
+    }
 
     init(
+        defaultStream: String,
         logger: LyticsLogger,
         sessionDidStart: @escaping (Millisecond) -> Bool,
         eventQueue: EventQueueing,
         uploader: Uploading,
         userSettings: UserSettings
     ) {
+        self.defaultStream = defaultStream.isNotEmpty ? defaultStream : Constants.defaultStream
         self.logger = logger
         self.sessionDidStart = sessionDidStart
         self.eventQueue = eventQueue
@@ -30,8 +39,14 @@ struct EventPipeline {
     }
 
     @usableFromInline
+    /// Adds an event to the event pipeline.
+    /// - Parameters:
+    ///   - stream: The DataType, or "Table" of type of data being uploaded.
+    ///   - timestamp: The event timestamp.
+    ///   - name: The event name.
+    ///   - event: The event.
     func event<E: Encodable>(
-        stream: String,
+        stream: String?,
         timestamp: Millisecond,
         name: String?,
         event: E
@@ -43,22 +58,27 @@ struct EventPipeline {
 
         await eventQueue.enqueue(
             Payload(
-                stream: stream,
+                stream: stream.nonEmpty(default: defaultStream),
                 timestamp: timestamp,
                 sessionDidStart: sessionDidStart(timestamp) ? 1 : nil,
+                name: name,
                 event: event))
     }
 
     @usableFromInline
+    /// Opts the user in to event collection.
     func optIn() {
         userSettings.setOptIn(true)
     }
 
     @usableFromInline
+    /// Opts the user out of event collection.
     func optOut() {
         userSettings.setOptIn(false)
     }
 
+    @usableFromInline
+    /// Force flushes the event queue by sending all events in the queue immediately.
     func dispatch() async {
         await eventQueue.flush()
     }
@@ -82,11 +102,10 @@ extension EventPipeline {
             maxRetryCount: configuration.maxRetryCount)
 
         return EventPipeline(
+            defaultStream: configuration.defaultStream,
             logger: logger,
             sessionDidStart: { timestamp in
-                let lastTimestamp = UserDefaults.standard.int64(for: .lastEventTimestamp)
-                UserDefaults.standard.set(timestamp, for: .lastEventTimestamp)
-                return timestamp - lastTimestamp > configuration.sessionDuration.milliseconds
+                SessionTracker.markInteraction(timestamp) > configuration.sessionDuration.milliseconds
             },
             eventQueue: EventQueue.live(
                 logger: logger,

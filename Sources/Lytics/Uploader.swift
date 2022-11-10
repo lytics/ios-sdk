@@ -46,12 +46,17 @@ actor Uploader: Uploading {
             self.uploadTask = nil
         }
 
-        final func encode(to encoder: Encoder) throws {
+        func encode(to encoder: Encoder) throws {
             var container: KeyedEncodingContainer<CodingKeys> = encoder.container(
                 keyedBy: CodingKeys.self)
 
             try container.encode(self.id, forKey: .id)
             try container.encode(self.request, forKey: .request)
+        }
+
+        func cancel() {
+            uploadTask?.cancel()
+            uploadTask = nil
         }
 
         private enum CodingKeys: CodingKey {
@@ -115,7 +120,7 @@ actor Uploader: Uploading {
     /// Stores pending requests and cancels their upload tasks.
     func storeRequests() {
         shouldSend = false
-        pendingRequests.forEach { $0.value.uploadTask?.cancel() }
+        pendingRequests.forEach { $0.value.cancel() }
 
         for (id, wrapper) in pendingRequests {
             pendingRequests[id] = nil
@@ -152,7 +157,7 @@ private extension Uploader {
     /// Removes a wrapped request from `pendingRequests` and cancels its upload task.
     /// - Parameter id: The unique value identifying the wrapper of the request to be removed.
     func remove(id: UUID) {
-        pendingRequests[id]?.uploadTask?.cancel()
+        pendingRequests[id]?.cancel()
         pendingRequests[id] = nil
     }
 

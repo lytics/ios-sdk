@@ -14,7 +14,7 @@ public struct LyticsUser: Codable, Equatable {
     public var identifiers: [String: AnyCodable]
 
     /// Additional information about a user.
-    public var attributes: [String: AnyCodable]
+    public var attributes: [String: AnyCodable]?
 
     /// Initializes a user.
     /// - Parameters:
@@ -22,7 +22,7 @@ public struct LyticsUser: Codable, Equatable {
     ///   - attributes: Additional information about a user.
     public init(
         identifiers: [String: AnyCodable] = [:],
-        attributes: [String: AnyCodable] = [:]
+        attributes: [String: AnyCodable]? = nil
     ) {
         self.identifiers = identifiers
         self.attributes = attributes
@@ -37,9 +37,9 @@ public extension LyticsUser {
     ///   - attributes: Additional information about a user.
     init(
         identifiers: [String: Any] = [:],
-        attributes: [String: Any] = [:]
+        attributes: [String: Any]? = nil
     ) {
         self.identifiers = identifiers.mapValues(AnyCodable.init(_:))
-        self.attributes = attributes.mapValues(AnyCodable.init(_:))
+        self.attributes = attributes?.mapValues(AnyCodable.init(_:))
     }
 }

@@ -9,8 +9,8 @@ import Foundation
 struct UserStorage {
     var attributes: () -> [String: Any]?
     var identifiers: () -> [String: Any]?
-    var storeAttributes: ([String: Any]) -> Void
-    var storeIdentifiers: ([String: Any]) -> Void
+    var storeAttributes: ([String: Any]?) -> Void
+    var storeIdentifiers: ([String: Any]?) -> Void
 }
 
 extension UserStorage {
@@ -35,9 +35,9 @@ extension UserStorage {
     #if DEBUG
     static func mock(
         attributes: @escaping () -> [String: Any]? = { [:] },
-        identifiers: @escaping () -> [String: Any]? = { [:] },
-        storeAttributes: @escaping ([String: Any]) -> Void = { _ in },
-        storeIdentifiers: @escaping ([String: Any]) -> Void = { _ in }
+        identifiers: @escaping () -> [String: Any]? = { nil },
+        storeAttributes: @escaping ([String: Any]?) -> Void = { _ in },
+        storeIdentifiers: @escaping ([String: Any]?) -> Void = { _ in }
     ) -> UserStorage {
         .init(
             attributes: attributes,

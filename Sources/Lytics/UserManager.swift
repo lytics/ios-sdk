@@ -27,16 +27,36 @@ actor UserManager: UserManaging {
     private let storage: UserStorage
 
     /// The user identifiers.
-    @usableFromInline private(set) var identifiers: [String: Any]
+    @usableFromInline private(set) var identifiers: [String: Any] {
+        get {
+            if let identifiers = storage.identifiers() {
+                return identifiers
+            } else {
+                let newIdentifiers = makeAnonymousIdentifiers()
+                storage.storeIdentifiers(newIdentifiers)
+                return newIdentifiers
+            }
+        }
+        set {
+            storage.storeIdentifiers(newValue)
+        }
+    }
 
     /// The user attributes.
-    @usableFromInline private(set) var attributes: [String: Any]
+    @usableFromInline private(set) var attributes: [String: Any]? {
+        get {
+            storage.attributes()
+        }
+        set  {
+            storage.storeAttributes(newValue)
+        }
+    }
 
     /// The current user.
     @usableFromInline var user: LyticsUser {
         .init(
             identifiers: identifiers.mapValues(AnyCodable.init(_:)),
-            attributes: attributes.mapValues(AnyCodable.init(_:)))
+            attributes: attributes?.mapValues(AnyCodable.init(_:)))
     }
 
     init(
@@ -49,15 +69,6 @@ actor UserManager: UserManaging {
         self.encoder = encoder
         self.idProvider = idProvider
         self.storage = storage
-        self.attributes = storage.attributes() ?? [:]
-
-        if let identifiers = storage.identifiers() {
-            self.identifiers = identifiers
-        } else {
-            let identifiers = [configuration.anonymousIdentityKey: idProvider()]
-            storage.storeIdentifiers(identifiers)
-            self.identifiers = identifiers
-        }
     }
 
     @discardableResult
@@ -66,9 +77,9 @@ actor UserManager: UserManaging {
     /// - Parameter other: The identifier to update.
     /// - Returns: The updated identifiers.
     func updateIdentifiers<T: Encodable>(with other: T) throws -> [String: Any] {
-        identifiers = identifiers.deepMerging(try(convert(other)))
-        storage.storeIdentifiers(identifiers)
-        return identifiers
+        let updated = identifiers.deepMerging(try(convert(other)))
+        identifiers = updated
+        return updated
     }
 
     @discardableResult
@@ -77,9 +88,15 @@ actor UserManager: UserManaging {
     /// - Parameter other: The attribute to update.
     /// - Returns: The updated attributes.
     func updateAttributes<T: Encodable>(with other: T) throws -> [String: Any] {
-        attributes = attributes.deepMerging(try convert(other))
-        storage.storeAttributes(attributes)
-        return attributes
+        let updated: [String: Any]
+        if let currentAttributes = attributes {
+            updated = currentAttributes.deepMerging(try convert(other))
+        } else {
+            updated = try convert(other)
+        }
+
+        attributes = updated
+        return updated
     }
 
     @usableFromInline
@@ -100,7 +117,7 @@ actor UserManager: UserManaging {
     /// - Parameter userUpdate: The update.
     /// - Returns: The updated user.
     func update<I: Encodable, A: Encodable>(with userUpdate: UserUpdate<I, A>) throws -> LyticsUser {
-        let updatedAttributes: [String: Any]
+        let updatedAttributes: [String: Any]?
         let updatedIdentifiers: [String: Any]
 
         if let attributesUpdate = userUpdate.attributes {
@@ -121,15 +138,17 @@ actor UserManager: UserManaging {
     @usableFromInline
     /// Clear all stored user information.
     func clear() {
-        attributes = [:]
-        storage.storeAttributes(attributes)
-
-        identifiers = [configuration.anonymousIdentityKey: idProvider()]
-        storage.storeIdentifiers(identifiers)
+        attributes = nil
+        identifiers = makeAnonymousIdentifiers()
     }
 }
 
 private extension UserManager {
+
+    /// Returns a new identifier dictionary with an anonymous identifier.
+    func makeAnonymousIdentifiers() -> [String: Any] {
+        [configuration.anonymousIdentityKey: idProvider()]
+    }
 
     /// Returns a dictionary representation of a model.
     /// - Parameter value: The model to convert.

@@ -22,4 +22,7 @@ protocol RequestWrapping<Resp>: Codable {
 
     /// The task to upload the wrapped request.
     var uploadTask: Task<Void, Never>? { get set }
+
+    /// Cancels the upload task.
+    func cancel()
 }
