@@ -13,7 +13,7 @@ public struct LyticsConfiguration: Equatable {
     public var apiKey: String = ""
 
     /// Default stream name to which events will be sent if not explicitly set for an event.
-    public var defaultStream: String = "stream"
+    public var defaultStream: String = Constants.defaultStream
 
     /// The key that represents the core identifier to be used in api calls.
     public var primaryIdentityKey: String = "_uid"

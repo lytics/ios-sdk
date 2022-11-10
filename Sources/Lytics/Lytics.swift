@@ -14,28 +14,27 @@ public final class Lytics {
         Lytics()
     }()
 
-    @usableFromInline
-    internal var logger: LyticsLogger = .live
+    private var appEventTracker: AppEventTracking!
 
     @usableFromInline
-    internal var userManager: UserManaging!
+    internal private(set) var logger: LyticsLogger = .live
 
     @usableFromInline
-    internal var timestampProvider: () -> Millisecond = { Date().timeIntervalSince1970.milliseconds }
+    internal private(set) var userManager: UserManaging!
+
+    @usableFromInline
+    internal private(set) var timestampProvider: () -> Millisecond = { Date().timeIntervalSince1970.milliseconds }
 
     @usableFromInline
     internal private(set) var appTrackingTransparency: AppTrackingTransparency!
 
     @usableFromInline
-    internal var eventPipeline: EventPipeline!
-
-    @usableFromInline
-    internal private(set) var defaultStream: String = ""
+    internal private(set) var eventPipeline: EventPipelineProtocol!
 
     /// A Boolean value indicating whether this instance has been started.
     public private(set) var hasStarted: Bool = false
 
-    /// A Boolean value indicating whether the user has opted into event collection.
+    /// A Boolean value indicating whether the user has opted in to event collection.
     public var isOptedIn: Bool {
         guard hasStarted else {
             assertionFailure("Lytics must be started before accessing `isOptedIn`.")
@@ -78,14 +77,22 @@ public final class Lytics {
         configure(&configuration)
 
         logger.logLevel = configuration.logLevel
-        defaultStream = configuration.defaultStream
 
         userManager = UserManager.live(configuration: configuration)
         appTrackingTransparency = .live
 
-        eventPipeline = .live(
+        eventPipeline = EventPipeline.live(
             logger: logger,
             configuration: configuration)
+
+        appEventTracker = AppEventTracker.live(
+            configuration: configuration,
+            logger: logger,
+            userManager: userManager,
+            eventPipeline: eventPipeline)
+
+        appEventTracker.startTracking(
+            lifecycleEvents: NotificationCenter.default.lifecycleEvents())
 
         hasStarted = true
     }
@@ -130,7 +137,7 @@ public extension Lytics {
             }
 
             await eventPipeline.event(
-                stream: stream ?? defaultStream,
+                stream: stream,
                 timestamp: timestamp,
                 name: name,
                 event: Event(
@@ -213,7 +220,7 @@ public extension Lytics {
                         with: UserUpdate(identifiers: identifiers, attributes: attributes))
 
                     await eventPipeline.event(
-                        stream: stream ?? defaultStream,
+                        stream: stream,
                         timestamp: timestamp,
                         name: name,
                         event: IdentityEvent(
@@ -289,7 +296,7 @@ public extension Lytics {
                         with: UserUpdate(identifiers: identifiers, attributes: attributes))
 
                     await eventPipeline.event(
-                        stream: stream ?? defaultStream,
+                        stream: stream,
                         timestamp: timestamp,
                         name: name,
                         event: ConsentEvent(
@@ -393,7 +400,7 @@ public extension Lytics {
             }
 
             await eventPipeline.event(
-                stream: stream ?? defaultStream,
+                stream: stream,
                 timestamp: timestamp,
                 name: name,
                 event: ScreenEvent(

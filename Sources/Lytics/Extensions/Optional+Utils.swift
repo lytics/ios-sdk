@@ -51,6 +51,21 @@ extension Optional where Wrapped: RangeReplaceableCollection {
     }
 }
 
+extension Optional where Wrapped == String {
+
+    /// Returns the unwrapped, non-empty value, falling back to the given default value if there isn't one.
+    /// - Parameter defaultValue: The default value to use if there is not a wrapped value or it is empty.
+    /// - Returns: The unwrapped, non-empty value; otherwise `defaultValue`.
+    func nonEmpty(default defaultValue: String) -> String {
+        switch self {
+        case .some(let value):
+            return value.isNotEmpty ? value : defaultValue
+        case .none:
+            return defaultValue
+        }
+    }
+}
+
 public extension Optional where Wrapped == Never {
 
     /// A convenience member to specify an `Optional<Never>.none` value.
