@@ -176,4 +176,56 @@ final class UserManagerTests: XCTestCase {
         XCTAssertEqual(identifiers, [anonymousIdentityKey: Mock.uuidString])
         XCTAssertEqual(storedIdentifiers?[anonymousIdentityKey]! as! String, Mock.uuidString)
     }
+
+    func testPreserveIdentifiersOnInit() async throws {
+        let anonymousIdentityKey = "id"
+        let anonymousIdentityValue = "XXXXXX"
+
+        var storedIdentifiers: [String: Any]? = [anonymousIdentityKey: anonymousIdentityValue]
+        let storage = UserStorage.mock(
+            identifiers: { storedIdentifiers },
+            storeIdentifiers: { storedIdentifiers = $0 })
+
+        let sut = UserManager(
+            configuration: .init(anonymousIdentityKey: anonymousIdentityKey),
+            encoder: .init(),
+            idProvider: { Mock.uuidString },
+            storage: storage)
+
+        let identifiers = await sut.identifiers as! [String: String]
+        XCTAssertEqual(identifiers, [anonymousIdentityKey: anonymousIdentityValue])
+        XCTAssertEqual(storedIdentifiers?[anonymousIdentityKey]! as! String, anonymousIdentityValue)
+    }
+
+    func testCreateIdentifiersAfterKeyChange() async throws {
+        let initialIdentityKey = "id"
+        let initialIdentityValue = "XXXXXX"
+        let updatedIdentityKey = "anotherID"
+        let updatedIdentityValue = "YYYYYY"
+
+        var storedIdentifiers: [String: Any]? = nil
+        let storage = UserStorage.mock(
+            identifiers: { storedIdentifiers },
+            storeIdentifiers: { storedIdentifiers = $0 })
+
+        _ = UserManager(
+            configuration: .init(anonymousIdentityKey: initialIdentityKey),
+            encoder: .init(),
+            idProvider: { initialIdentityValue },
+            storage: storage)
+
+        _ = UserManager(
+            configuration: .init(anonymousIdentityKey: updatedIdentityKey),
+            encoder: .init(),
+            idProvider: { updatedIdentityValue },
+            storage: storage)
+
+        let identifiers = storedIdentifiers as! [String: String]
+        XCTAssertEqual(
+            identifiers,
+            [
+                initialIdentityKey: initialIdentityValue,
+                updatedIdentityKey: updatedIdentityValue
+            ])
+    }
 }
