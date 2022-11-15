@@ -16,7 +16,9 @@ final class EventPipelineTests: XCTestCase {
         })
 
         let sut = EventPipeline(
-            defaultStream: "",
+            configuration: .init(
+                defaultStream: "",
+                requireConsent: false),
             logger: .mock,
             sessionDidStart: { _ in false },
             eventQueue: eventQueue,
