@@ -65,6 +65,11 @@ actor UserManager: UserManaging {
         idProvider: @escaping () -> String = { UUID().uuidString },
         storage: UserStorage
     ) {
+        Self.ensure(
+            anonymousIdentityKey: configuration.anonymousIdentityKey,
+            in: storage,
+            idProvider: idProvider)
+
         self.configuration = configuration
         self.encoder = encoder
         self.idProvider = idProvider
@@ -144,6 +149,19 @@ actor UserManager: UserManaging {
 }
 
 private extension UserManager {
+
+    /// Stores a value for the anonymous identity key in the given storage if one does not already exist.
+    /// - Parameters:
+    ///   - anonymousIdentityKey: The key for the anonymous identifier.
+    ///   - storage: The user storage.
+    ///   - idProvider: The identifier provider.
+    private static func ensure(anonymousIdentityKey: String, in storage: UserStorage, idProvider: () -> String) {
+        var identifiers = storage.identifiers() ?? [:]
+        if identifiers[anonymousIdentityKey] == nil {
+            identifiers[anonymousIdentityKey] = idProvider()
+            storage.storeIdentifiers(identifiers)
+        }
+    }
 
     /// Returns a new identifier dictionary with an anonymous identifier.
     func makeAnonymousIdentifiers() -> [String: Any] {
