@@ -8,7 +8,7 @@ import AnyCodable
 import Foundation
 
 enum User1 {
-    static let apiKey = "at.1234"
+    static let apiToken = "at.1234"
     static let email = "someemail@lytics.com"
     static let firstName = "Jane"
     static let lastName = "Doe"
