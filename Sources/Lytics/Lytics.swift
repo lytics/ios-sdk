@@ -69,7 +69,7 @@ public final class Lytics {
     /// - Parameters:
     ///   - apiToken: An Lytics account API token.
     ///   - configure: A closure enabling mutation of the configuration.
-    public func start(apiToken: String, configure: (inout LyticsConfiguration) -> Void) {
+    public func start(apiToken: String, configure: ((inout LyticsConfiguration) -> Void)? = nil) {
         guard !hasStarted else {
             logger.error("Lytics instance has already been started")
             return
@@ -81,7 +81,9 @@ public final class Lytics {
         }
 
         var configuration = LyticsConfiguration()
-        configure(&configuration)
+        if let configure {
+            configure(&configuration)
+        }
 
         if configuration.anonymousIdentityKey.isEmpty {
             configuration.anonymousIdentityKey = Constants.defaultAnonymousIdentityKey
