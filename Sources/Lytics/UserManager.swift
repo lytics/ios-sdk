@@ -15,10 +15,10 @@ actor UserManager: UserManaging {
     struct Configuration: Equatable {
 
         /// The key that represents the core identifier to be used in api calls.
-        public var primaryIdentityKey: String = Constants.defaultPrimaryIdentityKey
+        var primaryIdentityKey: String = Constants.defaultPrimaryIdentityKey
 
         /// The key which we use to store the anonymous identifier.
-        public var anonymousIdentityKey: String = Constants.defaultAnonymousIdentityKey
+        var anonymousIdentityKey: String = Constants.defaultAnonymousIdentityKey
     }
 
     private let configuration: Configuration
