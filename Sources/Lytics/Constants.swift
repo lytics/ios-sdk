@@ -11,6 +11,9 @@ enum Constants {
     static let requestStorageDirectory = "requests"
     static let requestStorageFilename = "requests"
 
+    static let defaultAnonymousIdentityKey = "_uid"
+    static let defaultPrimaryIdentityKey = "_uid"
+
     static let defaultStream: String = "ios_sdk"
     static let idfaKey: String = "idfa"
 
