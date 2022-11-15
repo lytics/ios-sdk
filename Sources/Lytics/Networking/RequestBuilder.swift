@@ -53,7 +53,7 @@ struct RequestBuilder {
         parameters.appendOrSet(timestampField.flatMap(QueryParameter.timestampField))
         parameters.appendOrSet(filename.flatMap(QueryParameter.filename))
 
-        return post(.dataUpload(stream), data: data)
+        return post(.dataUpload(stream), data: data, parameters: parameters)
     }
 }
 
@@ -72,7 +72,7 @@ private extension RequestBuilder {
         .init(method: .get, url: url(for: route), headers: [authHeader])
     }
 
-    func post<T>(_ route: Route, data: Data, contentType: HeaderField.ContentType = .json) -> Request<T> {
-        .init(method: .post, url: url(for: route), headers: [.contentType(contentType), authHeader], body: data)
+    func post<T>(_ route: Route, data: Data, parameters: [QueryParameter]? = nil, contentType: HeaderField.ContentType = .json) -> Request<T> {
+        .init(method: .post, url: url(for: route), parameters: parameters, headers: [.contentType(contentType), authHeader], body: data)
     }
 }
