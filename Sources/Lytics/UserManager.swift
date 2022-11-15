@@ -47,7 +47,7 @@ actor UserManager: UserManaging {
         get {
             storage.attributes()
         }
-        set  {
+        set {
             storage.storeAttributes(newValue)
         }
     }
