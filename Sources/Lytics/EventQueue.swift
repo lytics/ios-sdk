@@ -108,6 +108,7 @@ private extension EventQueue {
 extension EventQueue {
     static func live(
         logger: LyticsLogger,
+        apiToken: String,
         configuration: LyticsConfiguration,
         upload: @escaping ([Request<DataUploadResponse>]) async -> Void
     ) -> EventQueue {
@@ -116,7 +117,7 @@ extension EventQueue {
             maxQueueSize: configuration.maxQueueSize,
             uploadInterval: configuration.uploadInterval,
             requestBuilder: .live(
-                apiKey: configuration.apiKey,
+                apiKey: apiToken,
                 dryRun: configuration.enableSandbox),
             upload: upload)
     }
