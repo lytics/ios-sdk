@@ -75,6 +75,11 @@ public final class Lytics {
             return
         }
 
+        guard apiToken.isNotEmpty else {
+            assertionFailure("Lytics must be started with a non-empty API token")
+            return
+        }
+
         var configuration = LyticsConfiguration()
         configure(&configuration)
 
