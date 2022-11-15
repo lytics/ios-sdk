@@ -76,6 +76,13 @@ public final class Lytics {
         var configuration = LyticsConfiguration()
         configure(&configuration)
 
+        if configuration.anonymousIdentityKey.isEmpty {
+            configuration.anonymousIdentityKey = Constants.defaultAnonymousIdentityKey
+        }
+        if configuration.primaryIdentityKey.isEmpty {
+            configuration.primaryIdentityKey = Constants.defaultPrimaryIdentityKey
+        }
+
         logger.logLevel = configuration.logLevel
 
         userManager = UserManager.live(configuration: configuration)
