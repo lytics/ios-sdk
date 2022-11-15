@@ -39,7 +39,7 @@ extension DataUploadRequestBuilder {
                         requests.append(
                             requestBuilder.dataUpload(
                                 stream: element.key,
-                                dryrun: dryRun,
+                                dryrun: dryRun == true ? true : nil,
                                 data: data))
                     }
                 }
