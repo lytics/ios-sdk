@@ -13,6 +13,7 @@ final class UserManagerTests: XCTestCase {
     let expectationTimeout: TimeInterval = 0.1
 
     func testUpdate() async throws {
+        let anonymousIdentityKey = "_uid"
         let a = 1
         let b = "2"
 
@@ -26,6 +27,7 @@ final class UserManagerTests: XCTestCase {
 
         let sut = UserManager(
             encoder: .init(),
+            idProvider: { Mock.uuidString },
             storage: storage)
 
         let firstResult = try await sut.update(
@@ -37,6 +39,7 @@ final class UserManagerTests: XCTestCase {
             firstResult,
             LyticsUser(
                 identifiers: [
+                    anonymousIdentityKey: Mock.uuidString,
                     "email": User1.email
                 ])
         )
@@ -50,6 +53,7 @@ final class UserManagerTests: XCTestCase {
             secondResult,
             LyticsUser(
                 identifiers: [
+                    anonymousIdentityKey: Mock.uuidString,
                     "email": User1.email,
                     "userID": User1.userID
                 ])
@@ -64,6 +68,7 @@ final class UserManagerTests: XCTestCase {
             thirdResult,
             LyticsUser(
                 identifiers: [
+                    anonymousIdentityKey: Mock.uuidString,
                     "email": User1.email,
                     "userID": User1.userID,
                     "nested": [
@@ -85,6 +90,7 @@ final class UserManagerTests: XCTestCase {
             fourthResult,
             LyticsUser(
                 identifiers: [
+                    anonymousIdentityKey: Mock.uuidString,
                     "email": User1.email,
                     "userID": User1.userID,
                     "nested": [
@@ -103,7 +109,7 @@ final class UserManagerTests: XCTestCase {
         var storedIdentifiers: [String: Any]!
         let storeExpectation = expectation(description: "Identifiers were stored")
         let storage = UserStorage.mock(
-            identifiers: { [:] },
+            identifiers: { [Constants.defaultAnonymousIdentityKey: Mock.uuidString] },
             storeIdentifiers: { identifiers in
                 storedIdentifiers = identifiers
                 storeExpectation.fulfill()
@@ -155,9 +161,10 @@ final class UserManagerTests: XCTestCase {
     func testCreateIdentifiersOnInit() async throws {
         let anonymousIdentityKey = "id"
 
+        var storedIdentifiers: [String: Any]? = nil
         let storage = UserStorage.mock(
-            identifiers: { nil }
-        )
+            identifiers: { storedIdentifiers },
+            storeIdentifiers: { storedIdentifiers = $0 })
 
         let sut = UserManager(
             configuration: .init(anonymousIdentityKey: anonymousIdentityKey),
@@ -167,5 +174,6 @@ final class UserManagerTests: XCTestCase {
 
         let identifiers = await sut.identifiers as! [String: String]
         XCTAssertEqual(identifiers, [anonymousIdentityKey: Mock.uuidString])
+        XCTAssertEqual(storedIdentifiers?[anonymousIdentityKey]! as! String, Mock.uuidString)
     }
 }
