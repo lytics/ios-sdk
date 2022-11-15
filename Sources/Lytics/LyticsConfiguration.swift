@@ -16,10 +16,10 @@ public struct LyticsConfiguration: Equatable {
     public var defaultStream: String = Constants.defaultStream
 
     /// The key that represents the core identifier to be used in api calls.
-    public var primaryIdentityKey: String = "_uid"
+    public var primaryIdentityKey: String = Constants.defaultPrimaryIdentityKey
 
     /// The key which we use to store the anonymous identifier.
-    public var anonymousIdentityKey: String = "_uid"
+    public var anonymousIdentityKey: String = Constants.defaultAnonymousIdentityKey
 
     /// A Boolean value indicating whether application lifecycle events should be tracked automatically.
     public var trackApplicationLifecycleEvents: Bool = false
