@@ -83,6 +83,47 @@ final class DataUploadRequestBuilderTests: XCTestCase {
         let last = array.last!
         assertOnEvents(first: first, last: last)
     }
+
+    func testEnableSandbox() throws {
+        let events: [String: [any StreamEvent]] = [
+            Stream.one: [
+                Mock.payload(
+                    stream: Stream.one,
+                    timestamp: Timestamp.one,
+                    sessionDidStart: 1,
+                    name: Name.one,
+                    event: IdentityEvent(
+                        identifiers: User1.identifiers,
+                        attributes: User1.attributes)),
+            ]
+        ]
+
+        let sut = DataUploadRequestBuilder.live(apiKey: User1.apiKey, dryRun: true)
+        let requests = try sut.requests(events)
+
+        let dryRunParam = requests.first!.parameters?.first(where: { $0.name == "dryrun" })!
+        XCTAssertEqual(dryRunParam?.value, "true")
+    }
+
+    func testDisableSandbox() throws {
+        let events: [String: [any StreamEvent]] = [
+            Stream.one: [
+                Mock.payload(
+                    stream: Stream.one,
+                    timestamp: Timestamp.one,
+                    sessionDidStart: 1,
+                    name: Name.one,
+                    event: IdentityEvent(
+                        identifiers: User1.identifiers,
+                        attributes: User1.attributes)),
+            ]
+        ]
+
+        let sut = DataUploadRequestBuilder.live(apiKey: User1.apiKey)
+        let requests = try sut.requests(events)
+
+        XCTAssertNil(requests.first!.parameters)
+    }
 }
 
  // MARK: - Helpers
