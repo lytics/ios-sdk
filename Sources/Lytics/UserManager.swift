@@ -155,7 +155,7 @@ private extension UserManager {
     ///   - anonymousIdentityKey: The key for the anonymous identifier.
     ///   - storage: The user storage.
     ///   - idProvider: The identifier provider.
-    private static func ensure(anonymousIdentityKey: String, in storage: UserStorage, idProvider: () -> String) {
+    static func ensure(anonymousIdentityKey: String, in storage: UserStorage, idProvider: () -> String) {
         var identifiers = storage.identifiers() ?? [:]
         if identifiers[anonymousIdentityKey] == nil {
             identifiers[anonymousIdentityKey] = idProvider()
