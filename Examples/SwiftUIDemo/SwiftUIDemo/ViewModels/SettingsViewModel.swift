@@ -11,6 +11,10 @@ import Lytics
 
 final class SettingsViewModel: ObservableObject {
 
+    func dispatch() {
+        Lytics.shared.dispatch()
+    }
+
     func reset() {
         Lytics.shared.reset()
     }
