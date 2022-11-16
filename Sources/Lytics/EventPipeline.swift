@@ -76,7 +76,9 @@ struct EventPipeline: EventPipelineProtocol {
 
         await eventQueue.enqueue(
             Payload(
-                stream: stream.nonEmpty(default: configuration.defaultStream),
+                stream: stream
+                    .nonEmpty(default: configuration.defaultStream)
+                    .replacingOccurrences(of: " ", with: "_"),
                 timestamp: timestamp,
                 sessionDidStart: sessionDidStart(timestamp) ? 1 : nil,
                 name: name,
