@@ -12,7 +12,7 @@ import SwiftUI
 @main
 struct SwiftUIDemoApp: App {
     init() {
-        Lytics.shared.start(apiToken: "at.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx") { configuration in
+        Lytics.shared.start(apiToken: Secrets.apiToken) { configuration in
             configuration.maxQueueSize = 5
             configuration.logLevel = .debug
             // ...
