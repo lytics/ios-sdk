@@ -9,7 +9,7 @@
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
 
-API_TOKEN = "at.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+API_TOKEN = at.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 DEVELOPMENT_TEAM = BXV9QFGNQ8
 ORGANIZATION_IDENTIFIER = com.lytics
 
@@ -26,3 +26,5 @@ ORGANIZATION_IDENTIFIER = com.lytics
 // the project.
 
 #include? "../DeveloperConfig.xcconfig"
+
+PRODUCT_BUNDLE_IDENTIFIER = $(ORGANIZATION_IDENTIFIER).SwiftUIDemo
