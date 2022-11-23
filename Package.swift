@@ -38,7 +38,6 @@ let package = Package(
                 permissions: [
                     .writeToPackageDirectory(reason: "This command write the new `Version.swift` to the source root.")
                 ]
-            )
-        ),
+            ))
     ]
 )

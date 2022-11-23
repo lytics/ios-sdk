@@ -4,8 +4,8 @@
 //  Created by Mathew Gacy on 11/20/22.
 //
 
-import PackagePlugin
 import Foundation
+import PackagePlugin
 
 enum Constants {
     static let versionFile = "Version.swift"

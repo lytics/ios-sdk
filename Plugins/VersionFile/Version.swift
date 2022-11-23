@@ -222,22 +222,22 @@ import Foundation
 
 /// A struct representing a semver version.
 public struct Version: Sendable {
-    
+
     /// The major version.
     public let major: Int
-    
+
     /// The minor version.
     public let minor: Int
-    
+
     /// The patch version.
     public let patch: Int
-    
+
     /// The pre-release identifier.
     public let prereleaseIdentifiers: [String]
-    
+
     /// The build metadata.
     public let buildMetadataIdentifiers: [String]
-    
+
     /// Creates a version object.
     public init(
         _ major: Int,
@@ -274,7 +274,7 @@ public enum VersionError: Error, CustomStringConvertible {
     /// Some or all of the build metadata identifiers contain characters other than alpha-numerics and hyphens.
     /// - Parameter identifiers: The build metadata identifiers in the version string.
     case nonAlphaNumerHyphenalBuildMetadataIdentifiers(_ identifiers: [String])
-    
+
     public var description: String {
         switch self {
         case let .nonASCIIVersionString(versionString):
@@ -318,18 +318,18 @@ extension Version {
         guard versionString.allSatisfy(\.isASCII) else {
             throw VersionError.nonASCIIVersionString(versionString)
         }
-        
+
         let metadataDelimiterIndex = versionString.firstIndex(of: "+")
         // SemVer 2.0.0 requires that pre-release identifiers come before build metadata identifiers
         let prereleaseDelimiterIndex = versionString[..<(metadataDelimiterIndex ?? versionString.endIndex)].firstIndex(of: "-")
-        
+
         let versionCore = versionString[..<(prereleaseDelimiterIndex ?? metadataDelimiterIndex ?? versionString.endIndex)]
         let versionCoreIdentifiers = versionCore.split(separator: ".", omittingEmptySubsequences: false)
-        
+
         guard versionCoreIdentifiers.count == 3 || (usesLenientParsing && versionCoreIdentifiers.count == 2) else {
             throw VersionError.invalidVersionCoreIdentifiersCount(versionCoreIdentifiers.map { String($0) }, usesLenientParsing: usesLenientParsing)
         }
-        
+
         guard
             // Major, minor, and patch versions must be ASCII numbers, according to the semantic versioning standard.
             // Converting each identifier from a substring to an integer doubles as checking if the identifiers have non-numeric characters.
@@ -339,11 +339,11 @@ extension Version {
         else {
             throw VersionError.nonNumericalOrEmptyVersionCoreIdentifiers(versionCoreIdentifiers.map { String($0) })
         }
-        
+
         self.major = major
         self.minor = minor
         self.patch = patch
-        
+
         if let prereleaseDelimiterIndex = prereleaseDelimiterIndex {
             let prereleaseStartIndex = versionString.index(after: prereleaseDelimiterIndex)
             let prereleaseIdentifiers = versionString[prereleaseStartIndex..<(metadataDelimiterIndex ?? versionString.endIndex)].split(separator: ".", omittingEmptySubsequences: false)
@@ -354,7 +354,7 @@ extension Version {
         } else {
             self.prereleaseIdentifiers = []
         }
-        
+
         if let metadataDelimiterIndex = metadataDelimiterIndex {
             let metadataStartIndex = versionString.index(after: metadataDelimiterIndex)
             let buildMetadataIdentifiers = versionString[metadataStartIndex...].split(separator: ".", omittingEmptySubsequences: false)
@@ -369,42 +369,42 @@ extension Version {
 }
 
 extension Version: Comparable, Hashable {
-    
+
     func isEqualWithoutPrerelease(_ other: Version) -> Bool {
         return major == other.major && minor == other.minor && patch == other.patch
     }
-    
+
     // Although `Comparable` inherits from `Equatable`, it does not provide a new default implementation of `==`, but instead uses `Equatable`'s default synthesised implementation. The compiler-synthesised `==`` is composed of [member-wise comparisons](https://github.com/apple/swift-evolution/blob/main/proposals/0185-synthesize-equatable-hashable.md#implementation-details), which leads to a false `false` when 2 semantic versions differ by only their build metadata identifiers, contradicting SemVer 2.0.0's [comparison rules](https://semver.org/#spec-item-10).
     @inlinable
     public static func == (lhs: Version, rhs: Version) -> Bool {
         !(lhs < rhs) && !(lhs > rhs)
     }
-    
+
     public static func < (lhs: Version, rhs: Version) -> Bool {
         let lhsComparators = [lhs.major, lhs.minor, lhs.patch]
         let rhsComparators = [rhs.major, rhs.minor, rhs.patch]
-        
+
         if lhsComparators != rhsComparators {
             return lhsComparators.lexicographicallyPrecedes(rhsComparators)
         }
-        
+
         guard lhs.prereleaseIdentifiers.count > 0 else {
             return false // Non-prerelease lhs >= potentially prerelease rhs
         }
-        
+
         guard rhs.prereleaseIdentifiers.count > 0 else {
             return true // Prerelease lhs < non-prerelease rhs
         }
-        
+
         for (lhsPrereleaseIdentifier, rhsPrereleaseIdentifier) in zip(lhs.prereleaseIdentifiers, rhs.prereleaseIdentifiers) {
             if lhsPrereleaseIdentifier == rhsPrereleaseIdentifier {
                 continue
             }
-            
+
             // Check if either of the 2 pre-release identifiers is numeric.
             let lhsNumericPrereleaseIdentifier = Int(lhsPrereleaseIdentifier)
             let rhsNumericPrereleaseIdentifier = Int(rhsPrereleaseIdentifier)
-            
+
             if let lhsNumericPrereleaseIdentifier = lhsNumericPrereleaseIdentifier,
                let rhsNumericPrereleaseIdentifier = rhsNumericPrereleaseIdentifier {
                 return lhsNumericPrereleaseIdentifier < rhsNumericPrereleaseIdentifier
@@ -416,10 +416,10 @@ extension Version: Comparable, Hashable {
                 return lhsPrereleaseIdentifier < rhsPrereleaseIdentifier
             }
         }
-        
+
         return lhs.prereleaseIdentifiers.count < rhs.prereleaseIdentifiers.count
     }
-    
+
     // Custom `Equatable` conformance leads to custom `Hashable` conformance.
     // [SR-11588](https://bugs.swift.org/browse/SR-11588)
     public func hash(into hasher: inout Hasher) {
@@ -462,18 +462,18 @@ extension Version {
 }
 
 extension Version: ExpressibleByStringLiteral {
-    
+
     public init(stringLiteral value: String) {
         guard let version = Version(value) else {
             fatalError("\(value) is not a valid version")
         }
         self = version
     }
-    
+
     public init(extendedGraphemeClusterLiteral value: String) {
         self.init(stringLiteral: value)
     }
-    
+
     public init(unicodeScalarLiteral value: String) {
         self.init(stringLiteral: value)
     }
@@ -494,17 +494,17 @@ extension Version: Codable {
         var container = encoder.singleValueContainer()
         try container.encode(description)
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let string = try container.decode(String.self)
-        
+
         guard let version = Version(string) else {
             throw DecodingError.dataCorrupted(.init(
                 codingPath: decoder.codingPath,
                 debugDescription: "Invalid version string \(string)"))
         }
-        
+
         self.init(version)
     }
 }
@@ -545,7 +545,7 @@ extension Range where Bound == Version {
             if lowerBound.prereleaseIdentifiers.isEmpty && upperBound.prereleaseIdentifiers.isEmpty {
                 return false
             }
-            
+
             // At this point, one of the bounds contains prerelease identifiers.
             //
             // Reject 2.0.0-alpha when upper bound is 2.0.0.
@@ -553,12 +553,13 @@ extension Range where Bound == Version {
                 return false
             }
         }
-        
+
         if lowerBound == version {
             return true
         }
-        
+
         // Otherwise, apply normal contains rules.
         return version >= lowerBound && version < upperBound
     }
 }
+
