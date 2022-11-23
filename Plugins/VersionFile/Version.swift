@@ -218,6 +218,8 @@
     otherwise be required by Sections 4(a), 4(b) and 4(d) of the License.
 */
 
+// swiftlint:disable all`
+
 import Foundation
 
 /// A struct representing a semver version.
@@ -562,4 +564,3 @@ extension Range where Bound == Version {
         return version >= lowerBound && version < upperBound
     }
 }
-
