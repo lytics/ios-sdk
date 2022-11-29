@@ -66,15 +66,24 @@ public final class Lytics {
     }
 
     /// Configure this Lytics SDK instance.
-    /// - Parameter configuration: A closure enabling mutation of the configuration.
-    public func start(_ configure: (inout LyticsConfiguration) -> Void) {
+    /// - Parameters:
+    ///   - apiToken: An Lytics account API token.
+    ///   - configure: A closure enabling mutation of the configuration.
+    public func start(apiToken: String, configure: ((inout LyticsConfiguration) -> Void)? = nil) {
         guard !hasStarted else {
             logger.error("Lytics instance has already been started")
             return
         }
 
+        guard apiToken.isNotEmpty else {
+            assertionFailure("Lytics must be started with a non-empty API token")
+            return
+        }
+
         var configuration = LyticsConfiguration()
-        configure(&configuration)
+        if let configure {
+            configure(&configuration)
+        }
 
         if configuration.anonymousIdentityKey.isEmpty {
             configuration.anonymousIdentityKey = Constants.defaultAnonymousIdentityKey
@@ -90,6 +99,7 @@ public final class Lytics {
 
         eventPipeline = EventPipeline.live(
             logger: logger,
+            apiToken: apiToken,
             configuration: configuration)
 
         appEventTracker = AppEventTracker.live(

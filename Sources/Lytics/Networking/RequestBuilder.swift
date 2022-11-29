@@ -22,15 +22,15 @@ struct RequestBuilder {
     }
 
     private let baseURL: URL
-    private let apiKey: String
+    private let apiToken: String
 
     private var authHeader: HeaderField {
-        .authorization(apiKey)
+        .authorization(apiToken)
     }
 
-    init(baseURL: URL, apiKey: String) {
+    init(baseURL: URL, apiToken: String) {
         self.baseURL = baseURL
-        self.apiKey = apiKey
+        self.apiToken = apiToken
     }
 
     /// Upload event to API.
@@ -58,8 +58,8 @@ struct RequestBuilder {
 }
 
 extension RequestBuilder {
-    static func live(apiKey: String) -> Self {
-        .init(baseURL: URL(string: "https://api.lytics.io")!, apiKey: apiKey)
+    static func live(apiToken: String) -> Self {
+        .init(baseURL: URL(string: "https://api.lytics.io")!, apiToken: apiToken)
     }
 }
 

@@ -105,6 +105,7 @@ struct EventPipeline: EventPipelineProtocol {
 extension EventPipeline {
     static func live(
         logger: LyticsLogger,
+        apiToken: String,
         configuration: LyticsConfiguration
     ) -> Self {
         var requestCache: RequestCache?
@@ -129,6 +130,7 @@ extension EventPipeline {
             },
             eventQueue: EventQueue.live(
                 logger: logger,
+                apiToken: apiToken,
                 configuration: configuration,
                 upload: { await uploader.upload($0) }),
             uploader: uploader,

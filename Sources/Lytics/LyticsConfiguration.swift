@@ -9,9 +9,6 @@ import Foundation
 /// Lytics SDK configuration.
 public struct LyticsConfiguration: Equatable {
 
-    /// Lytics account API token.
-    public var apiKey: String = ""
-
     /// Default stream name to which events will be sent if not explicitly set for an event.
     public var defaultStream: String = Constants.defaultStream
 

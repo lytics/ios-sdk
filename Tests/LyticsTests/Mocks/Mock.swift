@@ -9,7 +9,7 @@ import AnyCodable
 import Foundation
 
 enum Mock {
-    static let apiKey = "at.xxxx"
+    static let apiToken = "at.xxxx"
 
     static let consentEvent = ConsentEvent(
         identifiers: User1.identifiers,
