@@ -58,8 +58,8 @@ struct RequestBuilder {
 }
 
 extension RequestBuilder {
-    static func live(apiToken: String) -> Self {
-        .init(baseURL: URL(string: "https://api.lytics.io")!, apiToken: apiToken)
+    static func live(baseURL: URL, apiToken: String) -> Self {
+        .init(baseURL: baseURL, apiToken: apiToken)
     }
 }
 

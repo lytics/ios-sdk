@@ -118,6 +118,7 @@ extension EventQueue {
             uploadInterval: configuration.uploadInterval,
             requestBuilder: .live(
                 apiToken: apiToken,
+                baseURL: configuration.apiURL,
                 dryRun: configuration.enableSandbox),
             upload: upload)
     }

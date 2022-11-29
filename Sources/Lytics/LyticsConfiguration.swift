@@ -9,6 +9,12 @@ import Foundation
 /// Lytics SDK configuration.
 public struct LyticsConfiguration: Equatable {
 
+    /// The base URL to which requests will be made.
+    public var baseURL: URL = Constants.defaultBaseURL
+
+    /// Additional path components for the API.
+    public var apiPath: String = Constants.defaultAPIPath
+
     /// Default stream name to which events will be sent if not explicitly set for an event.
     public var defaultStream: String = Constants.defaultStream
 
@@ -55,4 +61,12 @@ public struct LyticsConfiguration: Equatable {
 
     /// Set the logging level of the SDK.
     public var logLevel: LogLevel = .error
+
+    var apiURL: URL {
+        if apiPath.isEmpty {
+            return baseURL
+        } else {
+            return baseURL.appendingPathComponent(apiPath, isDirectory: false)
+        }
+    }
 }
