@@ -95,4 +95,24 @@ final class EventPipelineTests: XCTestCase {
         await sut.event(stream: nil, timestamp: 0, name: nil, event: Mock.event)
         XCTAssertNil(enqueuedEvent)
     }
+
+    func testNoSpacesInStreamName() async throws {
+        var enqueuedEvent: StreamEvent!
+        let eventQueue = EventQueueMock(onEnqueue: { event in
+            enqueuedEvent = event
+        })
+
+        let sut = EventPipeline(
+            configuration: .init(
+                defaultStream: Constants.defaultStream,
+                requireConsent: false),
+            logger: .mock,
+            sessionDidStart: { _ in false },
+            eventQueue: eventQueue,
+            uploader: UploaderMock<DataUploadResponse>(),
+            userSettings: .optedOutMock)
+
+        await sut.event(stream: "has empty spaces", timestamp: 0, name: nil, event: Mock.event)
+        XCTAssertEqual(enqueuedEvent.stream, "has_empty_spaces")
+    }
 }
