@@ -13,16 +13,14 @@ API_TOKEN = at.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 DEVELOPMENT_TEAM = BXV9QFGNQ8
 ORGANIZATION_IDENTIFIER = com.lytics
 
-// Developers can locally override the Xcode settings for by creating a
-// `DeveloperSettings.xcconfig` file locally at the appropriate path.
-//
-// Make a ../DeveloperConfig.xcconfig file with the following:
+// Developers can locally override the Xcode settings by creating a build configuration
+// file at `Examples/DeveloperConfig.xcconfig` with the following:
 //
 //    API_TOKEN = <Your Token>
 //    DEVELOPMENT_TEAM = <Your Team ID>
 //    ORGANIZATION_IDENTIFIER = <Your Domain Name Reversed>
 //
-// And you should be able to build without code signing errors and without modifying
+// You should then be able to build without code signing errors and without modifying
 // the project.
 
 #include? "../DeveloperConfig.xcconfig"
