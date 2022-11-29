@@ -115,7 +115,9 @@ extension EventQueue {
             logger: logger,
             maxQueueSize: configuration.maxQueueSize,
             uploadInterval: configuration.uploadInterval,
-            requestBuilder: .live(apiKey: configuration.apiKey),
+            requestBuilder: .live(
+                apiKey: configuration.apiKey,
+                dryRun: configuration.enableSandbox),
             upload: upload)
     }
 }
