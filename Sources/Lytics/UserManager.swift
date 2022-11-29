@@ -15,10 +15,10 @@ actor UserManager: UserManaging {
     struct Configuration: Equatable {
 
         /// The key that represents the core identifier to be used in api calls.
-        public var primaryIdentityKey: String = "_uid"
+        var primaryIdentityKey: String = Constants.defaultPrimaryIdentityKey
 
         /// The key which we use to store the anonymous identifier.
-        public var anonymousIdentityKey: String = "_uid"
+        var anonymousIdentityKey: String = Constants.defaultAnonymousIdentityKey
     }
 
     private let configuration: Configuration
@@ -47,7 +47,7 @@ actor UserManager: UserManaging {
         get {
             storage.attributes()
         }
-        set  {
+        set {
             storage.storeAttributes(newValue)
         }
     }
@@ -65,6 +65,11 @@ actor UserManager: UserManaging {
         idProvider: @escaping () -> String = { UUID().uuidString },
         storage: UserStorage
     ) {
+        Self.ensure(
+            anonymousIdentityKey: configuration.anonymousIdentityKey,
+            in: storage,
+            idProvider: idProvider)
+
         self.configuration = configuration
         self.encoder = encoder
         self.idProvider = idProvider
@@ -144,6 +149,19 @@ actor UserManager: UserManaging {
 }
 
 private extension UserManager {
+
+    /// Stores a value for the anonymous identity key in the given storage if one does not already exist.
+    /// - Parameters:
+    ///   - anonymousIdentityKey: The key for the anonymous identifier.
+    ///   - storage: The user storage.
+    ///   - idProvider: The identifier provider.
+    static func ensure(anonymousIdentityKey: String, in storage: UserStorage, idProvider: () -> String) {
+        var identifiers = storage.identifiers() ?? [:]
+        if identifiers[anonymousIdentityKey] == nil {
+            identifiers[anonymousIdentityKey] = idProvider()
+            storage.storeIdentifiers(identifiers)
+        }
+    }
 
     /// Returns a new identifier dictionary with an anonymous identifier.
     func makeAnonymousIdentifiers() -> [String: Any] {
