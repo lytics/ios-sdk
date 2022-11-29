@@ -53,6 +53,9 @@ public struct LyticsConfiguration: Equatable {
     /// processed in an alternative way or skipped entirely upon delivery to the Lytics collection APIs.
     public var enableSandbox: Bool = false
 
+    /// A Boolean value indicating whether a user must explicitly opt-in to event tracking.
+    public var requireConsent: Bool = false
+
     /// Set the logging level of the SDK.
     public var logLevel: LogLevel = .error
 }
