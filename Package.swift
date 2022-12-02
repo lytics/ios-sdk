@@ -19,7 +19,7 @@ let package = Package(
             from: "0.6.6"),
         .package(
             url: "https://github.com/mobelux/swift-version-file-plugin",
-            branch: "feature/initial"),
+            from: "0.1.0")
     ],
     targets: [
         .target(
