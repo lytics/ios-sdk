@@ -16,8 +16,10 @@ let package = Package(
     dependencies: [
         .package(
             url: "https://github.com/Flight-School/AnyCodable",
-            from: "0.6.6"
-        ),
+            from: "0.6.6"),
+        .package(
+            url: "https://github.com/mobelux/swift-version-file-plugin",
+            branch: "feature/initial"),
     ],
     targets: [
         .target(
@@ -27,17 +29,6 @@ let package = Package(
             ]),
         .testTarget(
             name: "LyticsTests",
-            dependencies: ["Lytics"]),
-        .plugin(
-            name: "VersionFile",
-            capability: .command(
-                intent: .custom(
-                    verb: "version-file",
-                    description: "Generates a `Version.swift` file"
-                ),
-                permissions: [
-                    .writeToPackageDirectory(reason: "This command write the new `Version.swift` to the source root.")
-                ]
-            ))
+            dependencies: ["Lytics"])
     ]
 )

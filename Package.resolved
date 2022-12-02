@@ -8,6 +8,15 @@
         "revision" : "56901f2af3625b38924d488b612e95fe8846ee9b",
         "version" : "0.6.6"
       }
+    },
+    {
+      "identity" : "swift-version-file-plugin",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mobelux/swift-version-file-plugin",
+      "state" : {
+        "branch" : "feature/initial",
+        "revision" : "895f472df6029548e4564a7ebc216c35640b4e1c"
+      }
     }
   ],
   "version" : 2
