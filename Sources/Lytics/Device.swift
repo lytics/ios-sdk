@@ -17,9 +17,22 @@ struct Device: Encodable, Equatable {
 
     /// The device model name.
     var name: String {
-        return UIDevice.current.name
+        UIDevice.current.name
     }
 
     @usableFromInline
     init() {}
+
+    @usableFromInline
+    func encode(to encoder: Encoder) throws {
+        var container: KeyedEncodingContainer<CodingKeys> = encoder.container(keyedBy: CodingKeys.self)
+
+        try container.encode(self.osVersion, forKey: .osVersion)
+        try container.encode(self.name, forKey: .name)
+    }
+
+    private enum CodingKeys: CodingKey {
+        case osVersion
+        case name
+    }
 }
