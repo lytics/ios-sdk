@@ -17,13 +17,13 @@ public final class Lytics {
     private var appEventTracker: AppEventTracking!
 
     @usableFromInline
-    internal private(set) var logger: LyticsLogger = .live
+    internal private(set) var logger: LyticsLogger
 
     @usableFromInline
     internal private(set) var userManager: UserManaging!
 
     @usableFromInline
-    internal private(set) var timestampProvider: () -> Millisecond = { Date().timeIntervalSince1970.milliseconds }
+    internal private(set) var timestampProvider: () -> Millisecond
 
     @usableFromInline
     internal private(set) var appTrackingTransparency: AppTrackingTransparency!
@@ -65,7 +65,24 @@ public final class Lytics {
         }
     }
 
-    /// Configure this Lytics SDK instance.
+    /// Creates a Lytics instance.
+    ///
+    /// Warning: You must call ``start(apiToken:configure:)`` before using the created instance.
+    public convenience init() {
+        self.init(
+            logger: .live,
+            timestampProvider: { Date().timeIntervalSince1970.milliseconds })
+    }
+
+    internal init(
+        logger: LyticsLogger,
+        timestampProvider: @escaping () -> Millisecond
+    ) {
+        self.logger = logger
+        self.timestampProvider = timestampProvider
+    }
+
+    /// Configures this Lytics SDK instance.
     /// - Parameters:
     ///   - apiToken: An Lytics account API token.
     ///   - configure: A closure enabling mutation of the configuration.
