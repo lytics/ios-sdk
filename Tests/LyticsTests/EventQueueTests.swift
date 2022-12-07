@@ -69,10 +69,17 @@ final class EventQueueTests: XCTestCase {
     func testManualFlush() async throws {
         let buildExpectation = expectation(description: "Requests built")
 
+        var uploadedRequests: [Request<DataUploadResponse>]!
+        let uploadExpectation = expectation(description: "Request uploaded")
+        let upload: ([Request<DataUploadResponse>]) async -> Void = { requests in
+            uploadedRequests = requests
+            uploadExpectation.fulfill()
+        }
+
         let requestBuilder = DataUploadRequestBuilder(
             requests: { _ in
                 buildExpectation.fulfill()
-                return []
+                return [Mock.request]
             })
 
         let sut = EventQueue(
@@ -80,14 +87,17 @@ final class EventQueueTests: XCTestCase {
             maxQueueSize: 10,
             uploadInterval: 10,
             requestBuilder: requestBuilder,
-            upload: { _ in })
+            upload: upload)
 
         await sut.enqueue(Mock.payload(event: Mock.consentEvent))
         await sut.flush()
 
         await waitForExpectations(timeout: Timeout.medium)
+        XCTAssertEqual(uploadedRequests, [Mock.request])
+
         let isEmpty = await sut.isEmpty
         XCTAssert(isEmpty)
+
         let eventCount = await sut.eventCount
         XCTAssertEqual(eventCount, 0)
     }

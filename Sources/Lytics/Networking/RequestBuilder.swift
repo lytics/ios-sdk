@@ -22,15 +22,15 @@ struct RequestBuilder {
     }
 
     private let baseURL: URL
-    private let apiKey: String
+    private let apiToken: String
 
     private var authHeader: HeaderField {
-        .authorization(apiKey)
+        .authorization(apiToken)
     }
 
-    init(baseURL: URL, apiKey: String) {
+    init(baseURL: URL, apiToken: String) {
         self.baseURL = baseURL
-        self.apiKey = apiKey
+        self.apiToken = apiToken
     }
 
     /// Upload event to API.
@@ -53,13 +53,13 @@ struct RequestBuilder {
         parameters.appendOrSet(timestampField.flatMap(QueryParameter.timestampField))
         parameters.appendOrSet(filename.flatMap(QueryParameter.filename))
 
-        return post(.dataUpload(stream), data: data)
+        return post(.dataUpload(stream), data: data, parameters: parameters)
     }
 }
 
 extension RequestBuilder {
-    static func live(apiKey: String) -> Self {
-        .init(baseURL: URL(string: "https://api.lytics.io")!, apiKey: apiKey)
+    static func live(baseURL: URL, apiToken: String) -> Self {
+        .init(baseURL: baseURL, apiToken: apiToken)
     }
 }
 
@@ -72,7 +72,7 @@ private extension RequestBuilder {
         .init(method: .get, url: url(for: route), headers: [authHeader])
     }
 
-    func post<T>(_ route: Route, data: Data, contentType: HeaderField.ContentType = .json) -> Request<T> {
-        .init(method: .post, url: url(for: route), headers: [.contentType(contentType), authHeader], body: data)
+    func post<T>(_ route: Route, data: Data, parameters: [QueryParameter]? = nil, contentType: HeaderField.ContentType = .json) -> Request<T> {
+        .init(method: .post, url: url(for: route), parameters: parameters, headers: [.contentType(contentType), authHeader], body: data)
     }
 }

@@ -9,7 +9,23 @@ import Foundation
 @usableFromInline
 /// An event pipeline.
 struct EventPipeline: EventPipelineProtocol {
-    private let defaultStream: String
+
+    /// Configurable `EventPipeline` properties.
+    struct Configuration: Equatable {
+
+        /// Default stream name to which events will be sent if not explicitly set for an event.
+        let defaultStream: String
+
+        /// A Boolean value indicating whether a user must explicitly opt-in to event tracking.
+        let requireConsent: Bool
+
+        init(defaultStream: String, requireConsent: Bool) {
+            self.defaultStream = defaultStream.isNotEmpty ? defaultStream : Constants.defaultStream
+            self.requireConsent = requireConsent
+        }
+    }
+
+    private let configuration: Configuration
     private let logger: LyticsLogger
     private let sessionDidStart: (Millisecond) -> Bool
     private let eventQueue: EventQueueing
@@ -23,14 +39,14 @@ struct EventPipeline: EventPipelineProtocol {
     }
 
     init(
-        defaultStream: String,
+        configuration: Configuration,
         logger: LyticsLogger,
         sessionDidStart: @escaping (Millisecond) -> Bool,
         eventQueue: EventQueueing,
         uploader: Uploading,
         userSettings: UserSettings
     ) {
-        self.defaultStream = defaultStream.isNotEmpty ? defaultStream : Constants.defaultStream
+        self.configuration = configuration
         self.logger = logger
         self.sessionDidStart = sessionDidStart
         self.eventQueue = eventQueue
@@ -51,14 +67,18 @@ struct EventPipeline: EventPipelineProtocol {
         name: String?,
         event: E
     ) async {
-        guard userSettings.getOptIn() else {
-            logger.info("User is not opted in; discarding event \(event)")
-            return
+        if configuration.requireConsent {
+            guard userSettings.getOptIn() else {
+                logger.info("User is not opted in; discarding event \(event)")
+                return
+            }
         }
 
         await eventQueue.enqueue(
             Payload(
-                stream: stream.nonEmpty(default: defaultStream),
+                stream: stream
+                    .nonEmpty(default: configuration.defaultStream)
+                    .replacingOccurrences(of: " ", with: "_"),
                 timestamp: timestamp,
                 sessionDidStart: sessionDidStart(timestamp) ? 1 : nil,
                 name: name,
@@ -87,6 +107,7 @@ struct EventPipeline: EventPipelineProtocol {
 extension EventPipeline {
     static func live(
         logger: LyticsLogger,
+        apiToken: String,
         configuration: LyticsConfiguration
     ) -> Self {
         var requestCache: RequestCache?
@@ -102,13 +123,16 @@ extension EventPipeline {
             maxRetryCount: configuration.maxRetryCount)
 
         return EventPipeline(
-            defaultStream: configuration.defaultStream,
+            configuration: Configuration(
+                defaultStream: configuration.defaultStream,
+                requireConsent: configuration.requireConsent),
             logger: logger,
             sessionDidStart: { timestamp in
                 SessionTracker.markInteraction(timestamp) > configuration.sessionDuration.milliseconds
             },
             eventQueue: EventQueue.live(
                 logger: logger,
+                apiToken: apiToken,
                 configuration: configuration,
                 upload: { await uploader.upload($0) }),
             uploader: uploader,

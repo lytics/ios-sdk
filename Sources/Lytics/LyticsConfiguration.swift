@@ -9,17 +9,20 @@ import Foundation
 /// Lytics SDK configuration.
 public struct LyticsConfiguration: Equatable {
 
-    /// Lytics account API token.
-    public var apiKey: String = ""
+    /// The base URL to which requests will be made.
+    public var baseURL: URL = Constants.defaultBaseURL
+
+    /// Additional path components for the API.
+    public var apiPath: String = Constants.defaultAPIPath
 
     /// Default stream name to which events will be sent if not explicitly set for an event.
     public var defaultStream: String = Constants.defaultStream
 
     /// The key that represents the core identifier to be used in api calls.
-    public var primaryIdentityKey: String = "_uid"
+    public var primaryIdentityKey: String = Constants.defaultPrimaryIdentityKey
 
     /// The key which we use to store the anonymous identifier.
-    public var anonymousIdentityKey: String = "_uid"
+    public var anonymousIdentityKey: String = Constants.defaultAnonymousIdentityKey
 
     /// A Boolean value indicating whether application lifecycle events should be tracked automatically.
     public var trackApplicationLifecycleEvents: Bool = false
@@ -53,6 +56,17 @@ public struct LyticsConfiguration: Equatable {
     /// processed in an alternative way or skipped entirely upon delivery to the Lytics collection APIs.
     public var enableSandbox: Bool = false
 
+    /// A Boolean value indicating whether a user must explicitly opt-in to event tracking.
+    public var requireConsent: Bool = false
+
     /// Set the logging level of the SDK.
     public var logLevel: LogLevel = .error
+
+    var apiURL: URL {
+        if apiPath.isEmpty {
+            return baseURL
+        } else {
+            return baseURL.appendingPathComponent(apiPath, isDirectory: false)
+        }
+    }
 }

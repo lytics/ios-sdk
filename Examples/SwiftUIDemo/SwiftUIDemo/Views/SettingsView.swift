@@ -20,6 +20,14 @@ struct SettingsView: View {
                 label: {
                     Text("Reset Demo App")
                 })
+
+            Button(
+                action: {
+                    viewModel.dispatch()
+                },
+                label: {
+                    Text("Dispatch Events")
+                })
         }
     }
 }
