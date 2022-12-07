@@ -18,6 +18,7 @@
 		C94BF00529096EA3007E1C25 /* Task+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94BF00429096EA3007E1C25 /* Task+Utils.swift */; };
 		C94BF00729096F00007E1C25 /* RemoteImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94BF00629096F00007E1C25 /* RemoteImage.swift */; };
 		C94BF00929097480007E1C25 /* Color+Assets.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94BF00829097480007E1C25 /* Color+Assets.swift */; };
+		C9A4146F29255EDA001D2C46 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A4146E29255EDA001D2C46 /* Configuration.swift */; };
 		C9DC54F228EDC4D800EAD25E /* DemoIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DC54EF28EDC4D800EAD25E /* DemoIdentity.swift */; };
 		C9DC54F328EDC4D800EAD25E /* DemoConsent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DC54F028EDC4D800EAD25E /* DemoConsent.swift */; };
 		C9DC54F428EDC4D800EAD25E /* DemoCart.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DC54F128EDC4D800EAD25E /* DemoCart.swift */; };
@@ -83,6 +84,9 @@
 		C94BF00429096EA3007E1C25 /* Task+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Task+Utils.swift"; sourceTree = "<group>"; };
 		C94BF00629096F00007E1C25 /* RemoteImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImage.swift; sourceTree = "<group>"; };
 		C94BF00829097480007E1C25 /* Color+Assets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Assets.swift"; sourceTree = "<group>"; };
+		C9A4146C292558E0001D2C46 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		C9A4146D29255A94001D2C46 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		C9A4146E29255EDA001D2C46 /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		C9DC54EF28EDC4D800EAD25E /* DemoIdentity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DemoIdentity.swift; sourceTree = "<group>"; };
 		C9DC54F028EDC4D800EAD25E /* DemoConsent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DemoConsent.swift; sourceTree = "<group>"; };
 		C9DC54F128EDC4D800EAD25E /* DemoCart.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DemoCart.swift; sourceTree = "<group>"; };
@@ -145,6 +149,7 @@
 		C94BDF2B28E923A9008FB4DE = {
 			isa = PBXGroup;
 			children = (
+				C9A4146D29255A94001D2C46 /* Config.xcconfig */,
 				C94BDF3628E923A9008FB4DE /* SwiftUIDemo */,
 				C94BDF4728E923AB008FB4DE /* SwiftUIDemoTests */,
 				C94BDF5128E923AB008FB4DE /* SwiftUIDemoUITests */,
@@ -167,7 +172,9 @@
 		C94BDF3628E923A9008FB4DE /* SwiftUIDemo */ = {
 			isa = PBXGroup;
 			children = (
+				C9A4146C292558E0001D2C46 /* Info.plist */,
 				C94BDF3728E923A9008FB4DE /* SwiftUIDemoApp.swift */,
+				C9A4146E29255EDA001D2C46 /* Configuration.swift */,
 				C9DE3E4B2908463A0047F502 /* Constants.swift */,
 				C9DE3E3D290734AB0047F502 /* EventService.swift */,
 				C94BF00229096E86007E1C25 /* ImageLoader.swift */,
@@ -470,6 +477,7 @@
 				C9DE3E1F290717F30047F502 /* TabContainerView.swift in Sources */,
 				C9DE3E3C29072F410047F502 /* EventCard.swift in Sources */,
 				C94BF00529096EA3007E1C25 /* Task+Utils.swift in Sources */,
+				C9A4146F29255EDA001D2C46 /* Configuration.swift in Sources */,
 				C9DE3E5029085BD80047F502 /* ChecklistToggleStyle.swift in Sources */,
 				C94BF00329096E86007E1C25 /* ImageLoader.swift in Sources */,
 				C9DC54F428EDC4D800EAD25E /* DemoCart.swift in Sources */,
@@ -513,6 +521,7 @@
 /* Begin XCBuildConfiguration section */
 		C94BDF5628E923AB008FB4DE /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C9A4146D29255A94001D2C46 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -573,6 +582,7 @@
 		};
 		C94BDF5728E923AB008FB4DE /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C9A4146D29255A94001D2C46 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -636,6 +646,7 @@
 				DEVELOPMENT_TEAM = NYT8K4678F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SwiftUIDemo/Info.plist;
 				INFOPLIST_KEY_NSUserTrackingUsageDescription = "Your data will be used to deliver personalized ads to you.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -666,6 +677,7 @@
 				DEVELOPMENT_TEAM = NYT8K4678F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SwiftUIDemo/Info.plist;
 				INFOPLIST_KEY_NSUserTrackingUsageDescription = "Your data will be used to deliver personalized ads to you.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

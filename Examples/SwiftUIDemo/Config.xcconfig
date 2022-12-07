@@ -1,0 +1,28 @@
+//
+//  Config.xcconfig
+//  SwiftUIDemo
+//
+//  Created by Mathew Gacy on 11/16/22.
+//  Copyright © 2022 Lytics. All rights reserved.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+API_TOKEN = at.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+DEVELOPMENT_TEAM = BXV9QFGNQ8
+ORGANIZATION_IDENTIFIER = com.lytics
+
+// Developers can locally override the Xcode settings by creating a build configuration
+// file at `Examples/DeveloperConfig.xcconfig` with the following:
+//
+//    API_TOKEN = <Your Token>
+//    DEVELOPMENT_TEAM = <Your Team ID>
+//    ORGANIZATION_IDENTIFIER = <Your Domain Name Reversed>
+//
+// You should then be able to build without code signing errors and without modifying
+// the project.
+
+#include? "../DeveloperConfig.xcconfig"
+
+PRODUCT_BUNDLE_IDENTIFIER = $(ORGANIZATION_IDENTIFIER).SwiftUIDemo
