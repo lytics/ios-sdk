@@ -60,7 +60,9 @@ public struct LyticsConfiguration: Equatable {
     public var requireConsent: Bool = false
 
     /// Set the logging level of the SDK.
-    public var logLevel: LogLevel = .error
+    ///
+    /// Set to `nil` to disable all logging.
+    public var logLevel: LogLevel? = .error
 
     var apiURL: URL {
         if apiPath.isEmpty {

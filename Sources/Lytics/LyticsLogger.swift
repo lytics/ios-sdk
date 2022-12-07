@@ -31,7 +31,7 @@ public enum LogLevel: Comparable, Equatable {
 
 @usableFromInline
 struct LyticsLogger {
-    var logLevel: LogLevel = .error
+    var logLevel: LogLevel? = .error
     var log: (OSLogType, @escaping () -> String, StaticString, StaticString, UInt) -> Void
 
     @usableFromInline
@@ -43,7 +43,7 @@ struct LyticsLogger {
         function: StaticString = #function,
         line: UInt = #line
     ) {
-        guard logLevel >= .debug else {
+        guard shouldLog(.debug) else {
             return
         }
         log(.debug, message, file, function, line)
@@ -58,7 +58,7 @@ struct LyticsLogger {
         function: StaticString = #function,
         line: UInt = #line
     ) {
-        guard logLevel >= .info else {
+        guard shouldLog(.info) else {
             return
         }
         log(.info, message, file, function, line)
@@ -73,10 +73,18 @@ struct LyticsLogger {
         function: StaticString = #function,
         line: UInt = #line
     ) {
-        guard logLevel >= .error else {
+        guard shouldLog(.error) else {
             return
         }
         log(.error, message, file, function, line)
+    }
+
+    private func shouldLog(_ level: LogLevel) -> Bool {
+        guard let logLevel else {
+            return false
+        }
+
+        return logLevel >= level
     }
 }
 

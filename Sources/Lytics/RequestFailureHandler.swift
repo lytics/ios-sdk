@@ -26,8 +26,12 @@ struct RequestFailureHandler {
     let configuration: RetryConfiguration
 
     func strategy(for error: Error, retryCount: Int) -> Strategy {
-        if error is DecodingError {
+        switch error {
+        case is DecodingError:
             return .discard("Invalid response value")
+        case NetworkError.clientError:
+            return .discard(error.localizedDescription)
+        default: break
         }
 
         if retryCount < configuration.maxRetryCount {

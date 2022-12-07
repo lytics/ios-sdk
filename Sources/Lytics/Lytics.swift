@@ -17,13 +17,13 @@ public final class Lytics {
     private var appEventTracker: AppEventTracking!
 
     @usableFromInline
-    internal private(set) var logger: LyticsLogger = .live
+    internal private(set) var logger: LyticsLogger
 
     @usableFromInline
     internal private(set) var userManager: UserManaging!
 
     @usableFromInline
-    internal private(set) var timestampProvider: () -> Millisecond = { Date().timeIntervalSince1970.milliseconds }
+    internal private(set) var timestampProvider: () -> Millisecond
 
     @usableFromInline
     internal private(set) var appTrackingTransparency: AppTrackingTransparency!
@@ -65,9 +65,26 @@ public final class Lytics {
         }
     }
 
-    /// Configure this Lytics SDK instance.
+    /// Creates a Lytics instance.
+    ///
+    /// Warning: You must call ``start(apiToken:configure:)`` before using the created instance.
+    public convenience init() {
+        self.init(
+            logger: .live,
+            timestampProvider: { Date().timeIntervalSince1970.milliseconds })
+    }
+
+    internal init(
+        logger: LyticsLogger,
+        timestampProvider: @escaping () -> Millisecond
+    ) {
+        self.logger = logger
+        self.timestampProvider = timestampProvider
+    }
+
+    /// Configures this Lytics SDK instance.
     /// - Parameters:
-    ///   - apiToken: An Lytics account API token.
+    ///   - apiToken: A Lytics account API token.
     ///   - configure: A closure enabling mutation of the configuration.
     public func start(apiToken: String, configure: ((inout LyticsConfiguration) -> Void)? = nil) {
         guard !hasStarted else {
@@ -119,11 +136,11 @@ public final class Lytics {
 public extension Lytics {
 
     @inlinable
-    /// Track a custom event.
+    /// Tracks a custom event.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
-    ///   - timestamp: A an optional custom timestamp for the event.
+    ///   - timestamp: A custom timestamp for the event.
     ///   - identifiers: A value representing additional identifiers to associate with this event.
     ///   - properties: A value  representing the event properties.
     func track<I: Encodable, P: Encodable>(
@@ -164,11 +181,11 @@ public extension Lytics {
     }
 
     @inlinable
-    /// Track a custom event.
+    /// Tracks a custom event.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
-    ///   - timestamp: A an optional custom timestamp for the event.
+    ///   - timestamp: A custom timestamp for the event.
     ///   - event: A value representing the event properties.
     func track<P: Encodable>(
         stream: String? = nil,
@@ -185,11 +202,11 @@ public extension Lytics {
     }
 
     @inlinable
-    /// Track a custom event.
+    /// Tracks a custom event.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
-    ///   - timestamp: A an optional custom timestamp for the event.
+    ///   - timestamp: A custom timestamp for the event.
     func track(
         stream: String? = nil,
         name: String? = nil,
@@ -204,11 +221,11 @@ public extension Lytics {
     }
 
     @inlinable
-    /// Update the user properties and optionally emit an identity event.
+    /// Updates the user properties and optionally emit an identity event.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
-    ///   - timestamp: A an optional custom timestamp for the event.
+    ///   - timestamp: A custom timestamp for the event.
     ///   - identifiers: A value representing user identifiers.
     ///   - attributes: A value representing additional information about a user.
     ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
@@ -254,11 +271,11 @@ public extension Lytics {
     }
 
     @inlinable
-    /// Update the user properties and optionally emit an identity event.
+    /// Updates the user properties and optionally emit an identity event.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
-    ///   - timestamp: A an optional custom timestamp for the event.
+    ///   - timestamp: A custom timestamp for the event.
     ///   - identifiers: A value representing user identifiers.
     ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
     func identify<I: Encodable>(
@@ -278,11 +295,11 @@ public extension Lytics {
     }
 
     @inlinable
-    /// Update a user consent properties and optionally emit a special event that represents an app user's explicit consent.
+    /// Updates a user consent properties and optionally emit a special event that represents an app user's explicit consent.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
-    ///   - timestamp: A an optional custom timestamp for the event.
+    ///   - timestamp: A custom timestamp for the event.
     ///   - identifiers: A value representing additional identifiers to associate with this event.
     ///   - attributes: A value representing additional information about a user.
     ///   - consent: A value representing consent properties.
@@ -331,11 +348,11 @@ public extension Lytics {
     }
 
     @inlinable
-    /// Update a user consent properties and optionally emit a special event that represents an app user's explicit consent.
+    /// Updates a user consent properties and optionally emit a special event that represents an app user's explicit consent.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
-    ///   - timestamp: A an optional custom timestamp for the event.
+    ///   - timestamp: A custom timestamp for the event.
     ///   - attributes: A value representing additional information about a user.
     ///   - consent: A value representing consent properties.
     ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
@@ -358,11 +375,11 @@ public extension Lytics {
     }
 
     @inlinable
-    /// Update a user consent properties and optionally emit a special event that represents an app user's explicit consent.
+    /// Updates a user consent properties and optionally emit a special event that represents an app user's explicit consent.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
-    ///   - timestamp: A an optional custom timestamp for the event.
+    ///   - timestamp: A custom timestamp for the event.
     ///   - consent: A value representing consent properties.
     ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
     func consent<C: Encodable>(
@@ -383,11 +400,11 @@ public extension Lytics {
     }
 
     @inlinable
-    /// Emit an event representing a screen or page view. Device properties are injected into the payload before emitting.
+    /// Emits an event representing a screen or page view. Device properties are injected into the payload before emitting.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
-    ///   - timestamp: A an optional custom timestamp for the event.
+    ///   - timestamp: A custom timestamp for the event.
     ///   - properties: A value representing the event properties.
     func screen<I: Encodable, P: Encodable>(
         stream: String? = nil,
@@ -428,11 +445,11 @@ public extension Lytics {
     }
 
     @inlinable
-    /// Emit an event representing a screen or page view. Device properties are injected into the payload before emitting.
+    /// Emits an event representing a screen or page view. Device properties are injected into the payload before emitting.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
-    ///   - timestamp: A an optional custom timestamp for the event.
+    ///   - timestamp: A custom timestamp for the event.
     ///   - properties: A value representing the event properties.
     func screen<P: Encodable>(
         stream: String? = nil,
@@ -452,7 +469,7 @@ public extension Lytics {
 // MARK: - Tracking
 public extension Lytics {
 
-    /// Opt the user in to event collection.
+    /// Opts the user in to event collection.
     func optIn() {
         guard hasStarted else {
             assertionFailure("Lytics must be started before using \(#function)")
@@ -463,7 +480,7 @@ public extension Lytics {
         eventPipeline.optIn()
     }
 
-    /// Opt the user out of event collection.
+    /// Opts the user out of event collection.
     func optOut() {
         guard hasStarted else {
             assertionFailure("Lytics must be started before using \(#function)")
@@ -474,7 +491,7 @@ public extension Lytics {
         eventPipeline.optOut()
     }
 
-    /// Request access to IDFA.
+    /// Requests access to IDFA.
     func requestTrackingAuthorization() async -> Bool {
         guard hasStarted else {
             assertionFailure("Lytics must be started before using \(#function)")
@@ -502,7 +519,7 @@ public extension Lytics {
         return didAuthorize
     }
 
-    /// Disable use of IDFA.
+    /// Disables use of IDFA.
     func disableTracking() {
         logger.debug("Disable tracking")
         appTrackingTransparency.disableIDFA()
@@ -517,7 +534,7 @@ public extension Lytics {
         UUID().uuidString
     }
 
-    /// Force flush the event queue by sending all events in the queue immediately.
+    /// Flushes the event queue by sending all events in the queue immediately.
     func dispatch() {
         logger.debug("Dispatch events")
         Task {
@@ -525,7 +542,7 @@ public extension Lytics {
         }
     }
 
-    /// Clear all stored user information.
+    /// Clears all stored user information.
     func reset() {
         logger.debug("Reset")
         optOut()

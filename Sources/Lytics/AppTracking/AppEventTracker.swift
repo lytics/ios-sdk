@@ -24,19 +24,19 @@ final class AppEventTracker: AppEventTracking {
     private let configuration: Configuration
     private let logger: LyticsLogger
     private let timestampProvider: () -> Millisecond = { Date().timeIntervalSince1970.milliseconds }
-    private let eventBuilder: AppEventProvider
+    private let eventProvider: AppEventProvider
     private let eventPipeline: EventPipelineProtocol
     private var trackingTask: Task<Void, Never>?
 
     init(
         configuration: Configuration,
         logger: LyticsLogger,
-        eventBuilder: AppEventProvider,
+        eventProvider: AppEventProvider,
         eventPipeline: EventPipelineProtocol
     ) {
         self.configuration = configuration
         self.logger = logger
-        self.eventBuilder = eventBuilder
+        self.eventProvider = eventProvider
         self.eventPipeline = eventPipeline
     }
 
@@ -50,12 +50,12 @@ final class AppEventTracker: AppEventTracking {
                 case .install:
                     self.logger.debug("App was installed")
 
-                    await self.eventBuilder.appInstall()
+                    await self.eventProvider.appInstall()
                     |> self.sendEvent
                 case .update(let version):
                     self.logger.debug("App was updated to version \(version)")
 
-                    await self.eventBuilder.appUpdate(version: version)
+                    await self.eventProvider.appUpdate(version: version)
                     |> self.sendEvent
                 }
             }
@@ -68,7 +68,7 @@ final class AppEventTracker: AppEventTracking {
                         self.logger.debug("App did become active")
 
                         if self.configuration.trackApplicationLifecycleEvents  {
-                                await self.eventBuilder.appOpen()
+                                await self.eventProvider.appOpen()
                                 |> self.sendEvent
                         } else {
                             SessionTracker.markInteraction(timestampProvider())
@@ -78,7 +78,7 @@ final class AppEventTracker: AppEventTracking {
                         self.logger.debug("App did enter background")
 
                         if self.configuration.trackApplicationLifecycleEvents  {
-                            await self.eventBuilder.appBackground()
+                            await self.eventProvider.appBackground()
                             |> self.sendEvent
                         }
 
@@ -123,14 +123,14 @@ extension AppEventTracker {
         userManager: UserManaging,
         eventPipeline: EventPipelineProtocol
     ) -> AppEventTracker {
-        let eventBuilder = AppEventProvider(identifiers: { [weak userManager] in
+        let eventProvider = AppEventProvider(identifiers: { [weak userManager] in
             await userManager?.identifiers.mapValues(AnyCodable.init) ?? [:]
         })
 
         return .init(
             configuration: .init(configuration),
             logger: logger,
-            eventBuilder: eventBuilder,
+            eventProvider: eventProvider,
             eventPipeline: eventPipeline)
     }
 }
