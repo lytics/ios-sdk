@@ -126,7 +126,8 @@ public final class Lytics {
             eventPipeline: eventPipeline)
 
         appEventTracker.startTracking(
-            lifecycleEvents: NotificationCenter.default.lifecycleEvents())
+            lifecycleEvents: NotificationCenter.default.lifecycleEvents(),
+            versionTracker: AppVersionTracker.live)
 
         hasStarted = true
     }

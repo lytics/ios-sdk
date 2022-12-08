@@ -41,24 +41,16 @@ final class AppEventTracker: AppEventTracking {
     }
 
     /// Starts tracking application events.
-    /// - Parameter lifecycleEvents: An asynchronous sequence of app lifecycle events.
-    func startTracking<S: AsyncSequence>(lifecycleEvents: S) where S.Element == AppLifecycleEvent {
+    /// - Parameters:
+    ///   - lifecycleEvents: An asynchronous sequence of app lifecycle events.
+    ///   - versionTracker:  An app version event tracker.
+    func startTracking<S: AsyncSequence>(
+        lifecycleEvents: S,
+        versionTracker: AppVersionTracker
+    ) where S.Element == AppLifecycleEvent {
         trackingTask = Task {
             // App version events
-            if let event = AppVersionTracker.live.checkVersion() {
-                switch event {
-                case .install:
-                    self.logger.debug("App was installed")
-
-                    await self.eventProvider.appInstall()
-                    |> self.sendEvent
-                case .update(let version):
-                    self.logger.debug("App was updated to version \(version)")
-
-                    await self.eventProvider.appUpdate(version: version)
-                    |> self.sendEvent
-                }
-            }
+            await trackVersionEvents(versionTracker)
 
             // App lifecycle events
             do {
@@ -100,6 +92,23 @@ final class AppEventTracker: AppEventTracking {
 }
 
 private extension AppEventTracker {
+    func trackVersionEvents(_ versionTracker: AppVersionTracker) async {
+        if let event = versionTracker.checkVersion() {
+            switch event {
+            case .install:
+                self.logger.debug("App was installed")
+
+                await self.eventProvider.appInstall()
+                |> self.sendEvent
+            case .update(let version):
+                self.logger.debug("App was updated to version \(version)")
+
+                await self.eventProvider.appUpdate(version: version)
+                |> self.sendEvent
+            }
+        }
+    }
+
     func sendEvent<E: Encodable>(_ tuple: (String, E)) async {
         await eventPipeline.event(
             stream: configuration.stream,
