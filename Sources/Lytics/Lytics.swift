@@ -6,6 +6,7 @@
 
 import AnyCodable
 import Foundation
+import UIKit
 
 public final class Lytics {
 
@@ -463,6 +464,61 @@ public extension Lytics {
             timestamp: timestamp,
             identifiers: Optional.never,
             properties: properties)
+    }
+}
+
+// MARK: - App Events
+public extension Lytics {
+
+    /// Tracks a request to continue an activity.
+    /// - Parameter userActivity: The activity object containing the data associated with the task the user was performing.
+    func continueUserActivity(_ userActivity: NSUserActivity) {
+        let event = UserActivityEvent(userActivity)
+
+        Task {
+            await eventPipeline.event(
+                stream: nil,
+                timestamp: timestampProvider(),
+                name: Constants.deepLinkEventName,
+                event: Event(
+                    identifiers: await userManager.identifiers.mapValues(AnyCodable.init(_:)),
+                    properties: event))
+        }
+    }
+
+    /// Tracks a request to open a resource specified by a URL,
+    /// - Parameters:
+    ///   - url: The URL resource to open.
+    ///   - options: A dictionary of URL handling options.
+    func openURL(_ url: URL, options: [UIApplication.OpenURLOptionsKey: Any]? = nil) {
+        let event = URLEvent(url: url, options: Dictionary(options))
+
+        Task {
+            await eventPipeline.event(
+                stream: nil,
+                timestamp: timestampProvider(),
+                name: Constants.urlEventName,
+                event: Event(
+                    identifiers: await userManager.identifiers.mapValues(AnyCodable.init(_:)),
+                    properties: event))
+        }
+    }
+
+    /// Tracks the selection of a Home screen quick action
+    /// - Parameter shortcutItem: The selected quick action.
+    func shortcutItem(_ shortcutItem: UIApplicationShortcutItem) {
+        print("\(#function) - \(shortcutItem)")
+        let shortcutItem = ShortcutEvent(shortcutItem)
+
+        Task {
+            await eventPipeline.event(
+                stream: nil,
+                timestamp: timestampProvider(),
+                name: Constants.shortcutEventNqme,
+                event: Event(
+                    identifiers: await userManager.identifiers.mapValues(AnyCodable.init(_:)),
+                    properties: shortcutItem))
+        }
     }
 }
 
