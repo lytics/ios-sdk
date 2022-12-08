@@ -7,6 +7,14 @@
 @testable import Lytics
 import Foundation
 
+extension AppVersionTracker {
+    static func mock(_ event: AppVersionEvent? = nil) -> Self {
+        .init {
+            event
+        }
+    }
+}
+
 extension DataUploadRequestBuilder {
     static var mock: Self {
         .init(requests: { _ in [] })
