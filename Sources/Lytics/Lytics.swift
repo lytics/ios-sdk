@@ -406,6 +406,7 @@ public extension Lytics {
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
     ///   - timestamp: A custom timestamp for the event.
+    ///   - identifiers:  A value representing additional identifiers to associate with this event.
     ///   - properties: A value representing the event properties.
     func screen<I: Encodable, P: Encodable>(
         stream: String? = nil,
