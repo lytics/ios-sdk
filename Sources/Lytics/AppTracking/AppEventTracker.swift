@@ -48,13 +48,15 @@ final class AppEventTracker: AppEventTracking {
         lifecycleEvents: S,
         versionTracker: AppVersionTracker
     ) where S.Element == AppLifecycleEvent {
-        trackingTask = Task {
+        trackingTask = Task { [weak self] in
             // App version events
-            await trackVersionEvents(versionTracker)
+            await self?.trackVersionEvents(versionTracker)
 
             // App lifecycle events
             do {
                 for try await event in lifecycleEvents {
+                    guard let self else { return }
+
                     switch event {
                     case .didBecomeActive:
                         self.logger.debug("App did become active")
@@ -63,7 +65,7 @@ final class AppEventTracker: AppEventTracking {
                                 await self.eventProvider.appOpen()
                                 |> self.sendEvent
                         } else {
-                            SessionTracker.markInteraction(timestampProvider())
+                            SessionTracker.markInteraction(self.timestampProvider())
                         }
 
                     case .didEnterBackground:
@@ -79,7 +81,7 @@ final class AppEventTracker: AppEventTracking {
                     }
                 }
             } catch {
-                logger.error("Encountered error iterating over lifecycle events")
+                self?.logger.error("Encountered error iterating over lifecycle events")
             }
         }
     }
