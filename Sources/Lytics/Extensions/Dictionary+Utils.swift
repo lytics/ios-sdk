@@ -4,6 +4,7 @@
 //  Created by Mathew Gacy on 9/29/22.
 //
 
+import AnyCodable
 import Foundation
 
 extension Dictionary {
@@ -23,5 +24,14 @@ extension Dictionary {
             }
         }
         return result
+    }
+}
+
+extension Dictionary where Key == AnyCodable, Value == AnyCodable {
+    init?<K, V>(_ other: Dictionary<K, V>?) {
+        guard let other else {
+            return nil
+        }
+        self.init(uniqueKeysWithValues: other.map { (AnyCodable($0), AnyCodable($1)) })
     }
 }
