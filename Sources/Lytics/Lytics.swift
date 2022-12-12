@@ -492,7 +492,8 @@ public extension Lytics {
                 stream: nil,
                 timestamp: timestamp,
                 name: Constants.deepLinkEventName,
-                event: eventProvider(await userManager.identifiers.mapValues(AnyCodable.init(_:))))
+                event: eventProvider(
+                    await userManager.identifiers.mapValues(AnyCodable.init(_:))))
         }
     }
 
@@ -529,7 +530,8 @@ public extension Lytics {
                 stream: nil,
                 timestamp: timestamp,
                 name: Constants.shortcutEventName,
-                event: eventProvider(await userManager.identifiers.mapValues(AnyCodable.init(_:))))
+                event: eventProvider(
+                    await userManager.identifiers.mapValues(AnyCodable.init(_:))))
         }
     }
 }
