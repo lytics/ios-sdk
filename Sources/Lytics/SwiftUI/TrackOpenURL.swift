@@ -14,7 +14,6 @@ public struct TrackOpenURL: ViewModifier {
         lytics: Lytics,
         action: @escaping (URL) -> Void
     ) {
-        // TODO: should we only be retaining a weak reference to Lytics?
         self.lytics = lytics
         self.action = action
     }
