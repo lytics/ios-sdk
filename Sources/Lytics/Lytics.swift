@@ -123,10 +123,16 @@ public final class Lytics {
             configuration: configuration,
             logger: logger,
             userManager: userManager,
-            eventPipeline: eventPipeline)
+            eventPipeline: eventPipeline,
+            onEvent: { [weak self] event in
+                if case .didEnterBackground = event {
+                    self?.dispatch()
+                }
+            })
 
         appEventTracker.startTracking(
-            lifecycleEvents: NotificationCenter.default.lifecycleEvents())
+            lifecycleEvents: NotificationCenter.default.lifecycleEvents(),
+            versionTracker: AppVersionTracker.live)
 
         hasStarted = true
     }
