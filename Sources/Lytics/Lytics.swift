@@ -480,16 +480,19 @@ public extension Lytics {
     /// Tracks a request to continue an activity.
     /// - Parameter userActivity: The activity object containing the data associated with the task the user was performing.
     func continueUserActivity(_ userActivity: NSUserActivity) {
-        let event = UserActivityEvent(userActivity)
+        let timestamp = timestampProvider()
 
-        Task {
+        // Create closure since `NSUserActivity` is not `Sendable`
+        let eventProvider: ([String: AnyCodable]?) -> UserActivityEvent = {
+            UserActivityEvent(userActivity, identifiers: $0)
+        }
+
+        Task(priority: .background) {
             await eventPipeline.event(
                 stream: nil,
-                timestamp: timestampProvider(),
+                timestamp: timestamp,
                 name: Constants.deepLinkEventName,
-                event: Event(
-                    identifiers: await userManager.identifiers.mapValues(AnyCodable.init(_:)),
-                    properties: event))
+                event: eventProvider(await userManager.identifiers.mapValues(AnyCodable.init(_:))))
         }
     }
 
@@ -498,33 +501,35 @@ public extension Lytics {
     ///   - url: The URL resource to open.
     ///   - options: A dictionary of URL handling options.
     func openURL(_ url: URL, options: [UIApplication.OpenURLOptionsKey: Any]? = nil) {
-        let event = URLEvent(url: url, options: Dictionary(options))
-
-        Task {
+        let timestamp = timestampProvider()
+        Task(priority: .background) {
             await eventPipeline.event(
                 stream: nil,
-                timestamp: timestampProvider(),
+                timestamp: timestamp,
                 name: Constants.urlEventName,
-                event: Event(
-                    identifiers: await userManager.identifiers.mapValues(AnyCodable.init(_:)),
-                    properties: event))
+                event: URLEvent(
+                    url: url,
+                    options: Dictionary(options),
+                    identifiers: await userManager.identifiers.mapValues(AnyCodable.init(_:))))
         }
     }
 
     /// Tracks the selection of a Home screen quick action
     /// - Parameter shortcutItem: The selected quick action.
     func shortcutItem(_ shortcutItem: UIApplicationShortcutItem) {
-        print("\(#function) - \(shortcutItem)")
-        let shortcutItem = ShortcutEvent(shortcutItem)
+        let timestamp = timestampProvider()
 
-        Task {
+        // Create closure since `UIApplicationShortcutItem` is not `Sendable`
+        let eventProvider: ([String: AnyCodable]?) -> ShortcutEvent = {
+            ShortcutEvent(shortcutItem, identifiers: $0)
+        }
+
+        Task(priority: .background) {
             await eventPipeline.event(
                 stream: nil,
-                timestamp: timestampProvider(),
-                name: Constants.shortcutEventNqme,
-                event: Event(
-                    identifiers: await userManager.identifiers.mapValues(AnyCodable.init(_:)),
-                    properties: shortcutItem))
+                timestamp: timestamp,
+                name: Constants.shortcutEventName,
+                event: eventProvider(await userManager.identifiers.mapValues(AnyCodable.init(_:))))
         }
     }
 }

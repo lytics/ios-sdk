@@ -8,6 +8,7 @@ import AnyCodable
 import Foundation
 
 struct URLEvent: Codable, Equatable {
-    let url: URL
-    let options: [AnyCodable: AnyCodable]?
+    var url: URL
+    var options: [AnyCodable: AnyCodable]?
+    var identifiers: [String: AnyCodable]?
 }

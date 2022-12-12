@@ -9,24 +9,26 @@ import Foundation
 
 struct UserActivityEvent: Codable, Equatable {
     var activityType: String
-    var title: String?
-    var requiredUserInfoKeys: Set<String>?
-    var userInfo: [AnyCodable: AnyCodable]?
-    var targetContentIdentifier: String?
     var keywords: Set<String>
-    var webpageURL: URL?
     var referrerURL: URL?
+    var requiredUserInfoKeys: Set<String>?
+    var targetContentIdentifier: String?
+    var title: String?
+    var userInfo: [AnyCodable: AnyCodable]?
+    var webpageURL: URL?
+    var identifiers: [String: AnyCodable]?
 }
 
 extension UserActivityEvent {
-    init(_ userActivity: NSUserActivity) {
+    init(_ userActivity: NSUserActivity, identifiers: [String: AnyCodable]? = nil) {
         self.activityType = userActivity.activityType
-        self.title = userActivity.title
-        self.requiredUserInfoKeys = userActivity.requiredUserInfoKeys
-        self.userInfo = Dictionary(userActivity.userInfo)
-        self.targetContentIdentifier = userActivity.targetContentIdentifier
         self.keywords = userActivity.keywords
-        self.webpageURL = userActivity.webpageURL
         self.referrerURL = userActivity.referrerURL
+        self.requiredUserInfoKeys = userActivity.requiredUserInfoKeys
+        self.targetContentIdentifier = userActivity.targetContentIdentifier
+        self.title = userActivity.title
+        self.userInfo = Dictionary(userActivity.userInfo)
+        self.webpageURL = userActivity.webpageURL
+        self.identifiers = identifiers
     }
 }
