@@ -25,7 +25,7 @@ enum Constants {
     static let appUpdateEventName = "App Update"
     static let deepLinkEventName = "Deep Link"
     static let pushNotificationEventName = "Push Notification"
-    static let shortcutEventNqme = "Shortcut"
+    static let shortcutEventName = "Shortcut"
     static let urlEventName = "URL"
     static let defaultAppVersion = "0.0"
 }
