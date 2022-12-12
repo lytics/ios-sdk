@@ -497,7 +497,7 @@ public extension Lytics {
         }
     }
 
-    /// Tracks a request to open a resource specified by a URL,
+    /// Tracks a request to open a resource specified by a URL.
     /// - Parameters:
     ///   - url: The URL resource to open.
     ///   - options: A dictionary of URL handling options.
@@ -515,7 +515,7 @@ public extension Lytics {
         }
     }
 
-    /// Tracks the selection of a Home screen quick action
+    /// Tracks the selection of a Home screen quick action.
     /// - Parameter shortcutItem: The selected quick action.
     func shortcutItem(_ shortcutItem: UIApplicationShortcutItem) {
         let timestamp = timestampProvider()
