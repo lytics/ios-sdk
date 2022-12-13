@@ -29,6 +29,7 @@ final class EventDetailViewModel: ObservableObject {
 
     func onAppear() {
         Lytics.shared.track(
+            name: "Event_Tap",
             properties: DemoTapEvent(
                 artistID: event.artist.id,
                 eventID: event.id))
