@@ -29,6 +29,8 @@ struct SettingsView: View {
                     Text("Dispatch Events")
                 })
         }
+        .trackScreen(
+            name: "Settings")
     }
 }
 

@@ -45,6 +45,10 @@ struct EventDetailView: View {
         .onAppear {
             viewModel.onAppear()
         }
+        .trackScreen(
+            name: "Event_Detail",
+            properties: DemoDetailScreenEvent(
+                artistName: viewModel.title))
     }
 }
 
