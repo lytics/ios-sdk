@@ -6,10 +6,11 @@
 //  Copyright © 2022 Lytics. All rights reserved.
 //
 
+import Lytics
 import SwiftUI
 
 struct TabContainerView: View {
-    enum Tab: Hashable {
+    enum Tab: String, Hashable {
         case events
         case login
         case profile
@@ -50,6 +51,15 @@ struct TabContainerView: View {
                     Image(systemName: "gearshape.fill")
                  }
                 .tag(Tab.settings)
+        }
+        .trackOpenURL { url in
+            handle(url: url)
+        }
+    }
+
+    func handle(url: URL) {
+        if let host = url.host(), let tab = Tab(rawValue: host) {
+            selectedTab = tab
         }
     }
 }
