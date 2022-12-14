@@ -19,6 +19,7 @@
 		C94BF00729096F00007E1C25 /* RemoteImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94BF00629096F00007E1C25 /* RemoteImage.swift */; };
 		C94BF00929097480007E1C25 /* Color+Assets.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94BF00829097480007E1C25 /* Color+Assets.swift */; };
 		C9739D81293FB3E800CFD435 /* DemoDetailScreenEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9739D80293FB3E800CFD435 /* DemoDetailScreenEvent.swift */; };
+		C97930B3294968BE00605CC9 /* LyticsUI in Frameworks */ = {isa = PBXBuildFile; productRef = C97930B2294968BE00605CC9 /* LyticsUI */; };
 		C9A4146F29255EDA001D2C46 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A4146E29255EDA001D2C46 /* Configuration.swift */; };
 		C9DC54F228EDC4D800EAD25E /* DemoIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DC54EF28EDC4D800EAD25E /* DemoIdentity.swift */; };
 		C9DC54F328EDC4D800EAD25E /* DemoConsent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DC54F028EDC4D800EAD25E /* DemoConsent.swift */; };
@@ -127,6 +128,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C97930B3294968BE00605CC9 /* LyticsUI in Frameworks */,
 				C94BDF6528E9245D008FB4DE /* Lytics in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -333,6 +335,7 @@
 			name = SwiftUIDemo;
 			packageProductDependencies = (
 				C94BDF6428E9245D008FB4DE /* Lytics */,
+				C97930B2294968BE00605CC9 /* LyticsUI */,
 			);
 			productName = SwiftUIDemo;
 			productReference = C94BDF3428E923A9008FB4DE /* SwiftUIDemo.app */;
@@ -822,6 +825,10 @@
 		C94BDF6428E9245D008FB4DE /* Lytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Lytics;
+		};
+		C97930B2294968BE00605CC9 /* LyticsUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LyticsUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

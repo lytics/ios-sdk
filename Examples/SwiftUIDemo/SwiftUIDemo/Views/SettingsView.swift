@@ -6,6 +6,7 @@
 //  Copyright © 2022 Lytics. All rights reserved.
 //
 
+import LyticsUI
 import SwiftUI
 
 struct SettingsView: View {

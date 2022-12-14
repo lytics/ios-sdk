@@ -7,6 +7,7 @@
 //
 
 import Lytics
+import LyticsUI
 import SwiftUI
 
 struct TabContainerView: View {

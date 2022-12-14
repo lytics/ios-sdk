@@ -11,7 +11,10 @@ let package = Package(
     products: [
         .library(
             name: "Lytics",
-            targets: ["Lytics", "LyticsUI"]),
+            targets: ["Lytics"]),
+        .library(
+            name: "LyticsUI",
+            targets: ["LyticsUI"])
     ],
     dependencies: [
         .package(
