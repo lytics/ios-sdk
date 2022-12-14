@@ -4,6 +4,7 @@
 //  Created by Mathew Gacy on 12/4/22.
 //
 
+import Lytics
 import SwiftUI
 
 public struct TrackScreen<I: Encodable, P: Encodable>: ViewModifier {
