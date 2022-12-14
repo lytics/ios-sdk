@@ -493,7 +493,8 @@ public extension Lytics {
                 timestamp: timestamp,
                 name: Constants.deepLinkEventName,
                 event: eventProvider(
-                    await userManager.identifiers.mapValues(AnyCodable.init(_:))))
+                    await userManager.identifiers
+                        .mapValues(AnyCodable.init(_:))))
         }
     }
 
@@ -511,7 +512,8 @@ public extension Lytics {
                 event: URLEvent(
                     url: url,
                     options: Dictionary(options),
-                    identifiers: await userManager.identifiers.mapValues(AnyCodable.init(_:))))
+                    identifiers: await userManager.identifiers
+                        .mapValues(AnyCodable.init(_:))))
         }
     }
 
@@ -531,7 +533,8 @@ public extension Lytics {
                 timestamp: timestamp,
                 name: Constants.shortcutEventName,
                 event: eventProvider(
-                    await userManager.identifiers.mapValues(AnyCodable.init(_:))))
+                    await userManager.identifiers
+                        .mapValues(AnyCodable.init(_:))))
         }
     }
 }
