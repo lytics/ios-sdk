@@ -6,7 +6,6 @@
 //  Copyright © 2022 Lytics. All rights reserved.
 //
 
-import Lytics
 import LyticsUI
 import SwiftUI
 
