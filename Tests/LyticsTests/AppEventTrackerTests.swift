@@ -108,14 +108,14 @@ final class AppEventTrackerTests: XCTestCase {
         eventExpectation = expectation(description: "didBecomeActive sent")
         await center.post(name: UIApplication.didBecomeActiveNotification, object: nil)
         await waitForExpectations(timeout: 1.0)
-        XCTAssertEqual(eventName, Constants.appOpenEventName)
+        XCTAssertEqual(eventName, EventNames.appOpen)
         XCTAssertEqual(streamName, expectedStream)
 
         // didEnterBackground
         eventExpectation = expectation(description: "didEnterBackground sent")
         await center.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
         await waitForExpectations(timeout: 1.0)
-        XCTAssertEqual(eventName, Constants.appBackgroundEventName)
+        XCTAssertEqual(eventName, EventNames.appBackground)
         XCTAssertEqual(streamName, expectedStream)
     }
 
@@ -170,7 +170,7 @@ final class AppEventTrackerTests: XCTestCase {
             lifecycleEvents: center.lifecycleEvents(),
             versionTracker: .mock(.install("1.0")))
         await waitForExpectations(timeout: 1.0)
-        XCTAssertEqual(eventName, Constants.appInstallEventName)
+        XCTAssertEqual(eventName, EventNames.appInstall)
         sut.stopTracking()
 
         // Update
@@ -179,7 +179,7 @@ final class AppEventTrackerTests: XCTestCase {
             lifecycleEvents: center.lifecycleEvents(),
             versionTracker: .mock(.update("1.1")))
         await waitForExpectations(timeout: 1.0)
-        XCTAssertEqual(eventName, Constants.appUpdateEventName)
+        XCTAssertEqual(eventName, EventNames.appUpdate)
         sut.stopTracking()
     }
 

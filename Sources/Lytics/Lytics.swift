@@ -496,7 +496,7 @@ public extension Lytics {
             await eventPipeline.event(
                 stream: stream,
                 timestamp: timestamp,
-                name: Constants.deepLinkEventName,
+                name: EventNames.deepLink,
                 event: eventProvider(
                     await userManager.identifiers
                         .mapValues(AnyCodable.init(_:))))
@@ -518,7 +518,7 @@ public extension Lytics {
             await eventPipeline.event(
                 stream: stream,
                 timestamp: timestamp,
-                name: Constants.urlEventName,
+                name: EventNames.url,
                 event: URLEvent(
                     url: url,
                     options: Dictionary(options),
@@ -546,7 +546,7 @@ public extension Lytics {
             await eventPipeline.event(
                 stream: stream,
                 timestamp: timestamp,
-                name: Constants.shortcutEventName,
+                name: EventNames.shortcut,
                 event: eventProvider(
                     await userManager.identifiers
                         .mapValues(AnyCodable.init(_:))))

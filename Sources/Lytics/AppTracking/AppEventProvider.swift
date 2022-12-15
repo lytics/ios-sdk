@@ -23,28 +23,28 @@ struct AppEventProvider {
 
 extension AppEventProvider {
     func appBackground() async -> (Name, Event<Never>) {
-        (Constants.appBackgroundEventName,
+        (EventNames.appBackground,
         Event(
             identifiers: await identifiers(),
             properties: .never))
     }
 
     func appInstall() async -> (Name, Event<Never>) {
-        (Constants.appInstallEventName,
+        (EventNames.appInstall,
         Event(
             identifiers: await identifiers(),
             properties: .never))
     }
 
     func appOpen() async -> (Name, Event<Never>) {
-        (Constants.appOpenEventName,
+        (EventNames.appOpen,
          Event(
             identifiers: await identifiers(),
             properties: .never))
     }
 
     func appUpdate(version: String) async -> (Name, Event<AppUpdate>) {
-        (Constants.appUpdateEventName,
+        (EventNames.appUpdate,
         Event(
             identifiers: await identifiers(),
             properties: AppUpdate(version: version)))
