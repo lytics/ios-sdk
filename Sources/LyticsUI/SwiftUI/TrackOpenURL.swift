@@ -9,20 +9,25 @@ import SwiftUI
 
 public struct TrackOpenURL: ViewModifier {
     let lytics: Lytics
+    let stream: String?
     let action: (URL) -> Void
 
     public init(
         lytics: Lytics,
+        stream: String?,
         action: @escaping (URL) -> Void
     ) {
         self.lytics = lytics
+        self.stream = stream
         self.action = action
     }
 
     public func body(content: Content) -> some View {
         content
             .onOpenURL { url in
-                lytics.openURL(url)
+                lytics.openURL(
+                    url,
+                    stream: stream)
                 action(url)
             }
     }
@@ -37,13 +42,16 @@ public extension View {
     ///
     /// - Parameters:
     ///   - lytics: The ``Lytics`` instance used to track the url.
+    ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - action: A function that takes a URL object as its parameter when delivering the URL to
     ///   the scene or window the view is in.
     func trackOpenURL(
         with lytics: Lytics = .shared,
+        stream: String? = nil,
         perform action: @escaping (URL) -> Void) -> some View {
         modifier(TrackOpenURL(
             lytics: lytics,
+            stream: stream,
             action: action))
     }
 }
