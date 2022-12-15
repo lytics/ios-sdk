@@ -7,6 +7,16 @@
 import Lytics
 import SwiftUI
 
+/// A `ViewModifier` that emits a screen event before the modified view appears.
+///
+/// It is recommended to use this via one of the `View.trackScreen` methods:
+///
+/// ```swift
+/// var body: some View {
+///     Text("A view")
+///         .trackScreen(stream: "stream", name: "event")
+/// }
+/// ```
 public struct TrackScreen<I: Encodable, P: Encodable>: ViewModifier {
     let lytics: Lytics
     let stream: String?
@@ -14,6 +24,13 @@ public struct TrackScreen<I: Encodable, P: Encodable>: ViewModifier {
     let identifiers: I?
     let properties: P?
 
+    /// Creates a view modifier that emits a screen event before the modified view appears.
+    /// - Parameters:
+    ///   - lytics: The ``Lytics`` instance used to track the event.
+    ///   - stream: The DataType, or "Table" of type of data being uploaded.
+    ///   - name: The event name.
+    ///   - identifiers: A value representing additional identifiers to associate with this event.
+    ///   - properties: A value representing the event properties.
     public init(
         lytics: Lytics,
         stream: String? = nil,
