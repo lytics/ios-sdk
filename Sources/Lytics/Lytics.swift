@@ -478,8 +478,13 @@ public extension Lytics {
 public extension Lytics {
 
     /// Tracks a request to continue an activity.
-    /// - Parameter userActivity: The activity object containing the data associated with the task the user was performing.
-    func continueUserActivity(_ userActivity: NSUserActivity) {
+    /// - Parameters:
+    ///   - userActivity: The activity object containing the data associated with the task the user was performing.
+    ///   - stream: The DataType, or "Table" of type of data being uploaded.
+    func continueUserActivity(
+        _ userActivity: NSUserActivity,
+        stream: String? = nil
+    ) {
         let timestamp = timestampProvider()
 
         // Create closure since `NSUserActivity` is not `Sendable`
@@ -489,7 +494,7 @@ public extension Lytics {
 
         Task(priority: .background) {
             await eventPipeline.event(
-                stream: nil,
+                stream: stream,
                 timestamp: timestamp,
                 name: Constants.deepLinkEventName,
                 event: eventProvider(
@@ -502,11 +507,16 @@ public extension Lytics {
     /// - Parameters:
     ///   - url: The URL resource to open.
     ///   - options: A dictionary of URL handling options.
-    func openURL(_ url: URL, options: [UIApplication.OpenURLOptionsKey: Any]? = nil) {
+    ///   - stream: The DataType, or "Table" of type of data being uploaded.
+    func openURL(
+        _ url: URL,
+        options: [UIApplication.OpenURLOptionsKey: Any]? = nil,
+        stream: String? = nil
+    ) {
         let timestamp = timestampProvider()
         Task(priority: .background) {
             await eventPipeline.event(
-                stream: nil,
+                stream: stream,
                 timestamp: timestamp,
                 name: Constants.urlEventName,
                 event: URLEvent(
@@ -518,8 +528,13 @@ public extension Lytics {
     }
 
     /// Tracks the selection of a Home screen quick action.
-    /// - Parameter shortcutItem: The selected quick action.
-    func shortcutItem(_ shortcutItem: UIApplicationShortcutItem) {
+    /// - Parameters:
+    ///   - shortcutItem: The selected quick action.
+    ///   - stream: The DataType, or "Table" of type of data being uploaded.
+    func shortcutItem(
+        _ shortcutItem: UIApplicationShortcutItem,
+        stream: String? = nil
+    ) {
         let timestamp = timestampProvider()
 
         // Create closure since `UIApplicationShortcutItem` is not `Sendable`
@@ -529,7 +544,7 @@ public extension Lytics {
 
         Task(priority: .background) {
             await eventPipeline.event(
-                stream: nil,
+                stream: stream,
                 timestamp: timestamp,
                 name: Constants.shortcutEventName,
                 event: eventProvider(
