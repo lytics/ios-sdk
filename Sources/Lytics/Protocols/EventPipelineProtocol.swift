@@ -6,8 +6,8 @@
 
 import Foundation
 
-@usableFromInline
 /// A class of types serving as an event pipeline.
+@usableFromInline
 protocol EventPipelineProtocol {
 
     /// A Boolean value indicating whether the user has opted in to event collection.

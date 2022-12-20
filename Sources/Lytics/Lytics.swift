@@ -142,7 +142,6 @@ public final class Lytics {
 // MARK: - Events
 public extension Lytics {
 
-    @inlinable
     /// Tracks a custom event.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
@@ -150,6 +149,7 @@ public extension Lytics {
     ///   - timestamp: A custom timestamp for the event.
     ///   - identifiers: A value representing additional identifiers to associate with this event.
     ///   - properties: A value  representing the event properties.
+    @inlinable
     func track<I: Encodable, P: Encodable>(
         stream: String? = nil,
         name: String? = nil,
@@ -187,13 +187,13 @@ public extension Lytics {
         }
     }
 
-    @inlinable
     /// Tracks a custom event.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
     ///   - timestamp: A custom timestamp for the event.
     ///   - event: A value representing the event properties.
+    @inlinable
     func track<P: Encodable>(
         stream: String? = nil,
         name: String? = nil,
@@ -208,12 +208,12 @@ public extension Lytics {
             properties: properties)
     }
 
-    @inlinable
     /// Tracks a custom event.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
     ///   - timestamp: A custom timestamp for the event.
+    @inlinable
     func track(
         stream: String? = nil,
         name: String? = nil,
@@ -227,7 +227,6 @@ public extension Lytics {
             properties: Optional.never)
     }
 
-    @inlinable
     /// Updates the user properties and optionally emit an identity event.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
@@ -236,6 +235,7 @@ public extension Lytics {
     ///   - identifiers: A value representing user identifiers.
     ///   - attributes: A value representing additional information about a user.
     ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
+    @inlinable
     func identify<I: Encodable, A: Encodable>(
         stream: String? = nil,
         name: String? = nil,
@@ -277,7 +277,6 @@ public extension Lytics {
         }
     }
 
-    @inlinable
     /// Updates the user properties and optionally emit an identity event.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
@@ -285,6 +284,7 @@ public extension Lytics {
     ///   - timestamp: A custom timestamp for the event.
     ///   - identifiers: A value representing user identifiers.
     ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
+    @inlinable
     func identify<I: Encodable>(
         stream: String? = nil,
         name: String? = nil,
@@ -301,7 +301,6 @@ public extension Lytics {
             shouldSend: shouldSend)
     }
 
-    @inlinable
     /// Updates a user consent properties and optionally emit a special event that represents an app user's explicit consent.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
@@ -311,6 +310,7 @@ public extension Lytics {
     ///   - attributes: A value representing additional information about a user.
     ///   - consent: A value representing consent properties.
     ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
+    @inlinable
     func consent<I: Encodable, A: Encodable, C: Encodable>(
         stream: String? = nil,
         name: String? = nil,
@@ -354,7 +354,6 @@ public extension Lytics {
         }
     }
 
-    @inlinable
     /// Updates a user consent properties and optionally emit a special event that represents an app user's explicit consent.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
@@ -363,6 +362,7 @@ public extension Lytics {
     ///   - attributes: A value representing additional information about a user.
     ///   - consent: A value representing consent properties.
     ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
+    @inlinable
     func consent<A: Encodable, C: Encodable>(
         stream: String? = nil,
         name: String? = nil,
@@ -381,7 +381,6 @@ public extension Lytics {
             shouldSend: shouldSend)
     }
 
-    @inlinable
     /// Updates a user consent properties and optionally emit a special event that represents an app user's explicit consent.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
@@ -389,6 +388,7 @@ public extension Lytics {
     ///   - timestamp: A custom timestamp for the event.
     ///   - consent: A value representing consent properties.
     ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
+    @inlinable
     func consent<C: Encodable>(
         stream: String? = nil,
         name: String? = nil,
@@ -406,7 +406,6 @@ public extension Lytics {
             shouldSend: shouldSend)
     }
 
-    @inlinable
     /// Emits an event representing a screen or page view. Device properties are injected into the payload before emitting.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
@@ -414,6 +413,7 @@ public extension Lytics {
     ///   - timestamp: A custom timestamp for the event.
     ///   - identifiers:  A value representing additional identifiers to associate with this event.
     ///   - properties: A value representing the event properties.
+    @inlinable
     func screen<I: Encodable, P: Encodable>(
         stream: String? = nil,
         name: String? = nil,
@@ -452,13 +452,13 @@ public extension Lytics {
         }
     }
 
-    @inlinable
     /// Emits an event representing a screen or page view. Device properties are injected into the payload before emitting.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
     ///   - timestamp: A custom timestamp for the event.
     ///   - properties: A value representing the event properties.
+    @inlinable
     func screen<P: Encodable>(
         stream: String? = nil,
         name: String? = nil,

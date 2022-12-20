@@ -7,8 +7,8 @@
 import AnyCodable
 import Foundation
 
-@usableFromInline
 /// An object that manages the current user's identity.
+@usableFromInline
 actor UserManager: UserManaging {
 
     /// Configurable `UserManager` properties.
@@ -76,22 +76,22 @@ actor UserManager: UserManaging {
         self.storage = storage
     }
 
-    @discardableResult
-    @usableFromInline
     /// Updates the user identifiers with the given identifier and returns the result.
     /// - Parameter other: The identifier to update.
     /// - Returns: The updated identifiers.
+    @discardableResult
+    @usableFromInline
     func updateIdentifiers<T: Encodable>(with other: T) throws -> [String: Any] {
         let updated = identifiers.deepMerging(try(convert(other)))
         identifiers = updated
         return updated
     }
 
-    @discardableResult
-    @usableFromInline
     /// Updates the user attributes with the given attribute and returns the result.
     /// - Parameter other: The attribute to update.
     /// - Returns: The updated attributes.
+    @discardableResult
+    @usableFromInline
     func updateAttributes<T: Encodable>(with other: T) throws -> [String: Any] {
         let updated: [String: Any]
         if let currentAttributes = attributes {
@@ -104,9 +104,9 @@ actor UserManager: UserManaging {
         return updated
     }
 
-    @usableFromInline
     /// Updates the user with the given update.
     /// - Parameter userUpdate: The update.
+    @usableFromInline
     func apply<I: Encodable, A: Encodable>(_ userUpdate: UserUpdate<I, A>) throws {
         if let attributesUpdate = userUpdate.attributes {
             try updateAttributes(with: attributesUpdate)
@@ -117,10 +117,10 @@ actor UserManager: UserManaging {
         }
     }
 
-    @usableFromInline
     /// Returns the result of updating the user with the given update.
     /// - Parameter userUpdate: The update.
     /// - Returns: The updated user.
+    @usableFromInline
     func update<I: Encodable, A: Encodable>(with userUpdate: UserUpdate<I, A>) throws -> LyticsUser {
         let updatedAttributes: [String: Any]?
         let updatedIdentifiers: [String: Any]
@@ -140,8 +140,8 @@ actor UserManager: UserManaging {
         return LyticsUser(identifiers: updatedIdentifiers, attributes: updatedAttributes)
     }
 
-    @usableFromInline
     /// Clear all stored user information.
+    @usableFromInline
     func clear() {
         attributes = nil
         identifiers = makeAnonymousIdentifiers()

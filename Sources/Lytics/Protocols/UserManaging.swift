@@ -20,16 +20,16 @@ protocol UserManaging: Actor {
     /// The current user.
     var user: LyticsUser {  get }
 
-    @discardableResult
     /// Updates the user identifiers with the given identifier and returns the result.
     /// - Parameter other: The identifier to update.
     /// - Returns: The updated identifiers.
+    @discardableResult
     func updateIdentifiers<T: Encodable>(with other: T) throws -> [String: Any]
 
-    @discardableResult
     /// Updates the user attributes with the given attribute and returns the result.
     /// - Parameter other: The attribute to update.
     /// - Returns: The updated attributes.
+    @discardableResult
     func updateAttributes<T: Encodable>(with other: T) throws -> [String: Any]
 
     /// Updates the user with the given update.
