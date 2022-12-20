@@ -12,6 +12,9 @@ let package = Package(
         .library(
             name: "Lytics",
             targets: ["Lytics"]),
+        .library(
+            name: "LyticsUI",
+            targets: ["LyticsUI"])
     ],
     dependencies: [
         .package(
@@ -26,6 +29,11 @@ let package = Package(
             name: "Lytics",
             dependencies: [
                 "AnyCodable"
+            ]),
+        .target(
+            name: "LyticsUI",
+            dependencies: [
+                "Lytics"
             ]),
         .testTarget(
             name: "LyticsTests",

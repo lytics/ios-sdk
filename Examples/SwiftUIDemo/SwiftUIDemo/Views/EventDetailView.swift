@@ -6,6 +6,7 @@
 //  Copyright © 2022 Lytics. All rights reserved.
 //
 
+import LyticsUI
 import SwiftUI
 
 struct EventDetailView: View {
@@ -45,6 +46,10 @@ struct EventDetailView: View {
         .onAppear {
             viewModel.onAppear()
         }
+        .trackScreen(
+            name: "Event_Detail",
+            properties: DemoDetailScreenEvent(
+                artistName: viewModel.title))
     }
 }
 

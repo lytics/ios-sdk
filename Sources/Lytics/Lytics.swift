@@ -6,6 +6,7 @@
 
 import AnyCodable
 import Foundation
+import UIKit
 
 public final class Lytics {
 
@@ -411,6 +412,7 @@ public extension Lytics {
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
     ///   - timestamp: A custom timestamp for the event.
+    ///   - identifiers:  A value representing additional identifiers to associate with this event.
     ///   - properties: A value representing the event properties.
     func screen<I: Encodable, P: Encodable>(
         stream: String? = nil,
@@ -469,6 +471,86 @@ public extension Lytics {
             timestamp: timestamp,
             identifiers: Optional.never,
             properties: properties)
+    }
+}
+
+// MARK: - App Events
+public extension Lytics {
+
+    /// Tracks a request to continue an activity.
+    /// - Parameters:
+    ///   - userActivity: The activity object containing the data associated with the task the user was performing.
+    ///   - stream: The DataType, or "Table" of type of data being uploaded.
+    func continueUserActivity(
+        _ userActivity: NSUserActivity,
+        stream: String? = nil
+    ) {
+        let timestamp = timestampProvider()
+
+        // Create closure since `NSUserActivity` is not `Sendable`
+        let eventProvider: ([String: AnyCodable]?) -> UserActivityEvent = {
+            UserActivityEvent(userActivity, identifiers: $0)
+        }
+
+        Task(priority: .background) {
+            await eventPipeline.event(
+                stream: stream,
+                timestamp: timestamp,
+                name: EventNames.deepLink,
+                event: eventProvider(
+                    await userManager.identifiers
+                        .mapValues(AnyCodable.init(_:))))
+        }
+    }
+
+    /// Tracks a request to open a resource specified by a URL.
+    /// - Parameters:
+    ///   - url: The URL resource to open.
+    ///   - options: A dictionary of URL handling options.
+    ///   - stream: The DataType, or "Table" of type of data being uploaded.
+    func openURL(
+        _ url: URL,
+        options: [UIApplication.OpenURLOptionsKey: Any]? = nil,
+        stream: String? = nil
+    ) {
+        let timestamp = timestampProvider()
+        Task(priority: .background) {
+            await eventPipeline.event(
+                stream: stream,
+                timestamp: timestamp,
+                name: EventNames.url,
+                event: URLEvent(
+                    url: url,
+                    options: Dictionary(options),
+                    identifiers: await userManager.identifiers
+                        .mapValues(AnyCodable.init(_:))))
+        }
+    }
+
+    /// Tracks the selection of a Home screen quick action.
+    /// - Parameters:
+    ///   - shortcutItem: The selected quick action.
+    ///   - stream: The DataType, or "Table" of type of data being uploaded.
+    func shortcutItem(
+        _ shortcutItem: UIApplicationShortcutItem,
+        stream: String? = nil
+    ) {
+        let timestamp = timestampProvider()
+
+        // Create closure since `UIApplicationShortcutItem` is not `Sendable`
+        let eventProvider: ([String: AnyCodable]?) -> ShortcutEvent = {
+            ShortcutEvent(shortcutItem, identifiers: $0)
+        }
+
+        Task(priority: .background) {
+            await eventPipeline.event(
+                stream: stream,
+                timestamp: timestamp,
+                name: EventNames.shortcut,
+                event: eventProvider(
+                    await userManager.identifiers
+                        .mapValues(AnyCodable.init(_:))))
+        }
     }
 }
 
