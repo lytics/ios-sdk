@@ -17,20 +17,15 @@ public final class Lytics {
 
     private var appEventTracker: AppEventTracking!
 
-    @usableFromInline
-    internal private(set) var logger: LyticsLogger
+    @usableFromInline internal private(set) var logger: LyticsLogger
 
-    @usableFromInline
-    internal private(set) var userManager: UserManaging!
+    @usableFromInline internal private(set) var userManager: UserManaging!
 
-    @usableFromInline
-    internal private(set) var timestampProvider: () -> Millisecond
+    @usableFromInline internal private(set) var timestampProvider: () -> Millisecond
 
-    @usableFromInline
-    internal private(set) var appTrackingTransparency: AppTrackingTransparency!
+    @usableFromInline internal private(set) var appTrackingTransparency: AppTrackingTransparency!
 
-    @usableFromInline
-    internal private(set) var eventPipeline: EventPipelineProtocol!
+    @usableFromInline internal private(set) var eventPipeline: EventPipelineProtocol!
 
     /// A Boolean value indicating whether this instance has been started.
     public private(set) var hasStarted: Bool = false
