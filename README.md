@@ -54,8 +54,6 @@ struct MyApp: App {
 
 ## Sending Data
 
-You must call `Lytics.shared.optIn()` to indicate that the user consents to tracking before any data can be sent.
-
 The Lytics event methods are generic, allowing you to define your own `Encodable` types and use the SDK with full type-safety.
 
 ```swift
