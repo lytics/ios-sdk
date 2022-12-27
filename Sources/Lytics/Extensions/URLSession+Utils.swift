@@ -6,6 +6,7 @@
 
 import Foundation
 
+// MARK: - URLSession + RequestPerforming
 extension URLSession: RequestPerforming {
 
     /// Downloads the contents of a URL based on the specified request and delivers the response asynchronously.

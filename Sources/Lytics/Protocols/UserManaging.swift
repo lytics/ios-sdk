@@ -18,7 +18,7 @@ protocol UserManaging: Actor {
     var attributes: [String: Any]? { get }
 
     /// The current user.
-    var user: LyticsUser {  get }
+    var user: LyticsUser { get }
 
     /// Updates the user identifiers with the given identifier and returns the result.
     /// - Parameter other: The identifier to update.

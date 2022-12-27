@@ -94,10 +94,10 @@ extension LyticsLogger {
 
         return LyticsLogger(
             logLevel: logLevel,
-            log: { logLevel, message, file, function, line in
+            log: { _, message, file, function, line in
                 logger.callAsFunction("\(file) \(function):\(line) - \(message())")
-
-            })
+            }
+        )
     }
 
     @available(iOS 14.0, *)
@@ -108,7 +108,8 @@ extension LyticsLogger {
             logLevel: logLevel,
             log: { logLevel, message, file, function, line in
                 logger.log(level: logLevel, "\(file) \(function):\(line) - \(message())")
-            })
+            }
+        )
     }
 
     static var live: Self {

@@ -56,7 +56,8 @@ actor UserManager: UserManaging {
     @usableFromInline var user: LyticsUser {
         .init(
             identifiers: identifiers.mapValues(AnyCodable.init(_:)),
-            attributes: attributes?.mapValues(AnyCodable.init(_:)))
+            attributes: attributes?.mapValues(AnyCodable.init(_:))
+        )
     }
 
     init(
@@ -68,7 +69,8 @@ actor UserManager: UserManaging {
         Self.ensure(
             anonymousIdentityKey: configuration.anonymousIdentityKey,
             in: storage,
-            idProvider: idProvider)
+            idProvider: idProvider
+        )
 
         self.configuration = configuration
         self.encoder = encoder
@@ -82,7 +84,7 @@ actor UserManager: UserManaging {
     @discardableResult
     @usableFromInline
     func updateIdentifiers<T: Encodable>(with other: T) throws -> [String: Any] {
-        let updated = identifiers.deepMerging(try(convert(other)))
+        let updated = identifiers.deepMerging(try (convert(other)))
         identifiers = updated
         return updated
     }
@@ -175,13 +177,16 @@ private extension UserManager {
         let data = try encoder.encode(value)
         guard let dictionary = try JSONSerialization.jsonObject(
             with: data,
-            options: .allowFragments) as? [String: Any]
+            options: .allowFragments
+        ) as? [String: Any]
         else {
             throw EncodingError.invalidValue(
                 T.self,
                 .init(
                     codingPath: [],
-                    debugDescription: "Unable to creation a dictionary from \(value)."))
+                    debugDescription: "Unable to creation a dictionary from \(value)."
+                )
+            )
         }
         return dictionary
     }
@@ -193,16 +198,19 @@ extension UserManager {
         .init(
             configuration: Configuration(
                 primaryIdentityKey: configuration.primaryIdentityKey,
-                anonymousIdentityKey: configuration.anonymousIdentityKey),
+                anonymousIdentityKey: configuration.anonymousIdentityKey
+            ),
             encoder: JSONEncoder(),
             idProvider: { UUID().uuidString },
-            storage: .live)
+            storage: .live
+        )
     }
 
     #if DEBUG
-    static let mock = UserManager(
-        configuration: .init(),
-        encoder: JSONEncoder(),
-        storage: .mock())
+        static let mock = UserManager(
+            configuration: .init(),
+            encoder: JSONEncoder(),
+            storage: .mock()
+        )
     #endif
 }

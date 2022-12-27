@@ -66,6 +66,7 @@ extension Storage {
                 } catch {
                     throw StorageError.file(path: file.path, error: error)
                 }
-            })
+            }
+        )
     }
 }

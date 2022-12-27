@@ -23,12 +23,13 @@ struct CodableRequestContainer: Codable {
             guard let type = _typeByName(typeName) as? any Decodable.Type else {
                 throw DecodingError.dataCorruptedError(
                     in: container,
-                    debugDescription: "\(typeName) is not decodable.")
+                    debugDescription: "\(typeName) is not decodable."
+                )
             }
             let encodedValue = try container.decode(String.self)
 
             if let value = try jsonDecoder.decode(type, from: Data(encodedValue.utf8)) as? (any RequestWrapping) {
-                self.requests.insert(value, at: 0)
+                requests.insert(value, at: 0)
             }
         }
     }
@@ -36,7 +37,6 @@ struct CodableRequestContainer: Codable {
     func encode(to encoder: Encoder) throws {
         var container = encoder.unkeyedContainer()
         for event in requests.reversed() {
-
             func open<A: Encodable>(_: A.Type) throws -> Data {
                 try JSONEncoder().encode(event as! A)
             }
@@ -45,7 +45,8 @@ struct CodableRequestContainer: Codable {
 
             let string = try String(
                 decoding: _openExistential(type(of: event), do: open),
-                as: UTF8.self)
+                as: UTF8.self
+            )
             try container.encode(string)
         }
     }

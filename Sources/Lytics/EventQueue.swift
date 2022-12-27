@@ -119,7 +119,9 @@ extension EventQueue {
             requestBuilder: .live(
                 apiToken: apiToken,
                 baseURL: configuration.apiURL,
-                dryRun: configuration.enableSandbox),
-            upload: upload)
+                dryRun: configuration.enableSandbox
+            ),
+            upload: upload
+        )
     }
 }

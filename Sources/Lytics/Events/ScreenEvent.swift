@@ -33,4 +33,5 @@ struct ScreenEvent<P: Encodable>: Encodable {
     }
 }
 
+// MARK: Equatable
 extension ScreenEvent: Equatable where P: Equatable {}

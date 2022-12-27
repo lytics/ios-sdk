@@ -16,8 +16,8 @@ extension Data {
     ///
     /// - Parameter newArrayData: The data to add.
     mutating func append(jsonArray newArrayData: inout Data) throws {
-        guard self.first == .leftSquareBracket,
-              self.last == .rightSquareBracket,
+        guard first == .leftSquareBracket,
+              last == .rightSquareBracket,
               newArrayData.first == .leftSquareBracket,
               newArrayData.last == .rightSquareBracket else {
             throw LyticsError(reason: "Invalid data format")

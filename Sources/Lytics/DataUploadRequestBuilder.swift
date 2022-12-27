@@ -44,7 +44,8 @@ extension DataUploadRequestBuilder {
                             requestBuilder.dataUpload(
                                 stream: element.key,
                                 dryrun: dryRun == true ? true : nil,
-                                data: data))
+                                data: data
+                            ))
                     }
                 }
             })

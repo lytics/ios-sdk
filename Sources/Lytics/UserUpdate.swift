@@ -18,4 +18,5 @@ struct UserUpdate<I: Encodable, A: Encodable>: Encodable {
     }
 }
 
+// MARK: Equatable
 extension UserUpdate: Equatable where A: Equatable, I: Equatable {}

@@ -21,4 +21,5 @@ struct IdentityEvent<I: Encodable, A: Encodable>: Encodable {
     }
 }
 
+// MARK: Equatable
 extension IdentityEvent: Equatable where I: Equatable, A: Equatable {}

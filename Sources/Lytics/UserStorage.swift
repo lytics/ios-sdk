@@ -29,21 +29,23 @@ extension UserStorage {
             },
             storeIdentifiers: { identifiers in
                 userDefaults.set(identifiers, for: .userIdentifiers)
-            })
+            }
+        )
     }
 
     #if DEBUG
-    static func mock(
-        attributes: @escaping () -> [String: Any]? = { [:] },
-        identifiers: @escaping () -> [String: Any]? = { nil },
-        storeAttributes: @escaping ([String: Any]?) -> Void = { _ in },
-        storeIdentifiers: @escaping ([String: Any]?) -> Void = { _ in }
-    ) -> UserStorage {
-        .init(
-            attributes: attributes,
-            identifiers: identifiers,
-            storeAttributes: storeAttributes,
-            storeIdentifiers: storeIdentifiers)
-    }
+        static func mock(
+            attributes: @escaping () -> [String: Any]? = { [:] },
+            identifiers: @escaping () -> [String: Any]? = { nil },
+            storeAttributes: @escaping ([String: Any]?) -> Void = { _ in },
+            storeIdentifiers: @escaping ([String: Any]?) -> Void = { _ in }
+        ) -> UserStorage {
+            .init(
+                attributes: attributes,
+                identifiers: identifiers,
+                storeAttributes: storeAttributes,
+                storeIdentifiers: storeIdentifiers
+            )
+        }
     #endif
 }

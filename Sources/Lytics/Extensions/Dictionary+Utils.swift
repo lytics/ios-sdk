@@ -7,12 +7,12 @@
 import AnyCodable
 import Foundation
 
-extension Dictionary {
+public extension Dictionary {
 
     /// Creates a dictionary by deep merging the given dictionary into this dictionary.
     /// - Parameter other: A dictionary to merge.
     /// - Returns: A new dictionary with the combined keys and values of this dictionary and other.
-    public func deepMerging(_ other: [Key: Value]) -> [Key: Value] {
+    func deepMerging(_ other: [Key: Value]) -> [Key: Value] {
         var result: [Key: Value] = self
         for (key, value) in other {
             if let dictValue = value as? [Key: Value],
@@ -28,7 +28,7 @@ extension Dictionary {
 }
 
 extension Dictionary where Key == AnyCodable, Value == AnyCodable {
-    init?<K, V>(_ other: Dictionary<K, V>?) {
+    init?<K, V>(_ other: [K: V]?) {
         guard let other else {
             return nil
         }

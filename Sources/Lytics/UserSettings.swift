@@ -20,6 +20,7 @@ extension UserSettings {
             },
             setOptIn: { value in
                 userDefaults.set(value, for: .didOptIn)
-            })
+            }
+        )
     }
 }

@@ -20,9 +20,9 @@ extension NotificationCenter {
         private var cancellable: AnyCancellable?
 
         init(_ publisher: AnyPublisher<AppLifecycleEvent, Never>) {
-            var subscription: AnyCancellable? = nil
+            var subscription: AnyCancellable?
 
-            stream = AsyncStream<AppLifecycleEvent>(AppLifecycleEvent.self) { continuation in
+            self.stream = AsyncStream<AppLifecycleEvent>(AppLifecycleEvent.self) { continuation in
                 subscription = publisher
                     .handleEvents(
                         receiveCancel: {
@@ -34,10 +34,11 @@ extension NotificationCenter {
                         },
                         receiveValue: { value in
                             continuation.yield(value)
-                        })
+                        }
+                    )
             }
 
-            cancellable = subscription
+            self.cancellable = subscription
         }
 
         func cancel() {
