@@ -7,13 +7,13 @@
 import Foundation
 
 /// An 8-bit unsigned integer.
-public typealias Byte = UInt8
+typealias Byte = UInt8
 
 /// An array of 8-bit unsigned integers.
-public typealias Bytes = [Byte]
+typealias Bytes = [Byte]
 
 /// Adds control character conveniences to `Byte`.
-public extension Byte {
+extension Byte {
     /// '\n'
     static let newLine: Byte = 0xA
 
@@ -30,7 +30,7 @@ public extension Byte {
     static let rightSquareBracket: Byte = 0x5D
 }
 
-public extension Byte {
+extension Byte {
     /// Returns the `String` representation of this `Byte` (unicode scalar).
     var string: String {
         String(Character(Unicode.Scalar(self)))
