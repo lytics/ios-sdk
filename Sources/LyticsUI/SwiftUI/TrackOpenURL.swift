@@ -46,7 +46,8 @@ public struct TrackOpenURL: ViewModifier {
             .onOpenURL { url in
                 lytics.openURL(
                     url,
-                    stream: stream)
+                    stream: stream
+                )
                 action(url)
             }
     }
@@ -67,10 +68,12 @@ public extension View {
     func trackOpenURL(
         with lytics: Lytics = .shared,
         stream: String? = nil,
-        perform action: @escaping (URL) -> Void) -> some View {
+        perform action: @escaping (URL) -> Void
+    ) -> some View {
         modifier(TrackOpenURL(
             lytics: lytics,
             stream: stream,
-            action: action))
+            action: action
+        ))
     }
 }

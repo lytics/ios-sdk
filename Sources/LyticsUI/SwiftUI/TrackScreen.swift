@@ -52,7 +52,8 @@ public struct TrackScreen<I: Encodable, P: Encodable>: ViewModifier {
                     stream: stream,
                     name: name,
                     identifiers: identifiers,
-                    properties: properties)
+                    properties: properties
+                )
             }
     }
 }
@@ -78,7 +79,8 @@ public extension View {
             stream: stream,
             name: name,
             identifiers: identifiers,
-            properties: properties))
+            properties: properties
+        ))
     }
 
     /// Emits a screen event before this view appears.
@@ -98,7 +100,8 @@ public extension View {
             stream: stream,
             name: name,
             identifiers: identifiers,
-            properties: .never))
+            properties: .never
+        ))
     }
 
     /// Emits a screen event before this view appears.
@@ -118,7 +121,8 @@ public extension View {
             stream: stream,
             name: name,
             identifiers: .never,
-            properties: properties))
+            properties: properties
+        ))
     }
 
     /// Emits a screen event before this view appears.
@@ -136,6 +140,7 @@ public extension View {
             stream: stream,
             name: name,
             identifiers: .never,
-            properties: .never))
+            properties: .never
+        ))
     }
 }
