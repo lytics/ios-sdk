@@ -4,8 +4,8 @@
 //  Created by Mathew Gacy on 10/21/22.
 //
 
-@testable import Lytics
 import Foundation
+@testable import Lytics
 import XCTest
 
 final class RequestFailureHandlerTests: XCTestCase {
@@ -18,11 +18,12 @@ final class RequestFailureHandlerTests: XCTestCase {
             configuration: .init(
                 maxRetryCount: maxRetryCount,
                 initialDelay: initialDelay,
-                delayMultiplier: delayMultiplier))
+                delayMultiplier: delayMultiplier
+            ))
 
         let error = NetworkError.invalidResponse(nil)
 
-        var retryCount: Int = 0
+        var retryCount = 0
 
         // Initial Retry
         let initialRetry = sut.strategy(for: error, retryCount: retryCount)
@@ -49,13 +50,15 @@ final class RequestFailureHandlerTests: XCTestCase {
             configuration: .init(
                 maxRetryCount: maxRetryCount,
                 initialDelay: initialDelay,
-                delayMultiplier: delayMultiplier))
+                delayMultiplier: delayMultiplier
+            ))
 
         var caughtError: Error!
         do {
             _ = try JSONDecoder().decode(
                 Bool.self,
-                from: Data("abc".utf8))
+                from: Data("abc".utf8)
+            )
         } catch {
             caughtError = error
         }

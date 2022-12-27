@@ -17,6 +17,7 @@ extension TestAttributes {
         .init(
             firstName: User1.firstName,
             lastName: User1.lastName,
-            titles: User1.titles)
+            titles: User1.titles
+        )
     }
 }

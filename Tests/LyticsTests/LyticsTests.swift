@@ -1,5 +1,5 @@
-import XCTest
 @testable import Lytics
+import XCTest
 
 final class LyticsTests: XCTestCase {
     func testExample() throws {

@@ -2,10 +2,10 @@
 //  EventPipelineMock.swift
 //
 //  Created by Mathew Gacy on 11/16/22.
-//  
+//
 
-@testable import Lytics
 import Foundation
+@testable import Lytics
 
 struct EventPipelineMock: EventPipelineProtocol {
     var onEvent: (String?, Millisecond, String?, Any) -> Void = { _, _, _, _ in }
@@ -19,7 +19,7 @@ struct EventPipelineMock: EventPipelineProtocol {
         timestamp: Millisecond,
         name: String?,
         event: E
-    ) async where E : Encodable {
+    ) async where E: Encodable {
         onEvent(stream, timestamp, name, event)
     }
 

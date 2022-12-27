@@ -31,7 +31,8 @@ final class EventQueueTests: XCTestCase {
             maxQueueSize: 3,
             uploadInterval: 10,
             requestBuilder: requestBuilder,
-            upload: { _ in })
+            upload: { _ in }
+        )
 
         buildExpectation.isInverted = true
 
@@ -58,7 +59,8 @@ final class EventQueueTests: XCTestCase {
             uploadInterval: 1,
             taskPriority: .high,
             requestBuilder: requestBuilder,
-            upload: { _ in })
+            upload: { _ in }
+        )
 
         await sut.enqueue(Mock.payload(event: Mock.consentEvent))
         await sut.enqueue(Mock.payload(event: Mock.event))
@@ -87,7 +89,8 @@ final class EventQueueTests: XCTestCase {
             maxQueueSize: 10,
             uploadInterval: 10,
             requestBuilder: requestBuilder,
-            upload: upload)
+            upload: upload
+        )
 
         await sut.enqueue(Mock.payload(event: Mock.consentEvent))
         await sut.flush()
@@ -108,7 +111,8 @@ final class EventQueueTests: XCTestCase {
             maxQueueSize: 10,
             uploadInterval: 1,
             requestBuilder: .mock,
-            upload: { _ in })
+            upload: { _ in }
+        )
 
         let isEmpty = await sut.isEmpty
         XCTAssert(isEmpty)
@@ -139,7 +143,8 @@ final class EventQueueTests: XCTestCase {
             maxQueueSize: 10,
             uploadInterval: 10,
             requestBuilder: requestBuilder,
-            upload: { _ in })
+            upload: { _ in }
+        )
 
         await sut.enqueue(Mock.payload(event: Mock.event))
         await sut.flush()
@@ -152,7 +157,7 @@ final class EventQueueTests: XCTestCase {
 
         let requestBuilder = DataUploadRequestBuilder(
             requests: { _ in
-                return requests
+                requests
             })
 
         var uploadedRequests: [Request<DataUploadResponse>]!
@@ -168,7 +173,8 @@ final class EventQueueTests: XCTestCase {
             maxQueueSize: 10,
             uploadInterval: 10,
             requestBuilder: requestBuilder,
-            upload: upload)
+            upload: upload
+        )
 
         await sut.enqueue(Mock.payload(event: Mock.event))
         await sut.flush()
@@ -194,8 +200,8 @@ final class EventQueueTests: XCTestCase {
             maxQueueSize: 3,
             uploadInterval: 10,
             requestBuilder: requestBuilder,
-            upload: { _ in })
-
+            upload: { _ in }
+        )
 
         await sut.enqueue(Mock.payload(stream: Stream.one, name: Name.one, event: Mock.event))
         await sut.enqueue(Mock.payload(stream: Stream.two, name: Name.two, event: Mock.event))

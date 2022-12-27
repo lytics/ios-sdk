@@ -22,6 +22,7 @@ extension TestIdentifiers {
         .init(
             email: User1.email,
             userID: User1.userID,
-            nested: Nested(a: User1.a, b: User1.b))
+            nested: Nested(a: User1.a, b: User1.b)
+        )
     }
 }

@@ -4,8 +4,8 @@
 //  Created by Mathew Gacy on 10/3/22.
 //
 
-@testable import Lytics
 import Foundation
+@testable import Lytics
 import XCTest
 
 final class RequestTests: XCTestCase {

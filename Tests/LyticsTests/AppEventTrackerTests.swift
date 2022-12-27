@@ -22,12 +22,14 @@ final class AppEventTrackerTests: XCTestCase {
             logger: .mock,
             eventProvider: AppEventProvider(identifiers: { [:] }),
             eventPipeline: EventPipelineMock(),
-            onEvent: eventHandler)
+            onEvent: eventHandler
+        )
 
         let center = NotificationCenter()
         sut.startTracking(
             lifecycleEvents: center.lifecycleEvents(),
-            versionTracker: .mock())
+            versionTracker: .mock()
+        )
 
         // didBecomeActive
         handlerExpectation = expectation(description: "didBecomeActive handled")
@@ -59,12 +61,14 @@ final class AppEventTrackerTests: XCTestCase {
             logger: .mock,
             eventProvider: AppEventProvider(identifiers: { [:] }),
             eventPipeline: EventPipelineMock(),
-            onEvent: eventHandler)
+            onEvent: eventHandler
+        )
 
         let center = NotificationCenter()
         sut!.startTracking(
             lifecycleEvents: center.lifecycleEvents(),
-            versionTracker: .mock())
+            versionTracker: .mock()
+        )
 
         handlerExpectation = expectation(description: "Event handled")
         await center.post(name: UIApplication.didBecomeActiveNotification, object: nil)
@@ -97,12 +101,14 @@ final class AppEventTrackerTests: XCTestCase {
             logger: .mock,
             eventProvider: AppEventProvider(identifiers: { [:] }),
             eventPipeline: eventPipeline,
-            onEvent: { _ in })
+            onEvent: { _ in }
+        )
 
         let center = NotificationCenter()
         sut.startTracking(
             lifecycleEvents: center.lifecycleEvents(),
-            versionTracker: .mock())
+            versionTracker: .mock()
+        )
 
         // didBecomeActive
         eventExpectation = expectation(description: "didBecomeActive sent")
@@ -132,12 +138,14 @@ final class AppEventTrackerTests: XCTestCase {
             logger: .mock,
             eventProvider: AppEventProvider(identifiers: { [:] }),
             eventPipeline: eventPipeline,
-            onEvent: { _ in })
+            onEvent: { _ in }
+        )
 
         let center = NotificationCenter()
         sut.startTracking(
             lifecycleEvents: center.lifecycleEvents(),
-            versionTracker: .mock())
+            versionTracker: .mock()
+        )
 
         await center.post(name: UIApplication.didBecomeActiveNotification, object: nil)
         await center.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
@@ -160,7 +168,8 @@ final class AppEventTrackerTests: XCTestCase {
             logger: .mock,
             eventProvider: AppEventProvider(identifiers: { [:] }),
             eventPipeline: eventPipeline,
-            onEvent: { _ in })
+            onEvent: { _ in }
+        )
 
         let center = NotificationCenter()
 
@@ -168,7 +177,8 @@ final class AppEventTrackerTests: XCTestCase {
         eventExpectation = expectation(description: "Install event sent")
         sut.startTracking(
             lifecycleEvents: center.lifecycleEvents(),
-            versionTracker: .mock(.install("1.0")))
+            versionTracker: .mock(.install("1.0"))
+        )
         await waitForExpectations(timeout: 1.0)
         XCTAssertEqual(eventName, EventNames.appInstall)
         sut.stopTracking()
@@ -177,7 +187,8 @@ final class AppEventTrackerTests: XCTestCase {
         eventExpectation = expectation(description: "Update event sent")
         sut.startTracking(
             lifecycleEvents: center.lifecycleEvents(),
-            versionTracker: .mock(.update("1.1")))
+            versionTracker: .mock(.update("1.1"))
+        )
         await waitForExpectations(timeout: 1.0)
         XCTAssertEqual(eventName, EventNames.appUpdate)
         sut.stopTracking()
@@ -191,7 +202,7 @@ final class AppEventTrackerTests: XCTestCase {
             })
 
         var handlerExpectation: XCTestExpectation!
-        let eventHandler: (AppLifecycleEvent) -> Void = { event in
+        let eventHandler: (AppLifecycleEvent) -> Void = { _ in
             handlerExpectation.fulfill()
         }
 
@@ -200,12 +211,14 @@ final class AppEventTrackerTests: XCTestCase {
             logger: .mock,
             eventProvider: AppEventProvider(identifiers: { [:] }),
             eventPipeline: eventPipeline,
-            onEvent: eventHandler)
+            onEvent: eventHandler
+        )
 
         let center = NotificationCenter()
         sut.startTracking(
             lifecycleEvents: center.lifecycleEvents(),
-            versionTracker: .mock())
+            versionTracker: .mock()
+        )
 
         eventExpectation = expectation(description: "didBecomeActive sent")
         handlerExpectation = expectation(description: "Event handled")

@@ -4,8 +4,8 @@
 //  Created by Mathew Gacy on 11/9/22.
 //
 
-@testable import Lytics
 import Foundation
+@testable import Lytics
 
 actor EventQueueMock: EventQueueing {
     var onEnqueue: (any StreamEvent) -> Void

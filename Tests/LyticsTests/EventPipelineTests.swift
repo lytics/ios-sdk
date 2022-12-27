@@ -18,12 +18,14 @@ final class EventPipelineTests: XCTestCase {
         let sut = EventPipeline(
             configuration: .init(
                 defaultStream: "",
-                requireConsent: false),
+                requireConsent: false
+            ),
             logger: .mock,
             sessionDidStart: { _ in false },
             eventQueue: eventQueue,
             uploader: UploaderMock<DataUploadResponse>(),
-            userSettings: .optedInMock)
+            userSettings: .optedInMock
+        )
 
         await sut.event(stream: nil, timestamp: 0, name: nil, event: Mock.event)
         XCTAssertEqual(enqueuedEvent.stream, Constants.defaultStream)
@@ -45,12 +47,14 @@ final class EventPipelineTests: XCTestCase {
         let sut = EventPipeline(
             configuration: .init(
                 defaultStream: "",
-                requireConsent: false),
+                requireConsent: false
+            ),
             logger: .mock,
             sessionDidStart: { _ in false },
             eventQueue: eventQueue,
             uploader: UploaderMock<DataUploadResponse>(),
-            userSettings: .optedOutMock)
+            userSettings: .optedOutMock
+        )
 
         await sut.event(stream: nil, timestamp: 0, name: nil, event: Mock.event)
         XCTAssertEqual(enqueuedEvent.stream, Constants.defaultStream)
@@ -65,12 +69,14 @@ final class EventPipelineTests: XCTestCase {
         let sut = EventPipeline(
             configuration: .init(
                 defaultStream: "",
-                requireConsent: true),
+                requireConsent: true
+            ),
             logger: .mock,
             sessionDidStart: { _ in false },
             eventQueue: eventQueue,
             uploader: UploaderMock<DataUploadResponse>(),
-            userSettings: .optedInMock)
+            userSettings: .optedInMock
+        )
 
         await sut.event(stream: nil, timestamp: 0, name: nil, event: Mock.event)
         XCTAssertEqual(enqueuedEvent.stream, Constants.defaultStream)
@@ -85,12 +91,14 @@ final class EventPipelineTests: XCTestCase {
         let sut = EventPipeline(
             configuration: .init(
                 defaultStream: "",
-                requireConsent: true),
+                requireConsent: true
+            ),
             logger: .mock,
             sessionDidStart: { _ in false },
             eventQueue: eventQueue,
             uploader: UploaderMock<DataUploadResponse>(),
-            userSettings: .optedOutMock)
+            userSettings: .optedOutMock
+        )
 
         await sut.event(stream: nil, timestamp: 0, name: nil, event: Mock.event)
         XCTAssertNil(enqueuedEvent)
@@ -105,12 +113,14 @@ final class EventPipelineTests: XCTestCase {
         let sut = EventPipeline(
             configuration: .init(
                 defaultStream: Constants.defaultStream,
-                requireConsent: false),
+                requireConsent: false
+            ),
             logger: .mock,
             sessionDidStart: { _ in false },
             eventQueue: eventQueue,
             uploader: UploaderMock<DataUploadResponse>(),
-            userSettings: .optedOutMock)
+            userSettings: .optedOutMock
+        )
 
         await sut.event(stream: "has empty spaces", timestamp: 0, name: nil, event: Mock.event)
         XCTAssertEqual(enqueuedEvent.stream, "has_empty_spaces")

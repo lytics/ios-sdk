@@ -17,6 +17,7 @@ extension TestConsent {
         .init(
             document: "gdpr_collection_agreement_v1",
             timestamp: "46236424246",
-            consented: true)
+            consented: true
+        )
     }
 }
