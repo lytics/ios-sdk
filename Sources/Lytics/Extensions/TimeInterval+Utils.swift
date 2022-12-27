@@ -8,6 +8,6 @@ import Foundation
 
 public extension TimeInterval {
     var milliseconds: Millisecond {
-        Millisecond((self * 1_000).rounded())
+        Millisecond((self * 1000).rounded())
     }
 }
