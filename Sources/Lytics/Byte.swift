@@ -13,7 +13,7 @@ typealias Byte = UInt8
 typealias Bytes = [Byte]
 
 /// Adds control character conveniences to `Byte`.
-extension Byte {
+public extension Byte {
     /// '\n'
     static let newLine: Byte = 0xA
 
@@ -30,7 +30,7 @@ extension Byte {
     static let rightSquareBracket: Byte = 0x5D
 }
 
-extension Byte {
+public extension Byte {
     /// Returns the `String` representation of this `Byte` (unicode scalar).
     var string: String {
         String(Character(Unicode.Scalar(self)))
