@@ -9,7 +9,7 @@
 --closurevoid remove
 --commas always
 --conflictmarkers reject
---decimalgrouping 3,5
+--decimalgrouping 3,4
 --elseposition same-line
 --emptybraces no-space
 --enumthreshold 0
