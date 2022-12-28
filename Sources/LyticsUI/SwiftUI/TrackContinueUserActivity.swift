@@ -48,6 +48,7 @@ public struct TrackContinueUserActivity: ViewModifier {
         self.action = action
     }
 
+    /// Gets the current body of the caller.
     public func body(content: Content) -> some View {
         content
             .onContinueUserActivity(activityType) { userActivity in

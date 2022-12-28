@@ -45,6 +45,7 @@ public struct TrackScreen<I: Encodable, P: Encodable>: ViewModifier {
         self.properties = properties
     }
 
+    /// Gets the current body of the caller.
     public func body(content: Content) -> some View {
         content
             .onAppear {
