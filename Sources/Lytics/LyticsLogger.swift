@@ -7,6 +7,7 @@
 import Foundation
 import os.log
 
+/// The various log levels that the Lytics SDK provides.
 public enum LogLevel: Comparable, Equatable {
     case debug
     case info

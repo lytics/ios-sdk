@@ -8,6 +8,7 @@ import AnyCodable
 import Foundation
 import UIKit
 
+/// The Lytics SDK entry point.
 public final class Lytics {
 
     /// The shared instance.
