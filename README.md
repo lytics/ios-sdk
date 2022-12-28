@@ -114,7 +114,7 @@ Lytics.shared.track(
 Screen events provide an interface for configuring and emitting a special event that represents a screen or page view. It should be seen as an extension of the track method.
 
 ```swift
-Lytics.shared.screen(name: Dashboard)
+Lytics.shared.screen(name: "Dashboard")
 ```
 
 ### Advertising ID
