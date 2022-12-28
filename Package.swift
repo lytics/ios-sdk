@@ -19,7 +19,7 @@ let package = Package(
     dependencies: [
         .package(
             url: "https://github.com/Flight-School/AnyCodable",
-            from: "0.6.6"),
+            from: "0.6.7"),
         .package(
             url: "https://github.com/mobelux/swift-version-file-plugin",
             from: "0.1.0")
