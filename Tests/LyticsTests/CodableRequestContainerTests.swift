@@ -108,4 +108,17 @@ final class CodableRequestContainerTests: XCTestCase {
             XCTFail("Request URLs do not match expectations")
         }
     }
+
+    func testDecodeNotCodableData() {
+        enum NotCodable {}
+
+        let typeString = _mangledTypeName(NotCodable.self) ?? ""
+        let invalidData = Data("[\"\(typeString)\",{}]".utf8)
+
+        var thrownError: Error!
+        XCTAssertThrowsError(try JSONDecoder().decode(CodableRequestContainer.self, from: invalidData)) {
+            thrownError = $0
+        }
+        XCTAssertNotNil(thrownError as? DecodingError)
+    }
 }
