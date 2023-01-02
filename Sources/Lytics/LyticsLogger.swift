@@ -34,9 +34,9 @@ struct LyticsLogger {
     var logLevel: LogLevel? = .error
     var log: (OSLogType, @escaping () -> String, StaticString, StaticString, UInt) -> Void
 
-    @usableFromInline
     /// Log a debug message.
     /// - Parameter message: The message to log.
+    @usableFromInline
     func debug(
         _ message: @autoclosure @escaping () -> String,
         file: StaticString = #fileID,
@@ -49,9 +49,9 @@ struct LyticsLogger {
         log(.debug, message, file, function, line)
     }
 
-    @usableFromInline
     /// Log an info message.
     /// - Parameter message: The message to log.
+    @usableFromInline
     func info(
         _ message: @autoclosure @escaping () -> String,
         file: StaticString = #fileID,
@@ -64,9 +64,9 @@ struct LyticsLogger {
         log(.info, message, file, function, line)
     }
 
-    @usableFromInline
     /// Log an error message.
     /// - Parameter message: The message to log.
+    @usableFromInline
     func error(
         _ message: @autoclosure @escaping () -> String,
         file: StaticString = #fileID,
