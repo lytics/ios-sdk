@@ -10,7 +10,7 @@ import Foundation
 actor Uploader: Uploading {
 
     /// A wrapper for an in-progress request.
-    final class PendingRequest<R: Codable>: Codable, RequestWrapping {
+    final class PendingRequest<R: Codable>: Codable, Equatable, RequestWrapping {
 
         /// A unique value identifying the wrapped request.
         let id: UUID
@@ -57,6 +57,13 @@ actor Uploader: Uploading {
         func cancel() {
             uploadTask?.cancel()
             uploadTask = nil
+        }
+
+        static func == (lhs: PendingRequest<R>, rhs: PendingRequest<R>) -> Bool {
+            lhs.id == rhs.id
+                && lhs.request == rhs.request
+                && lhs.retryCount == rhs.retryCount
+                && lhs.uploadTask == rhs.uploadTask
         }
 
         private enum CodingKeys: CodingKey {
