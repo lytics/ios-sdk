@@ -6,6 +6,7 @@
 
 import Foundation
 @testable import Lytics
+import XCTest
 
 extension AppVersionTracker {
     static func mock(_ event: AppVersionEvent? = nil) -> Self {
@@ -24,6 +25,33 @@ extension DataUploadRequestBuilder {
 extension LyticsLogger {
     static var mock: Self {
         .init(log: { _, _, _, _, _ in })
+    }
+}
+
+extension RequestFailureHandler {
+    static var failing: Self {
+        .init(
+            strategy: { error, _ in
+                XCTFail("Unexpected request failure: \(error.localizedDescription)")
+                return .discard("")
+            }
+        )
+    }
+
+    static var mock: Self {
+        .init(
+            strategy: { _, _ in .discard("") }
+        )
+    }
+}
+
+extension Storage {
+    static var mock: Self {
+        .init(
+            write: { _ in },
+            read: { nil },
+            clear: {}
+        )
     }
 }
 
