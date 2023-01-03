@@ -22,3 +22,8 @@ jobs:
           xcode: ^14
           platform: iOS
           code-coverage: true
+      - name: Upload coverage to Codecov
+        run: |
+          curl -Os https://uploader.codecov.io/latest/macos/codecov
+          chmod +x codecov
+          ./codecov -t ${{ secrets.CODECOV_TOKEN }}
