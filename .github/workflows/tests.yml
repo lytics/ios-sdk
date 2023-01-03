@@ -21,3 +21,4 @@ jobs:
         with:
           xcode: ^14
           platform: iOS
+          code-coverage: true
