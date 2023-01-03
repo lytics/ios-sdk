@@ -73,7 +73,7 @@ actor Uploader: Uploading {
     private var pendingRequests: [UUID: any RequestWrapping]
 
     /// A Boolean value that indicates whether any requests passed to `upload(_:)` should be upload or stored immediately.
-    var shouldSend: Bool
+    private(set) var shouldSend: Bool
 
     /// The number of requests waiting to be uploaded.
     var pendingRequestCount: Int {
