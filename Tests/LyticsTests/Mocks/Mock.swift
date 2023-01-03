@@ -17,6 +17,20 @@ enum Mock {
         consent: TestConsent.user1
     )
 
+    static let dataUploadResponse = DataUploadResponse(
+        status: 200,
+        message: "Message",
+        data: .init(
+            messageCount: 1,
+            rejectedCount: 0,
+            contentType: nil,
+            dropErrors: nil,
+            dryrun: nil,
+            timestampField: nil,
+            filename: nil
+        )
+    )
+
     static let event = Event(
         identifiers: User1.identifiers,
         properties: TestCart.user1
@@ -35,9 +49,25 @@ enum Mock {
     static let uuidString = "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"
 
     static let url = URL(string: "https://api.lytics.io/collect/json/stream")!
+
+    static var uuid: UUID {
+        .init(uuidString: uuidString)!
+    }
 }
 
 extension Mock {
+    static func httpResponse(
+        _ statusCode: Int = 200,
+        headerFields: [String: String]? = nil
+    ) -> HTTPURLResponse {
+        .init(
+            url: url,
+            statusCode: statusCode,
+            httpVersion: nil,
+            headerFields: headerFields
+        )!
+    }
+
     static func payload<E: Encodable>(
         stream: String = Stream.one,
         timestamp: Millisecond = Timestamp.one,
