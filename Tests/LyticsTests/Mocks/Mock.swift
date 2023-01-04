@@ -56,6 +56,21 @@ enum Mock {
 }
 
 extension Mock {
+    static func containerJSON<R: Codable>(response: R.Type, idStrings: [String]) -> String {
+        func request(_ idString: String) -> String {
+            """
+            "{\\"id\\":\\"\(idString)\\",\\"request\\":{\\"url\\":\\"https:\\\\\\/\\\\\\/api.lytics.io\\\\\\/collect\\\\\\/json\\\\\\/stream\\",\\"method\\":\\"POST\\"}}"
+            """
+        }
+
+        let typeString = _mangledTypeName(Uploader.PendingRequest<R>.self) ?? ""
+        let elements = idStrings
+            .map { "\"\(typeString)\",\(request($0))" }
+            .joined(separator: ",")
+
+        return "[\(elements)]"
+    }
+
     static func httpResponse(
         _ statusCode: Int = 200,
         headerFields: [String: String]? = nil

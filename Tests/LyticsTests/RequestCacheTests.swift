@@ -8,21 +8,6 @@ import Foundation
 @testable import Lytics
 import XCTest
 
-func containerJSON<R: Codable>(response: R.Type, idStrings: [String]) -> String {
-    func request(_ idString: String) -> String {
-        """
-        "{\\"id\\":\\"\(idString)\\",\\"request\\":{\\"url\\":\\"https:\\\\\\/\\\\\\/api.lytics.io\\\\\\/collect\\\\\\/json\\\\\\/stream\\",\\"method\\":\\"POST\\"}}"
-        """
-    }
-
-    let typeString = _mangledTypeName(Uploader.PendingRequest<R>.self) ?? ""
-    let elements = idStrings
-        .map { "\"\(typeString)\",\(request($0))" }
-        .joined(separator: ",")
-
-    return "[\(elements)]"
-}
-
 final class RequestCacheTests: XCTestCase {
     typealias PendingRequest<R: Codable> = Uploader.PendingRequest<R>
 
@@ -79,7 +64,7 @@ final class RequestCacheTests: XCTestCase {
         try sut.cache(requests)
         waitForExpectations(timeout: 0.1)
 
-        let expectedJSON = containerJSON(
+        let expectedJSON = Mock.containerJSON(
             response: DataUploadResponse.self,
             idStrings: [Mock.uuidString]
         )
@@ -91,7 +76,7 @@ final class RequestCacheTests: XCTestCase {
         let writeExpectation = expectation(description: "Data written to storage")
 
         let storedData = Data(
-            containerJSON(
+            Mock.containerJSON(
                 response: DataUploadResponse.self,
                 idStrings: [Mock.uuidString]
             ).utf8
@@ -125,7 +110,7 @@ final class RequestCacheTests: XCTestCase {
         try sut.cache(requests)
         waitForExpectations(timeout: 0.1)
 
-        let expectedJSON = containerJSON(
+        let expectedJSON = Mock.containerJSON(
             response: DataUploadResponse.self,
             idStrings: [Mock.uuidString, uuidString]
         )
@@ -137,7 +122,7 @@ final class RequestCacheTests: XCTestCase {
             write: { _ in },
             read: {
                 Data(
-                    containerJSON(
+                    Mock.containerJSON(
                         response: DataUploadResponse.self,
                         idStrings: [Mock.uuidString]
                     ).utf8
