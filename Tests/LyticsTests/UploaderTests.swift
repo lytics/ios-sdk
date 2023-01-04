@@ -137,7 +137,7 @@ final class UploaderTests: XCTestCase {
         var hasLoadedRequest = false
         let cache = RequestCacheMock(
             onLoad: {
-                // Handle attempt to send cached requuests after success
+                // Handle attempt to send cached requests after success
                 if hasLoadedRequest {
                     return nil
                 } else {
@@ -212,7 +212,7 @@ final class UploaderTests: XCTestCase {
             cacheExpectation.fulfill()
         }
 
-        // Wait for retryied attept and storage
+        // Wait for retried attempt and storage
         await waitForExpectations(timeout: retryDelay * 2)
         let cachedRequest = cachedRequests.first! as! PendingRequest<DataUploadResponse>
         XCTAssertEqual(cachedRequest.request, request)
