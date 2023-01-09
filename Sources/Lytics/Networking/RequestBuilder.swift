@@ -98,8 +98,8 @@ private extension RequestBuilder {
         baseURL.appending(route)
     }
 
-    func get<T>(_ route: Route, parameters: [QueryParameter]? = nil) -> Request<T> {
-        .init(method: .get, url: url(for: route), headers: [authHeader])
+    func get<T>(_ route: Route, parameters: [QueryParameter]? = nil, contentType: HeaderField.ContentType = .json) -> Request<T> {
+        .init(method: .get, url: url(for: route), parameters: parameters, headers: [.contentType(contentType), authHeader])
     }
 
     func post<T>(_ route: Route, data: Data, parameters: [QueryParameter]? = nil, contentType: HeaderField.ContentType = .json) -> Request<T> {
