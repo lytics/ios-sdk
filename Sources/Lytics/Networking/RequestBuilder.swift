@@ -10,7 +10,7 @@ import Foundation
 struct RequestBuilder {
 
     enum Route: PathProvider {
-        /// Path: `/collect/json/{stream}/`
+        /// Path: `/collect/json/{stream}/`.
         case dataUpload(String)
         /// Path: `/api/entity/{table}/{field}/{value}`.
         case personalization(table: String, field: String, value: String)
@@ -37,7 +37,7 @@ struct RequestBuilder {
         self.apiToken = apiToken
     }
 
-    /// Upload event to API.
+    /// Uploads event to API.
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - dryrun: A Boolean value indicating whether an event should be processed.
