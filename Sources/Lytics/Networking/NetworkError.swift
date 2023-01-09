@@ -7,7 +7,7 @@
 import Foundation
 
 /// A network error.
-public enum NetworkError: Error {
+enum NetworkError: Error {
     /// Not a valid request.
     case malformedRequest
     /// Capture any underlying Error from the URLSession API.
@@ -30,7 +30,7 @@ public enum NetworkError: Error {
 extension NetworkError: LocalizedError {
 
     /// A description of the error, suitable for debugging.
-    public var errorDescription: String? {
+    var errorDescription: String? {
         switch self {
         case .malformedRequest:
             return "Malformed Request"
