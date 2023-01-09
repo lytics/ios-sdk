@@ -17,34 +17,14 @@ struct RequestFailureHandler {
         case store
     }
 
-    struct RetryConfiguration {
-        let maxRetryCount: Int
-        let initialDelay: TimeInterval
-        let delayMultiplier: Double
+    private let strategy: (Error, Int) -> Strategy
+
+    init(strategy: @escaping (Error, Int) -> Strategy) {
+        self.strategy = strategy
     }
 
-    let configuration: RetryConfiguration
-
     func strategy(for error: Error, retryCount: Int) -> Strategy {
-        switch error {
-        case is DecodingError:
-            return .discard("Invalid response value")
-        case NetworkError.clientError:
-            return .discard(error.localizedDescription)
-        default: break
-        }
-
-        if retryCount < configuration.maxRetryCount {
-            let delay = Self.calculateDelay(
-                currentAttempt: retryCount + 1,
-                initialDelay: configuration.initialDelay,
-                delayMultiplier: configuration.delayMultiplier
-            )
-
-            return .retry(delay)
-        } else {
-            return .store
-        }
+        strategy(error, retryCount)
     }
 
     private static func calculateDelay(
@@ -58,20 +38,33 @@ struct RequestFailureHandler {
     }
 }
 
-extension RequestFailureHandler.RetryConfiguration {
-    static func live(maxRetryCount: Int) -> Self {
-        .init(
-            maxRetryCount: maxRetryCount,
-            initialDelay: 10,
-            delayMultiplier: 1
-        )
-    }
-}
-
 extension RequestFailureHandler {
-    static func live(maxRetryCount: Int) -> Self {
+    static func live(
+        maxRetryCount: Int,
+        initialDelay: TimeInterval = 10,
+        delayMultiplier: Double = 1
+    ) -> Self {
         .init(
-            configuration: .live(
-                maxRetryCount: maxRetryCount))
+            strategy: { error, retryCount in
+                switch error {
+                case is DecodingError:
+                    return .discard("Invalid response value")
+                case NetworkError.clientError:
+                    return .discard(error.localizedDescription)
+                default: break
+                }
+
+                if retryCount < maxRetryCount {
+                    let delay = Self.calculateDelay(
+                        currentAttempt: retryCount + 1,
+                        initialDelay: initialDelay,
+                        delayMultiplier: delayMultiplier
+                    )
+
+                    return .retry(delay)
+                } else {
+                    return .store
+                }
+            })
     }
 }

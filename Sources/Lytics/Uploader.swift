@@ -10,7 +10,7 @@ import Foundation
 actor Uploader: Uploading {
 
     /// A wrapper for an in-progress request.
-    final class PendingRequest<R: Codable>: Codable, RequestWrapping {
+    final class PendingRequest<R: Codable>: Codable, Equatable, RequestWrapping {
 
         /// A unique value identifying the wrapped request.
         let id: UUID
@@ -59,6 +59,13 @@ actor Uploader: Uploading {
             uploadTask = nil
         }
 
+        static func == (lhs: PendingRequest<R>, rhs: PendingRequest<R>) -> Bool {
+            lhs.id == rhs.id
+                && lhs.request == rhs.request
+                && lhs.retryCount == rhs.retryCount
+                && lhs.uploadTask == rhs.uploadTask
+        }
+
         private enum CodingKeys: CodingKey {
             case id
             case request
@@ -73,7 +80,7 @@ actor Uploader: Uploading {
     private var pendingRequests: [UUID: any RequestWrapping]
 
     /// A Boolean value that indicates whether any requests passed to `upload(_:)` should be upload or stored immediately.
-    var shouldSend: Bool
+    private(set) var shouldSend: Bool
 
     /// The number of requests waiting to be uploaded.
     var pendingRequestCount: Int {

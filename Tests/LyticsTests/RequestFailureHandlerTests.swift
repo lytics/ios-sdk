@@ -14,12 +14,11 @@ final class RequestFailureHandlerTests: XCTestCase {
     let delayMultiplier: Double = 1.0
 
     func testRetryStrategy() {
-        let sut = RequestFailureHandler(
-            configuration: .init(
-                maxRetryCount: maxRetryCount,
-                initialDelay: initialDelay,
-                delayMultiplier: delayMultiplier
-            ))
+        let sut = RequestFailureHandler.live(
+            maxRetryCount: maxRetryCount,
+            initialDelay: initialDelay,
+            delayMultiplier: delayMultiplier
+        )
 
         let error = NetworkError.invalidResponse(nil)
 
@@ -46,12 +45,11 @@ final class RequestFailureHandlerTests: XCTestCase {
     }
 
     func testDiscardStrategy() {
-        let sut = RequestFailureHandler(
-            configuration: .init(
-                maxRetryCount: maxRetryCount,
-                initialDelay: initialDelay,
-                delayMultiplier: delayMultiplier
-            ))
+        let sut = RequestFailureHandler.live(
+            maxRetryCount: maxRetryCount,
+            initialDelay: initialDelay,
+            delayMultiplier: delayMultiplier
+        )
 
         var caughtError: Error!
         do {
