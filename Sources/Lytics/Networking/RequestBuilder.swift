@@ -12,11 +12,15 @@ struct RequestBuilder {
     enum Route: PathProvider {
         /// Path: `/collect/json/{stream}/`
         case dataUpload(String)
+        /// Path: `/api/entity/{table}/{field}/{value}`.
+        case personalization(table: String, field: String, value: String)
 
         var path: String {
             switch self {
             case let .dataUpload(stream):
                 return "/collect/json/\(stream)"
+            case let .personalization(table, field, value):
+                return "/api/entity/\(table)/\(field)/\(value)"
             }
         }
     }
@@ -54,6 +58,32 @@ struct RequestBuilder {
         parameters.appendOrSet(filename.flatMap(QueryParameter.filename))
 
         return post(.dataUpload(stream), data: data, parameters: parameters)
+    }
+
+    /// Fetches the attributes of and segments to which an entity belongs.
+    /// - Parameters:
+    ///   - table: The table.
+    ///   - fieldName: The field name of identity.
+    ///   - fieldVal: The field value of identity.
+    ///   - fields: The fields to include.
+    ///   - segments: A Boolean indicating whether the response should include segments to which the
+    ///    entity belongs.
+    ///   - meta: A Boolearn indicating whether the response should include Meta Fields.
+    /// - Returns: The request.
+    func entity(
+        table: String,
+        fieldName: String,
+        fieldVal: String,
+        fields: [String]? = nil,
+        segments: Bool? = nil,
+        meta: Bool? = nil
+    ) -> Request<Entity> {
+        var parameters: [QueryParameter]?
+        parameters.appendOrSet(fields.flatMap(QueryParameter.fields))
+        parameters.appendOrSet(segments.flatMap(QueryParameter.segments))
+        parameters.appendOrSet(meta.flatMap(QueryParameter.meta))
+
+        return get(.personalization(table: table, field: fieldName, value: fieldVal), parameters: parameters)
     }
 }
 
