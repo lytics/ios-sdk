@@ -6,6 +6,7 @@
 
 import UIKit
 
+// MARK: - UIDeviceOrientation + CustomStringConvertible
 extension UIDeviceOrientation: CustomStringConvertible {
     public var description: String {
         switch self {
@@ -20,6 +21,7 @@ extension UIDeviceOrientation: CustomStringConvertible {
     }
 }
 
+// MARK: - UIUserInterfaceIdiom + CustomStringConvertible
 extension UIUserInterfaceIdiom: CustomStringConvertible {
     public var description: String {
         switch self {

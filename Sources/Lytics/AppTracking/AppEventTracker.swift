@@ -58,14 +58,16 @@ final class AppEventTracker: AppEventTracking {
             // App lifecycle events
             do {
                 for try await event in lifecycleEvents {
-                    guard let self else { return }
+                    guard let self else {
+                        return
+                    }
 
                     switch event {
                     case .didBecomeActive:
                         self.logger.debug("App did become active")
 
-                        if self.configuration.trackApplicationLifecycleEvents  {
-                                await self.eventProvider.appOpen()
+                        if self.configuration.trackApplicationLifecycleEvents {
+                            await self.eventProvider.appOpen()
                                 |> self.sendEvent
                         } else {
                             SessionTracker.markInteraction(self.timestampProvider())
@@ -74,9 +76,9 @@ final class AppEventTracker: AppEventTracking {
                     case .didEnterBackground:
                         self.logger.debug("App did enter background")
 
-                        if self.configuration.trackApplicationLifecycleEvents  {
+                        if self.configuration.trackApplicationLifecycleEvents {
                             await self.eventProvider.appBackground()
-                            |> self.sendEvent
+                                |> self.sendEvent
                         }
 
                     case .willTerminate:
@@ -103,15 +105,15 @@ private extension AppEventTracker {
         if let event = versionTracker.checkVersion() {
             switch event {
             case .install:
-                self.logger.debug("App was installed")
+                logger.debug("App was installed")
 
-                await self.eventProvider.appInstall()
-                |> self.sendEvent
-            case .update(let version):
-                self.logger.debug("App was updated to version \(version)")
+                await eventProvider.appInstall()
+                    |> sendEvent
+            case let .update(version):
+                logger.debug("App was updated to version \(version)")
 
-                await self.eventProvider.appUpdate(version: version)
-                |> self.sendEvent
+                await eventProvider.appUpdate(version: version)
+                    |> sendEvent
             }
         }
     }
@@ -121,7 +123,8 @@ private extension AppEventTracker {
             stream: configuration.stream,
             timestamp: timestampProvider(),
             name: tuple.0,
-            event: tuple.1)
+            event: tuple.1
+        )
     }
 }
 
@@ -149,6 +152,7 @@ extension AppEventTracker {
             logger: logger,
             eventProvider: eventProvider,
             eventPipeline: eventPipeline,
-            onEvent: onEvent)
+            onEvent: onEvent
+        )
     }
 }

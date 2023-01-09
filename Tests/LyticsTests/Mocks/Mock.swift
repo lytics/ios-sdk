@@ -4,9 +4,9 @@
 //  Created by Mathew Gacy on 10/18/22.
 //
 
-@testable import Lytics
 import AnyCodable
 import Foundation
+@testable import Lytics
 
 enum Mock {
     static let apiToken = "at.xxxx"
@@ -14,19 +14,23 @@ enum Mock {
     static let consentEvent = ConsentEvent(
         identifiers: User1.identifiers,
         attributes: User1.attributes,
-        consent: TestConsent.user1)
+        consent: TestConsent.user1
+    )
 
     static let event = Event(
         identifiers: User1.identifiers,
-        properties: TestCart.user1)
+        properties: TestCart.user1
+    )
 
     static let identityEvent = IdentityEvent(
         identifiers: TestIdentifiers.user1,
-        attributes: TestAttributes.user1)
+        attributes: TestAttributes.user1
+    )
 
     static let request = Request<DataUploadResponse>(
         method: .post,
-        url: url)
+        url: url
+    )
 
     static let uuidString = "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"
 
@@ -46,7 +50,8 @@ extension Mock {
             timestamp: timestamp,
             sessionDidStart: sessionDidStart,
             name: name,
-            event: event)
+            event: event
+        )
     }
 
     static func payloadDictionary(
@@ -57,7 +62,7 @@ extension Mock {
     ) -> [String: Any] {
         var dict: [String: Any] = [
             "stream": stream,
-            "_ts": timestamp,
+            "_ts": timestamp
         ]
 
         if let sessionDidStart {

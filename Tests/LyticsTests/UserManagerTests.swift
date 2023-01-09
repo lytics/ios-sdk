@@ -4,9 +4,9 @@
 //  Created by Mathew Gacy on 9/29/22.
 //
 
-@testable import Lytics
 import AnyCodable
 import Foundation
+@testable import Lytics
 import XCTest
 
 final class UserManagerTests: XCTestCase {
@@ -18,22 +18,25 @@ final class UserManagerTests: XCTestCase {
         let b = "2"
 
         var storedIdentifiers: [String: Any]? = [:]
-        var storedAttributes: [String: Any]? = nil
+        var storedAttributes: [String: Any]?
         let storage = UserStorage.mock(
             attributes: { storedAttributes },
             identifiers: { storedIdentifiers },
             storeAttributes: { storedAttributes = $0 },
-            storeIdentifiers: { storedIdentifiers = $0 })
+            storeIdentifiers: { storedIdentifiers = $0 }
+        )
 
         let sut = UserManager(
             encoder: .init(),
             idProvider: { Mock.uuidString },
-            storage: storage)
+            storage: storage
+        )
 
         let firstResult = try await sut.update(
             with: UserUpdate(
                 identifiers: TestIdentifiers(email: User1.email),
-                attributes: .never))
+                attributes: .never
+            ))
 
         XCTAssertEqual(
             firstResult,
@@ -47,7 +50,8 @@ final class UserManagerTests: XCTestCase {
         let secondResult = try await sut.update(
             with: UserUpdate(
                 identifiers: TestIdentifiers(userID: User1.userID),
-                attributes: .never))
+                attributes: .never
+            ))
 
         XCTAssertEqual(
             secondResult,
@@ -62,7 +66,8 @@ final class UserManagerTests: XCTestCase {
         let thirdResult = try await sut.update(
             with: UserUpdate(
                 identifiers: TestIdentifiers(nested: .init(a: a, b: b)),
-                attributes: TestAttributes(firstName: User1.firstName)))
+                attributes: TestAttributes(firstName: User1.firstName)
+            ))
 
         XCTAssertEqual(
             thirdResult,
@@ -78,13 +83,15 @@ final class UserManagerTests: XCTestCase {
                 ],
                 attributes: [
                     "firstName": User1.firstName
-                ])
+                ]
+            )
         )
 
         let fourthResult = try await sut.update(
             with: UserUpdate(
                 identifiers: .never,
-                attributes: TestAttributes(titles: User1.titles)))
+                attributes: TestAttributes(titles: User1.titles)
+            ))
 
         XCTAssertEqual(
             fourthResult,
@@ -101,7 +108,8 @@ final class UserManagerTests: XCTestCase {
                 attributes: [
                     "firstName": User1.firstName,
                     "titles": User1.titles
-                ])
+                ]
+            )
         )
     }
 
@@ -113,7 +121,8 @@ final class UserManagerTests: XCTestCase {
             storeIdentifiers: { identifiers in
                 storedIdentifiers = identifiers
                 storeExpectation.fulfill()
-            })
+            }
+        )
 
         let sut = UserManager(encoder: .init(), storage: storage)
 
@@ -161,16 +170,18 @@ final class UserManagerTests: XCTestCase {
     func testCreateIdentifiersOnInit() async throws {
         let anonymousIdentityKey = "id"
 
-        var storedIdentifiers: [String: Any]? = nil
+        var storedIdentifiers: [String: Any]?
         let storage = UserStorage.mock(
             identifiers: { storedIdentifiers },
-            storeIdentifiers: { storedIdentifiers = $0 })
+            storeIdentifiers: { storedIdentifiers = $0 }
+        )
 
         let sut = UserManager(
             configuration: .init(anonymousIdentityKey: anonymousIdentityKey),
             encoder: .init(),
             idProvider: { Mock.uuidString },
-            storage: storage)
+            storage: storage
+        )
 
         let identifiers = await sut.identifiers as! [String: String]
         XCTAssertEqual(identifiers, [anonymousIdentityKey: Mock.uuidString])
@@ -184,13 +195,15 @@ final class UserManagerTests: XCTestCase {
         var storedIdentifiers: [String: Any]? = [anonymousIdentityKey: anonymousIdentityValue]
         let storage = UserStorage.mock(
             identifiers: { storedIdentifiers },
-            storeIdentifiers: { storedIdentifiers = $0 })
+            storeIdentifiers: { storedIdentifiers = $0 }
+        )
 
         let sut = UserManager(
             configuration: .init(anonymousIdentityKey: anonymousIdentityKey),
             encoder: .init(),
             idProvider: { Mock.uuidString },
-            storage: storage)
+            storage: storage
+        )
 
         let identifiers = await sut.identifiers as! [String: String]
         XCTAssertEqual(identifiers, [anonymousIdentityKey: anonymousIdentityValue])
@@ -203,22 +216,25 @@ final class UserManagerTests: XCTestCase {
         let updatedIdentityKey = "anotherID"
         let updatedIdentityValue = "YYYYYY"
 
-        var storedIdentifiers: [String: Any]? = nil
+        var storedIdentifiers: [String: Any]?
         let storage = UserStorage.mock(
             identifiers: { storedIdentifiers },
-            storeIdentifiers: { storedIdentifiers = $0 })
+            storeIdentifiers: { storedIdentifiers = $0 }
+        )
 
         _ = UserManager(
             configuration: .init(anonymousIdentityKey: initialIdentityKey),
             encoder: .init(),
             idProvider: { initialIdentityValue },
-            storage: storage)
+            storage: storage
+        )
 
         _ = UserManager(
             configuration: .init(anonymousIdentityKey: updatedIdentityKey),
             encoder: .init(),
             idProvider: { updatedIdentityValue },
-            storage: storage)
+            storage: storage
+        )
 
         let identifiers = storedIdentifiers as! [String: String]
         XCTAssertEqual(
@@ -226,6 +242,7 @@ final class UserManagerTests: XCTestCase {
             [
                 initialIdentityKey: initialIdentityValue,
                 updatedIdentityKey: updatedIdentityValue
-            ])
+            ]
+        )
     }
 }

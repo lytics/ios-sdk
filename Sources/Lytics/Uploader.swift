@@ -50,8 +50,8 @@ actor Uploader: Uploading {
             var container: KeyedEncodingContainer<CodingKeys> = encoder.container(
                 keyedBy: CodingKeys.self)
 
-            try container.encode(self.id, forKey: .id)
-            try container.encode(self.request, forKey: .request)
+            try container.encode(id, forKey: .id)
+            try container.encode(request, forKey: .request)
         }
 
         func cancel() {
@@ -130,7 +130,7 @@ actor Uploader: Uploading {
 
     /// Loads stored requests and send them.
     func loadRequests() throws {
-        guard let wrapped = try cache?.load() else  {
+        guard let wrapped = try cache?.load() else {
             return
         }
 
@@ -229,11 +229,11 @@ private extension Uploader {
         }
 
         switch errorHandler.strategy(for: error, retryCount: wrapper.retryCount) {
-        case .discard(let reason):
+        case let .discard(reason):
             logger.info("Unable to recover from \(error) uploading request \(wrapper.id): \(reason)")
             remove(id: id)
 
-        case .retry(let delay):
+        case let .retry(delay):
             logger.debug("Retrying request \(wrapper.id) in \(delay)")
             wrapper.retryCount += 1
             wrapper.uploadTask = Task.delayed(byTimeInterval: delay) { [weak self] in
@@ -263,6 +263,7 @@ extension Uploader {
             logger: logger,
             requestPerformer: URLSession.live,
             errorHandler: .live(maxRetryCount: maxRetryCount),
-            cache: cache)
+            cache: cache
+        )
     }
 }

@@ -38,7 +38,8 @@ struct RequestFailureHandler {
             let delay = Self.calculateDelay(
                 currentAttempt: retryCount + 1,
                 initialDelay: configuration.initialDelay,
-                delayMultiplier: configuration.delayMultiplier)
+                delayMultiplier: configuration.delayMultiplier
+            )
 
             return .retry(delay)
         } else {
@@ -52,16 +53,17 @@ struct RequestFailureHandler {
         delayMultiplier: Double
     ) -> TimeInterval {
         currentAttempt == 1
-        ? initialDelay
-        : initialDelay * pow(1 + delayMultiplier, Double(currentAttempt - 1))
+            ? initialDelay
+            : initialDelay * pow(1 + delayMultiplier, Double(currentAttempt - 1))
     }
 }
 
 extension RequestFailureHandler.RetryConfiguration {
     static func live(maxRetryCount: Int) -> Self {
-        .init(maxRetryCount: maxRetryCount,
-              initialDelay: 10,
-              delayMultiplier: 1
+        .init(
+            maxRetryCount: maxRetryCount,
+            initialDelay: 10,
+            delayMultiplier: 1
         )
     }
 }

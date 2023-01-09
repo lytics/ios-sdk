@@ -26,6 +26,7 @@ public enum NetworkError: Error {
     case unknown(_ message: String)
 }
 
+// MARK: LocalizedError
 extension NetworkError: LocalizedError {
 
     /// A description of the error, suitable for debugging.
@@ -33,19 +34,19 @@ extension NetworkError: LocalizedError {
         switch self {
         case .malformedRequest:
             return "Malformed Request"
-        case .network(let error):
+        case let .network(error):
             return "Network Error: \(error.localizedDescription)"
         case .noData:
             return "Missing Data"
-        case .invalidResponse(let response):
+        case let .invalidResponse(response):
             return "Unexpected Response Format: \(String(describing: response))"
-        case .clientError(let response):
+        case let .clientError(response):
             return "Client Error: \(response.statusCode)"
-        case .serverError(let response):
+        case let .serverError(response):
             return "Server Error: \(response.statusCode)"
-        case .decoding(let error):
+        case let .decoding(error):
             return "Decoding Error: \(error.userDescription)"
-        case .unknown(let message):
+        case let .unknown(message):
             return message
         }
     }

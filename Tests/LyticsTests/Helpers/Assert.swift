@@ -4,8 +4,8 @@
 //  Created by Mathew Gacy on 10/21/22.
 //
 
-@testable import Lytics
 import Foundation
+@testable import Lytics
 import XCTest
 
 /// Helper for testing equality of untyped dictionaries.
@@ -108,7 +108,7 @@ enum Assert {
     }
 
     static func equality(_ object: [String: Any], with cart: TestCart) {
-        XCTAssertEqual(object["orderId"] as! String, cart.orderId)
+        XCTAssertEqual(object["orderId"] as! String, cart.orderID)
         XCTAssertEqual(object["total"] as! Float, cart.total)
     }
 

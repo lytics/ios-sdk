@@ -41,9 +41,9 @@ extension Optional where Wrapped: RangeReplaceableCollection {
     /// - Parameter element: The element to append.
     mutating func appendOrSet<E>(_ element: E?) where E == Wrapped.Element {
         switch (self, element) {
-        case (.some, .some(let element)):
+        case let (.some, .some(element)):
             self?.append(element)
-        case (.none, .some(let element)):
+        case let (.none, .some(element)):
             self = .some(Wrapped([element]))
         default:
             return
@@ -58,7 +58,7 @@ extension Optional where Wrapped == String {
     /// - Returns: The unwrapped, non-empty value; otherwise `defaultValue`.
     func nonEmpty(default defaultValue: String) -> String {
         switch self {
-        case .some(let value):
+        case let .some(value):
             return value.isNotEmpty ? value : defaultValue
         case .none:
             return defaultValue

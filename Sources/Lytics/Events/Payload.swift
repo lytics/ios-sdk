@@ -47,9 +47,9 @@ struct Payload<E: Encodable>: StreamEvent {
     func encode(to encoder: Encoder) throws {
         var container: KeyedEncodingContainer<Payload<E>.CodingKeys> = encoder.container(keyedBy: CodingKeys.self)
 
-        try container.encode(self.timestamp, forKey: .timestamp)
-        try container.encodeIfPresent(self.sessionDidStart, forKey: .sessionDidStart)
-        try container.encodeIfPresent(self.name, forKey: .name)
+        try container.encode(timestamp, forKey: .timestamp)
+        try container.encodeIfPresent(sessionDidStart, forKey: .sessionDidStart)
+        try container.encodeIfPresent(name, forKey: .name)
         try event.encode(to: encoder)
     }
 

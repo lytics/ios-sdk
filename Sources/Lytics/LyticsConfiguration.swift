@@ -50,7 +50,7 @@ public struct LyticsConfiguration: Equatable {
     /// Session timeout in seconds.
     ///
     /// This is the period from when the app enters the background and the session expires, starting a new session.
-    public var sessionDuration: TimeInterval = 1200
+    public var sessionDuration: TimeInterval = 1_200
 
     /// Enable sandbox mode which adds a "sandbox" flag to all outbound events. This flag then enables those events to be
     /// processed in an alternative way or skipped entirely upon delivery to the Lytics collection APIs.

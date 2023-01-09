@@ -25,4 +25,5 @@ struct ConsentEvent<C: Encodable>: Encodable {
     }
 }
 
+// MARK: Equatable
 extension ConsentEvent: Equatable where C: Equatable {}

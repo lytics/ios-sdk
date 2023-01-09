@@ -16,37 +16,49 @@ struct AppEventProvider {
 
     private let identifiers: () async -> [String: AnyCodable]
 
-    init(identifiers: @escaping () async -> [String : AnyCodable]) {
+    init(identifiers: @escaping () async -> [String: AnyCodable]) {
         self.identifiers = identifiers
     }
 }
 
 extension AppEventProvider {
     func appBackground() async -> (Name, Event<Never>) {
-        (EventNames.appBackground,
-        Event(
-            identifiers: await identifiers(),
-            properties: .never))
+        (
+            EventNames.appBackground,
+            Event(
+                identifiers: await identifiers(),
+                properties: .never
+            )
+        )
     }
 
     func appInstall() async -> (Name, Event<Never>) {
-        (EventNames.appInstall,
-        Event(
-            identifiers: await identifiers(),
-            properties: .never))
+        (
+            EventNames.appInstall,
+            Event(
+                identifiers: await identifiers(),
+                properties: .never
+            )
+        )
     }
 
     func appOpen() async -> (Name, Event<Never>) {
-        (EventNames.appOpen,
-         Event(
-            identifiers: await identifiers(),
-            properties: .never))
+        (
+            EventNames.appOpen,
+            Event(
+                identifiers: await identifiers(),
+                properties: .never
+            )
+        )
     }
 
     func appUpdate(version: String) async -> (Name, Event<AppUpdate>) {
-        (EventNames.appUpdate,
-        Event(
-            identifiers: await identifiers(),
-            properties: AppUpdate(version: version)))
+        (
+            EventNames.appUpdate,
+            Event(
+                identifiers: await identifiers(),
+                properties: AppUpdate(version: version)
+            )
+        )
     }
 }

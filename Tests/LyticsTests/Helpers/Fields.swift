@@ -4,8 +4,8 @@
 //  Created by Mathew Gacy on 10/25/22.
 //
 
-import Lytics
 import Foundation
+import Lytics
 
 enum Stream {
     /// stream_1.
@@ -27,7 +27,7 @@ enum Name {
 
 enum Timestamp {
     /// 1_666_000_000_000.
-    static let one: Millisecond =  1_666_000_000_000
+    static let one: Millisecond = 1_666_000_000_000
     /// 1_666_000_001_000.
     static let two: Millisecond = 1_666_000_001_000
     /// 1_666_000_002_500.

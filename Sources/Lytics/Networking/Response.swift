@@ -34,11 +34,11 @@ extension Response {
     func validate() throws -> Self {
         switch statusCode {
         // Success
-        case (200..<300): return self
+        case 200 ..< 300: return self
         // Client Error
-        case (400..<500): throw NetworkError.clientError(httpResponse)
+        case 400 ..< 500: throw NetworkError.clientError(httpResponse)
         // Server Error
-        case (500..<600): throw NetworkError.serverError(httpResponse)
+        case 500 ..< 600: throw NetworkError.serverError(httpResponse)
         default: throw NetworkError.unknown("Unexpected status code: \(statusCode)")
         }
     }

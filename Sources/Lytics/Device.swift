@@ -42,11 +42,11 @@ struct Device: Encodable, Equatable {
     func encode(to encoder: Encoder) throws {
         var container: KeyedEncodingContainer<CodingKeys> = encoder.container(keyedBy: CodingKeys.self)
 
-        try container.encodeIfPresent(self.identifierForVendor, forKey: .identifierForVendor)
-        try container.encode(self.name, forKey: .name)
-        try container.encode(self.orientation, forKey: .orientation)
-        try container.encode(self.osVersion, forKey: .osVersion)
-        try container.encode(self.userInterfaceIdiom, forKey: .userInterfaceIdiom)
+        try container.encodeIfPresent(identifierForVendor, forKey: .identifierForVendor)
+        try container.encode(name, forKey: .name)
+        try container.encode(orientation, forKey: .orientation)
+        try container.encode(osVersion, forKey: .osVersion)
+        try container.encode(userInterfaceIdiom, forKey: .userInterfaceIdiom)
     }
 
     private enum CodingKeys: CodingKey {

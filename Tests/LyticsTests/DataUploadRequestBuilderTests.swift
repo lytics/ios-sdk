@@ -4,9 +4,9 @@
 //  Created by Mathew Gacy on 10/17/22.
 //
 
-@testable import Lytics
 import AnyCodable
 import Foundation
+@testable import Lytics
 import XCTest
 
 final class DataUploadRequestBuilderTests: XCTestCase {
@@ -28,7 +28,9 @@ final class DataUploadRequestBuilderTests: XCTestCase {
                     name: Name.one,
                     event: IdentityEvent(
                         identifiers: User1.identifiers,
-                        attributes: User1.attributes))
+                        attributes: User1.attributes
+                    )
+                )
             ],
             Stream.two: [
                 Mock.payload(
@@ -37,7 +39,9 @@ final class DataUploadRequestBuilderTests: XCTestCase {
                     name: Name.two,
                     event: ConsentEvent(
                         identifiers: User1.identifiers,
-                        consent: TestConsent.user1))
+                        consent: TestConsent.user1
+                    )
+                )
             ]
         ]
 
@@ -61,14 +65,18 @@ final class DataUploadRequestBuilderTests: XCTestCase {
                     name: Name.one,
                     event: IdentityEvent(
                         identifiers: User1.identifiers,
-                        attributes: User1.attributes)),
+                        attributes: User1.attributes
+                    )
+                ),
                 Mock.payload(
                     stream: Stream.two,
                     timestamp: Timestamp.two,
                     name: Name.two,
                     event: ConsentEvent(
                         identifiers: User1.identifiers,
-                        consent: TestConsent.user1))
+                        consent: TestConsent.user1
+                    )
+                )
             ]
         ]
 
@@ -94,7 +102,9 @@ final class DataUploadRequestBuilderTests: XCTestCase {
                     name: Name.one,
                     event: IdentityEvent(
                         identifiers: User1.identifiers,
-                        attributes: User1.attributes)),
+                        attributes: User1.attributes
+                    )
+                )
             ]
         ]
 
@@ -115,7 +125,9 @@ final class DataUploadRequestBuilderTests: XCTestCase {
                     name: Name.one,
                     event: IdentityEvent(
                         identifiers: User1.identifiers,
-                        attributes: User1.attributes)),
+                        attributes: User1.attributes
+                    )
+                )
             ]
         ]
 
@@ -126,9 +138,9 @@ final class DataUploadRequestBuilderTests: XCTestCase {
     }
 }
 
- // MARK: - Helpers
+// MARK: - Helpers
 extension DataUploadRequestBuilderTests {
-    func  assertOnEvents(first: [String: Any], last: [String: Any]) {
+    func assertOnEvents(first: [String: Any], last: [String: Any]) {
         let firstName = first["name"] as! String
 
         if firstName == Name.one {

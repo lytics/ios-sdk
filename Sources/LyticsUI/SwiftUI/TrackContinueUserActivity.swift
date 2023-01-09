@@ -53,7 +53,8 @@ public struct TrackContinueUserActivity: ViewModifier {
             .onContinueUserActivity(activityType) { userActivity in
                 lytics.continueUserActivity(
                     userActivity,
-                    stream: stream)
+                    stream: stream
+                )
                 action(userActivity)
             }
     }
@@ -79,6 +80,7 @@ public extension View {
             activityType: activityType,
             lytics: lytics,
             stream: stream,
-            action: action))
+            action: action
+        ))
     }
 }

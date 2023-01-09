@@ -4,8 +4,8 @@
 //  Created by Mathew Gacy on 10/18/22.
 //
 
-@testable import Lytics
 import Foundation
+@testable import Lytics
 
 extension AppVersionTracker {
     static func mock(_ event: AppVersionEvent? = nil) -> Self {
@@ -30,9 +30,11 @@ extension LyticsLogger {
 extension UserSettings {
     static let optedInMock = Self(
         getOptIn: { true },
-        setOptIn: { _ in })
+        setOptIn: { _ in }
+    )
 
     static let optedOutMock = Self(
         getOptIn: { false },
-        setOptIn: { _ in })
+        setOptIn: { _ in }
+    )
 }

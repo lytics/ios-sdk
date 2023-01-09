@@ -45,12 +45,13 @@ extension AppTrackingTransparency {
                 case .authorized:
                     userDefaults.set(true, for: .idfaIsEnabled)
                     return true
-                case .notDetermined, .restricted, .denied:
+                case .denied, .notDetermined, .restricted:
                     userDefaults.set(false, for: .idfaIsEnabled)
                     return false
                 @unknown default:
                     return false
                 }
-            })
+            }
+        )
     }
 }

@@ -22,7 +22,10 @@ let package = Package(
             from: "0.6.7"),
         .package(
             url: "https://github.com/mobelux/swift-version-file-plugin",
-            from: "0.1.0")
+            from: "0.1.0"),
+        .package(
+            url: "https://github.com/nicklockwood/SwiftFormat",
+            from: "0.50.6")
     ],
     targets: [
         .target(

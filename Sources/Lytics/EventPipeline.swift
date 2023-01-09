@@ -81,7 +81,8 @@ struct EventPipeline: EventPipelineProtocol {
                 timestamp: timestamp,
                 sessionDidStart: sessionDidStart(timestamp) ? 1 : nil,
                 name: name,
-                event: event))
+                event: event
+            ))
     }
 
     /// Opts the user in to event collection.
@@ -119,12 +120,14 @@ extension EventPipeline {
         let uploader = Uploader.live(
             logger: logger,
             cache: requestCache,
-            maxRetryCount: configuration.maxRetryCount)
+            maxRetryCount: configuration.maxRetryCount
+        )
 
         return EventPipeline(
             configuration: Configuration(
                 defaultStream: configuration.defaultStream,
-                requireConsent: configuration.requireConsent),
+                requireConsent: configuration.requireConsent
+            ),
             logger: logger,
             sessionDidStart: { timestamp in
                 SessionTracker.markInteraction(timestamp) > configuration.sessionDuration.milliseconds
@@ -133,8 +136,10 @@ extension EventPipeline {
                 logger: logger,
                 apiToken: apiToken,
                 configuration: configuration,
-                upload: { await uploader.upload($0) }),
+                upload: { await uploader.upload($0) }
+            ),
             uploader: uploader,
-            userSettings: .live)
+            userSettings: .live
+        )
     }
 }

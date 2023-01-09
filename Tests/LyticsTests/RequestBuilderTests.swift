@@ -13,11 +13,13 @@ final class RequestBuilderTests: XCTestCase {
 
         let sut = RequestBuilder(
             baseURL: Constants.defaultBaseURL,
-            apiToken: Mock.apiToken)
+            apiToken: Mock.apiToken
+        )
 
         let request = sut.dataUpload(
             stream: Stream.one,
-            data: requestData)
+            data: requestData
+        )
 
         XCTAssertEqual(request.method, .post)
         XCTAssertEqual(request.url, URL(string: "https://api.lytics.io/collect/json/\(Stream.one)")!)
@@ -27,7 +29,8 @@ final class RequestBuilderTests: XCTestCase {
             [
                 HeaderField(name: "Content-Type", value: "application/json"),
                 HeaderField(name: "Authorization", value: Mock.apiToken)
-            ])
+            ]
+        )
         XCTAssertEqual(request.body, requestData)
     }
 
@@ -38,11 +41,13 @@ final class RequestBuilderTests: XCTestCase {
 
         let sut = RequestBuilder(
             baseURL: configuration.apiURL,
-            apiToken: Mock.apiToken)
+            apiToken: Mock.apiToken
+        )
 
         let request = sut.dataUpload(
             stream: Stream.one,
-            data: Data())
+            data: Data()
+        )
 
         XCTAssertEqual(request.url, URL(string: "https://mycustomdomain.com/c/tacos/collect/json/\(Stream.one)")!)
     }

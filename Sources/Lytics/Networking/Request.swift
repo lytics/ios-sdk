@@ -96,6 +96,7 @@ struct Request<Response>: Codable, Equatable, URLRequestConvertible {
     }
 }
 
+// MARK: RequestProtocol
 extension Request: RequestProtocol where Response: Decodable {
     typealias Resp = Response
 }

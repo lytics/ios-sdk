@@ -19,7 +19,8 @@ extension FileManager {
         try createDirectory(
             at: file.directory,
             withIntermediateDirectories: true,
-            attributes: attributes)
+            attributes: attributes
+        )
     }
 }
 

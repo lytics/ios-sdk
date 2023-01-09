@@ -4,8 +4,8 @@
 //  Created by Mathew Gacy on 10/18/22.
 //
 
-@testable import Lytics
 import AnyCodable
+@testable import Lytics
 import XCTest
 
 final class CodableRequestContainerTests: XCTestCase {
@@ -16,19 +16,23 @@ final class CodableRequestContainerTests: XCTestCase {
         name: Name.one,
         event: IdentityEvent(
             identifiers: User1.identifiers,
-            attributes: User1.attributes))
+            attributes: User1.attributes
+        )
+    )
 
     var identityEventDictionary: [String: Any] {
         var payload = Mock.payloadDictionary(
             stream: Stream.one,
             timestamp: Timestamp.one,
             sessionDidStart: 1,
-            name: Name.one)
+            name: Name.one
+        )
 
         return Mock.identityEventDictionary(
             payload: &payload,
             identifiers: User1.anyIdentifiers,
-            attributes: User1.anyAttributes)
+            attributes: User1.anyAttributes
+        )
     }
 
     let consentEvent = Mock.payload(
@@ -37,13 +41,16 @@ final class CodableRequestContainerTests: XCTestCase {
         name: Name.two,
         event: ConsentEvent(
             identifiers: User1.identifiers,
-            consent: TestConsent.user1))
+            consent: TestConsent.user1
+        )
+    )
 
     var consentEventDictionary: [String: Any] {
         var payload = Mock.payloadDictionary(
             stream: Stream.two,
             timestamp: Timestamp.two,
-            name: Name.two)
+            name: Name.two
+        )
 
         return Mock.consentEventDictionary(
             payload: &payload,
@@ -52,7 +59,8 @@ final class CodableRequestContainerTests: XCTestCase {
                 "document": TestConsent.user1.document,
                 "timestamp": TestConsent.user1.timestamp,
                 "consented": TestConsent.user1.consented
-            ])
+            ]
+        )
     }
 
     var events: [String: [any StreamEvent]] {

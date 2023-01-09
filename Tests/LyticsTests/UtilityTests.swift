@@ -32,19 +32,19 @@ extension UtilityTests {
 
     func testDeepMerging() throws {
         let initial: [String: Any] = [
-             "a": 1,
-             "b": 2,
-             "c": [
-                 "d": 3
-             ]
-         ]
+            "a": 1,
+            "b": 2,
+            "c": [
+                "d": 3
+            ]
+        ]
 
-         let update: [String: Any] = [
-             "b": "4",
-             "c": [
-                 "e": 5
-             ]
-         ]
+        let update: [String: Any] = [
+            "b": "4",
+            "c": [
+                "e": 5
+            ]
+        ]
 
         let updated = initial.deepMerging(update)
 

@@ -11,9 +11,7 @@ import UIKit
 public final class Lytics {
 
     /// The shared instance.
-    public static let shared: Lytics = {
-        Lytics()
-    }()
+    public static let shared: Lytics = .init()
 
     private var appEventTracker: AppEventTracking!
 
@@ -67,7 +65,8 @@ public final class Lytics {
     public convenience init() {
         self.init(
             logger: .live,
-            timestampProvider: { Date().timeIntervalSince1970.milliseconds })
+            timestampProvider: { Date().timeIntervalSince1970.milliseconds }
+        )
     }
 
     internal init(
@@ -113,7 +112,8 @@ public final class Lytics {
         eventPipeline = EventPipeline.live(
             logger: logger,
             apiToken: apiToken,
-            configuration: configuration)
+            configuration: configuration
+        )
 
         appEventTracker = AppEventTracker.live(
             configuration: configuration,
@@ -124,11 +124,13 @@ public final class Lytics {
                 if case .didEnterBackground = event {
                     self?.dispatch()
                 }
-            })
+            }
+        )
 
         appEventTracker.startTracking(
             lifecycleEvents: NotificationCenter.default.lifecycleEvents(),
-            versionTracker: AppVersionTracker.live)
+            versionTracker: AppVersionTracker.live
+        )
 
         hasStarted = true
     }
@@ -178,7 +180,9 @@ public extension Lytics {
                 name: name,
                 event: Event(
                     identifiers: eventIdentifiers,
-                    properties: properties))
+                    properties: properties
+                )
+            )
         }
     }
 
@@ -200,7 +204,8 @@ public extension Lytics {
             name: name,
             timestamp: timestamp,
             identifiers: Optional.never,
-            properties: properties)
+            properties: properties
+        )
     }
 
     /// Tracks a custom event.
@@ -219,7 +224,8 @@ public extension Lytics {
             name: name,
             timestamp: timestamp,
             identifiers: Optional.never,
-            properties: Optional.never)
+            properties: Optional.never
+        )
     }
 
     /// Updates the user properties and optionally emit an identity event.
@@ -261,7 +267,9 @@ public extension Lytics {
                         name: name,
                         event: IdentityEvent(
                             identifiers: user.identifiers,
-                            attributes: user.attributes))
+                            attributes: user.attributes
+                        )
+                    )
                 } else {
                     try await userManager.apply(
                         UserUpdate(identifiers: identifiers, attributes: attributes))
@@ -293,7 +301,8 @@ public extension Lytics {
             timestamp: timestamp,
             identifiers: identifiers,
             attributes: Optional.never,
-            shouldSend: shouldSend)
+            shouldSend: shouldSend
+        )
     }
 
     /// Updates a user consent properties and optionally emit a special event that represents an app user's explicit consent.
@@ -338,7 +347,9 @@ public extension Lytics {
                         event: ConsentEvent(
                             identifiers: user.identifiers,
                             attributes: user.attributes,
-                            consent: consent))
+                            consent: consent
+                        )
+                    )
                 } else {
                     try await userManager.apply(
                         UserUpdate(identifiers: identifiers, attributes: attributes))
@@ -373,7 +384,8 @@ public extension Lytics {
             identifiers: Optional.never,
             attributes: attributes,
             consent: consent,
-            shouldSend: shouldSend)
+            shouldSend: shouldSend
+        )
     }
 
     /// Updates a user consent properties and optionally emit a special event that represents an app user's explicit consent.
@@ -398,7 +410,8 @@ public extension Lytics {
             identifiers: Optional.never,
             attributes: Optional.never,
             consent: consent,
-            shouldSend: shouldSend)
+            shouldSend: shouldSend
+        )
     }
 
     /// Emits an event representing a screen or page view. Device properties are injected into the payload before emitting.
@@ -443,7 +456,9 @@ public extension Lytics {
                 event: ScreenEvent(
                     device: Device(),
                     identifiers: eventIdentifiers,
-                    properties: properties))
+                    properties: properties
+                )
+            )
         }
     }
 
@@ -465,7 +480,8 @@ public extension Lytics {
             name: name,
             timestamp: timestamp,
             identifiers: Optional.never,
-            properties: properties)
+            properties: properties
+        )
     }
 }
 
@@ -494,7 +510,8 @@ public extension Lytics {
                 name: EventNames.deepLink,
                 event: eventProvider(
                     await userManager.identifiers
-                        .mapValues(AnyCodable.init(_:))))
+                        .mapValues(AnyCodable.init(_:)))
+            )
         }
     }
 
@@ -518,7 +535,9 @@ public extension Lytics {
                     url: url,
                     options: Dictionary(options),
                     identifiers: await userManager.identifiers
-                        .mapValues(AnyCodable.init(_:))))
+                        .mapValues(AnyCodable.init(_:))
+                )
+            )
         }
     }
 
@@ -544,7 +563,8 @@ public extension Lytics {
                 name: EventNames.shortcut,
                 event: eventProvider(
                     await userManager.identifiers
-                        .mapValues(AnyCodable.init(_:))))
+                        .mapValues(AnyCodable.init(_:)))
+            )
         }
     }
 }

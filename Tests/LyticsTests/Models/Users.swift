@@ -12,14 +12,14 @@ enum User1 {
     static let email = "someemail@lytics.com"
     static let firstName = "Jane"
     static let lastName = "Doe"
-    static let userID = 1234
+    static let userID = 1_234
     static let titles = ["VP Product", "Reviewer"]
     static let a = 1
     static let b = "2"
 
     static let anyIdentifiers: [String: Any] = [
         "email": "someemail@lytics.com",
-        "userID": 1234,
+        "userID": 1_234,
         "nested": [
             "a": a,
             "b": b
