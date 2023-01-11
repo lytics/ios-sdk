@@ -33,13 +33,13 @@ struct Entity: Codable, Equatable {
 
     var data: AnyCodable
     var message: String
-    var meta: Meta
+    var meta: Meta?
     var status: Int
 
     init(
         data: AnyCodable,
         message: String,
-        meta: Meta,
+        meta: Meta? = nil,
         status: Int
     ) {
         self.data = data
