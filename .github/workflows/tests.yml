@@ -22,8 +22,11 @@ jobs:
           xcode: ^14
           platform: iOS
           code-coverage: true
+      - name: Convert Code Coverage
+        uses: sersoft-gmbh/swift-coverage-action@v3
+        id: coverage-files
       - name: Upload coverage to Codecov
-        run: |
-          curl -Os https://uploader.codecov.io/latest/macos/codecov
-          chmod +x codecov
-          ./codecov -t ${{ secrets.CODECOV_TOKEN }}
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ${{join(fromJSON(steps.coverage-files.outputs.files), ',')}}
