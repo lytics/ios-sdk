@@ -75,7 +75,13 @@ final class CodableRequestContainerTests: XCTestCase {
     }
 
     func testEncodeAndDecode() throws {
-        let requestBuilder = DataUploadRequestBuilder.live(apiToken: Mock.apiToken)
+        let requestBuilder = DataUploadRequestBuilder.live(
+            requestBuilder: .live(
+                baseURL: Constants.defaultBaseURL,
+                apiToken: Mock.apiToken
+            )
+        )
+
         let wrappedRequests = try requestBuilder
             .requests(events)
             .map { Uploader.PendingRequest(request: $0) }

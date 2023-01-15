@@ -110,10 +110,14 @@ public final class Lytics {
         userManager = UserManager.live(configuration: configuration)
         appTrackingTransparency = .live
 
+        let requestBuilder = RequestBuilder.live(
+            baseURL: configuration.apiURL,
+            apiToken: apiToken)
+
         eventPipeline = EventPipeline.live(
+            configuration: configuration,
             logger: logger,
-            apiToken: apiToken,
-            configuration: configuration
+            requestBuilder: requestBuilder
         )
 
         appEventTracker = AppEventTracker.live(

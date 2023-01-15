@@ -10,10 +10,16 @@ import Foundation
 import XCTest
 
 final class DataUploadRequestBuilderTests: XCTestCase {
+    let requestBuilder: RequestBuilder = .live(
+        baseURL: Constants.defaultBaseURL,
+        apiToken: User1.apiToken
+    )
+
     func testEncodeEmpty() throws {
         let events: [String: [any StreamEvent]] = [:]
 
-        let sut = DataUploadRequestBuilder.live(apiToken: User1.apiToken)
+        let sut = DataUploadRequestBuilder.live(requestBuilder: requestBuilder)
+
         let requests = try sut.requests(events)
         XCTAssert(requests.isEmpty)
     }
@@ -45,7 +51,7 @@ final class DataUploadRequestBuilderTests: XCTestCase {
             ]
         ]
 
-        let sut = DataUploadRequestBuilder.live(apiToken: User1.apiToken)
+        let sut = DataUploadRequestBuilder.live(requestBuilder: requestBuilder)
         let requests = try sut.requests(events)
 
         XCTAssertEqual(requests.count, 2)
@@ -80,7 +86,7 @@ final class DataUploadRequestBuilderTests: XCTestCase {
             ]
         ]
 
-        let sut = DataUploadRequestBuilder.live(apiToken: User1.apiToken)
+        let sut = DataUploadRequestBuilder.live(requestBuilder: requestBuilder)
         let requests = try sut.requests(events)
 
         XCTAssertEqual(requests.count, 1)
@@ -108,7 +114,10 @@ final class DataUploadRequestBuilderTests: XCTestCase {
             ]
         ]
 
-        let sut = DataUploadRequestBuilder.live(apiToken: User1.apiToken, dryRun: true)
+        let sut = DataUploadRequestBuilder.live(
+            requestBuilder: requestBuilder,
+            dryRun: true
+        )
         let requests = try sut.requests(events)
 
         let dryRunParam = requests.first!.parameters?.first(where: { $0.name == "dryrun" })!
@@ -131,7 +140,7 @@ final class DataUploadRequestBuilderTests: XCTestCase {
             ]
         ]
 
-        let sut = DataUploadRequestBuilder.live(apiToken: User1.apiToken)
+        let sut = DataUploadRequestBuilder.live(requestBuilder: requestBuilder)
         let requests = try sut.requests(events)
 
         XCTAssertNil(requests.first!.parameters)
