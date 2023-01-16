@@ -31,9 +31,9 @@ extension Loader {
                         .decode()
                 }
 
-                if configuration.maxLoadRetryAttempts > 0 {
+                if configuration.maxRetryCount > 0 {
                     return try await Task.retrying(
-                        maxRetryCount: configuration.maxLoadRetryAttempts,
+                        maxRetryCount: configuration.maxRetryCount,
                         operation: perform
                     )
                     .value

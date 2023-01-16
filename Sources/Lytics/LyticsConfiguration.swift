@@ -64,11 +64,8 @@ public struct LyticsConfiguration: Equatable {
     /// Set to `nil` to disable all logging.
     public var logLevel: LogLevel? = .error
 
-    /// The maximum number of times failed load requests should be retried.
-    public var maxLoadRetryAttempts: Int = 1
-
     /// The default table
-    public var defaultTable: String = "user"
+    public var defaultTable: String = Constants.defaultEntityTable
 
     var apiURL: URL {
         if apiPath.isEmpty {
