@@ -26,6 +26,8 @@ public final class Lytics {
 
     @usableFromInline internal private(set) var eventPipeline: EventPipelineProtocol!
 
+    internal private(set) var loader: Loader!
+
     /// A Boolean value indicating whether this instance has been started.
     public private(set) var hasStarted: Bool = false
 
@@ -112,7 +114,14 @@ public final class Lytics {
 
         let requestBuilder = RequestBuilder.live(
             baseURL: configuration.apiURL,
-            apiToken: apiToken)
+            apiToken: apiToken
+        )
+
+        loader = .live(
+            configuration: configuration,
+            requestBuilder: requestBuilder,
+            requestPerformer: URLSession.live
+        )
 
         eventPipeline = EventPipeline.live(
             configuration: configuration,
