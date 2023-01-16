@@ -36,11 +36,12 @@ final class TaskUtilityTests: XCTestCase {
 
     func testRetryingShouldRetry() async {
         let maxRetryCount = 3
+        let errorMessage = "Expected"
 
         let counter = Counter()
         let operation: @Sendable () async throws -> String = {
             _ = await counter.increment()
-            throw TestError(message: "Expected")
+            throw TestError(message: errorMessage)
         }
 
         let handlerExpectation = expectation(description: "Handler called")
@@ -49,6 +50,7 @@ final class TaskUtilityTests: XCTestCase {
             return false
         }
 
+        let errorExpectation = expectation(description: "Error thrown")
         var caughtError: TestError!
         do {
             _ = try await Task.retrying(
@@ -58,13 +60,14 @@ final class TaskUtilityTests: XCTestCase {
             ).value
         } catch let testError as TestError {
             caughtError = testError
+            errorExpectation.fulfill()
         } catch {
             XCTFail("Unexpected error type: \(error)")
         }
 
         await waitForExpectations(timeout: 0.1)
 
-        XCTAssertEqual(caughtError, TestError(message: "Expected"))
+        XCTAssertEqual(caughtError, TestError(message: errorMessage))
         let operationCount = await counter.count
         XCTAssertEqual(operationCount, 1)
     }
