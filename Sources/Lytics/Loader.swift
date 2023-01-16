@@ -7,7 +7,7 @@
 import Foundation
 
 struct Loader {
-    var entity: (String, String) async throws -> Entity
+    var entity: (EntityIdentifier) async throws -> Entity
 }
 
 extension Loader {
@@ -17,11 +17,11 @@ extension Loader {
         requestPerformer: RequestPerforming
     ) -> Self {
         .init(
-            entity: { field, value in
+            entity: { identifier in
                 let request = requestBuilder.entity(
                     table: configuration.defaultTable,
-                    fieldName: field,
-                    fieldVal: value
+                    fieldName: identifier.name,
+                    fieldVal: identifier.value
                 )
 
                 let perform: @Sendable () async throws -> Entity = {
