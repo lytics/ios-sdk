@@ -24,3 +24,6 @@ struct Event<P: Encodable>: Encodable {
 
 // MARK: Equatable
 extension Event: Equatable where P: Equatable {}
+
+// MARK: Decodable
+extension Event: Decodable where P: Decodable {}
