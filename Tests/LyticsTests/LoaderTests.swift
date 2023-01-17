@@ -9,7 +9,7 @@ import XCTest
 
 final class LoaderTests: XCTestCase {
     let baseURLString = "https://example.com"
-    let defaultTable = "test"
+    let table = "test"
     let field = "test_field"
     let value = "test_value"
 
@@ -36,8 +36,7 @@ final class LoaderTests: XCTestCase {
         }
 
         let configuration = LyticsConfiguration(
-            maxRetryCount: 0,
-            defaultTable: defaultTable
+            maxRetryCount: 0
         )
 
         let requestBuilder = RequestBuilder(
@@ -51,14 +50,14 @@ final class LoaderTests: XCTestCase {
             requestPerformer: requestPerformer
         )
 
-        let actualEntity = try await sut.entity(identifier)
+        let actualEntity = try await sut.entity(table, identifier)
 
         await waitForExpectations(timeout: 0.1)
 
         XCTAssertEqual(actualEntity, expectedEntity)
         XCTAssertEqual(
             performedRequest.url.absoluteString,
-            "\(baseURLString)/api/entity/\(defaultTable)/\(field)/\(value)"
+            "\(baseURLString)/api/entity/\(table)/\(field)/\(value)"
         )
     }
 
@@ -74,8 +73,7 @@ final class LoaderTests: XCTestCase {
         }
 
         let configuration = LyticsConfiguration(
-            maxRetryCount: maxRetryCount,
-            defaultTable: defaultTable
+            maxRetryCount: maxRetryCount
         )
 
         let requestBuilder = RequestBuilder(
@@ -91,7 +89,7 @@ final class LoaderTests: XCTestCase {
 
         let errorExpectation = expectation(description: "Entity threw error")
         do {
-            _ = try await sut.entity(identifier)
+            _ = try await sut.entity(table, identifier)
         } catch {
             errorExpectation.fulfill()
         }
