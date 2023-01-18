@@ -12,9 +12,8 @@ struct UserSettings {
 }
 
 extension UserSettings {
-    static var live: Self {
-        let userDefaults = UserDefaults.standard
-        return .init(
+    static func live(userDefaults: UserDefaults = .standard) -> Self {
+        .init(
             getOptIn: {
                 userDefaults.bool(for: .didOptIn)
             },

@@ -62,7 +62,7 @@ public final class Lytics {
 
     /// Creates a Lytics instance.
     ///
-    /// Warning: You must call ``start(apiToken:configure:)`` before using the created instance.
+    /// > Warning: You must call ``start(apiToken:configure:)`` before using the created instance.
     public convenience init() {
         self.init(
             logger: .live,

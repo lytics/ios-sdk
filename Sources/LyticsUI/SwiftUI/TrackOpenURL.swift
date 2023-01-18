@@ -59,7 +59,7 @@ public extension View {
     /// Tracks reception of a url and registers a handler to invoke when the view receives a url
     /// for the scene or window the view is in.
     ///
-    /// Note: This method handles the reception of Universal Links, rather than a `NSUserActivity`.
+    /// > Note: This method handles the reception of Universal Links, rather than a `NSUserActivity`.
     ///
     /// - Parameters:
     ///   - lytics: The ``Lytics`` instance used to track the url.

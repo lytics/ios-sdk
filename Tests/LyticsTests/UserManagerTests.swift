@@ -113,6 +113,108 @@ final class UserManagerTests: XCTestCase {
         )
     }
 
+    func testUpdateIdentifiersError() async throws {
+        let anonymousIdentityKey = "_uid"
+
+        var storedIdentifiers: [String: Any]? = [anonymousIdentityKey: Mock.uuidString]
+        var storedAttributes: [String: Any]?
+        let storage = UserStorage.mock(
+            attributes: { storedAttributes },
+            identifiers: { storedIdentifiers },
+            storeAttributes: { storedAttributes = $0 },
+            storeIdentifiers: { storedIdentifiers = $0 }
+        )
+
+        let sut = UserManager(
+            configuration: .init(anonymousIdentityKey: anonymousIdentityKey),
+            encoder: .init(),
+            idProvider: { Mock.uuidString },
+            storage: storage
+        )
+
+        let errorExpectation = expectation(description: "Error caught")
+        var caughtError: EncodingError!
+        do {
+            _ = try await sut.update(
+                with: UserUpdate(
+                    identifiers: 1,
+                    attributes: .never
+                ))
+        } catch let encodingError as EncodingError {
+            caughtError = encodingError
+            errorExpectation.fulfill()
+        } catch {
+            XCTFail("Unexpected error type: \(error)")
+        }
+
+        await waitForExpectations(timeout: expectationTimeout)
+        XCTAssertEqual(caughtError!.userDescription, "Unable to creation a dictionary from 1.")
+    }
+
+    func testApply() async throws {
+        let anonymousIdentityKey = "_uid"
+        let a = 1
+        let b = "2"
+
+        var storedIdentifiers: [String: Any]? = [anonymousIdentityKey: Mock.uuidString]
+        var storedAttributes: [String: Any]?
+        let storage = UserStorage.mock(
+            attributes: { storedAttributes },
+            identifiers: { storedIdentifiers },
+            storeAttributes: { storedAttributes = $0 },
+            storeIdentifiers: { storedIdentifiers = $0 }
+        )
+
+        let sut = UserManager(
+            configuration: .init(anonymousIdentityKey: anonymousIdentityKey),
+            encoder: .init(),
+            idProvider: { Mock.uuidString },
+            storage: storage
+        )
+
+        try await sut.apply(
+            UserUpdate(
+                identifiers: TestIdentifiers(
+                    email: User1.email,
+                    userID: User1.userID,
+                    nested: .init(a: a, b: b)
+                ),
+                attributes: .never
+            ))
+
+        XCTAssertNil(storedAttributes)
+        Assert.identifierEquality(
+            storedIdentifiers!,
+            expected: [
+                anonymousIdentityKey: Mock.uuidString,
+                "email": User1.email,
+                "userID": User1.userID,
+                "nested": [
+                    "a": a,
+                    "b": b
+                ]
+            ]
+        )
+
+        try await sut.apply(
+            UserUpdate(
+                identifiers: .never,
+                attributes: TestAttributes(
+                    firstName: User1.firstName,
+                    titles: User1.titles
+                )
+            )
+        )
+
+        Assert.attributeEquality(
+            storedAttributes!,
+            expected: [
+                "firstName": User1.firstName,
+                "titles": User1.titles
+            ]
+        )
+    }
+
     func testUpdatedIdentifiersAreStored() async throws {
         var storedIdentifiers: [String: Any]!
         let storeExpectation = expectation(description: "Identifiers were stored")
@@ -243,6 +345,75 @@ final class UserManagerTests: XCTestCase {
                 initialIdentityKey: initialIdentityValue,
                 updatedIdentityKey: updatedIdentityValue
             ]
+        )
+    }
+
+    func testClear() async {
+        let anonymousIdentityKey = "id"
+
+        var storedAttributes: [String: Any]? = ["initial": "value"]
+        var storedIdentifiers: [String: Any]!
+        let attributeExpectation = expectation(description: "Attributes were stored")
+        let identifierExpectation = expectation(description: "Identifiers were stored")
+        let storage = UserStorage.mock(
+            identifiers: { [anonymousIdentityKey: "initial_value"] },
+            storeAttributes: { attributes in
+                storedAttributes = attributes
+                attributeExpectation.fulfill()
+            },
+            storeIdentifiers: { identifiers in
+                storedIdentifiers = identifiers
+                identifierExpectation.fulfill()
+            }
+        )
+
+        let sut = UserManager(
+            configuration: .init(anonymousIdentityKey: anonymousIdentityKey),
+            encoder: .init(),
+            idProvider: { Mock.uuidString },
+            storage: storage
+        )
+
+        await sut.clear()
+        await waitForExpectations(timeout: expectationTimeout)
+
+        XCTAssertNil(storedAttributes)
+        XCTAssertEqual(storedIdentifiers.count, 1)
+        let storedID = storedIdentifiers[anonymousIdentityKey] as! String
+        XCTAssertEqual(storedID, Mock.uuidString)
+    }
+
+    func testGetUser() async {
+        let anonymousIdentityKey = "userID"
+        let attributes: [String: Any] = User1.anyAttributes
+        let identifiers: [String: Any] = User1.anyIdentifiers
+
+        let attributeExpectation = expectation(description: "Attributes were fetched")
+        let storage = UserStorage.mock(
+            attributes: {
+                attributeExpectation.fulfill()
+                return attributes
+            },
+            identifiers: {
+                identifiers
+            }
+        )
+
+        let sut = UserManager(
+            configuration: .init(anonymousIdentityKey: anonymousIdentityKey),
+            encoder: .init(),
+            storage: storage
+        )
+
+        let actualUser = await sut.user
+        await waitForExpectations(timeout: expectationTimeout)
+
+        XCTAssertEqual(
+            actualUser,
+            LyticsUser(
+                identifiers: User1.identifiers,
+                attributes: User1.attributes
+            )
         )
     }
 }

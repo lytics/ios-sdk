@@ -14,10 +14,8 @@ struct UserStorage {
 }
 
 extension UserStorage {
-    static var live: Self {
-        let userDefaults = UserDefaults.standard
-
-        return .init(
+    static func live(userDefaults: UserDefaults = .standard) -> Self {
+        .init(
             attributes: {
                 userDefaults.dictionary(for: .userAttributes)
             },
