@@ -12,7 +12,7 @@ public struct EntityIdentifier: Equatable {
     /// The name of the identity field.
     public var name: String
 
-    /// The value of hte identity field.
+    /// The value of the identity field.
     public var value: String
 
     /// Creates an entity identifier.
