@@ -505,7 +505,7 @@ public extension Lytics {
 // MARK: - Personalization
 public extension Lytics {
 
-    /// Returns a user profile from the Entity API.
+    /// Returns the current user with a user profile from the Entity API.
     ///
     /// This method fetches a user profile from the table specified by the ``Lytics/LyticsConfiguration/defaultTable``
     /// of the `LyticsConfiguration` instance passed to ``start(apiToken:configure:)``. By default,
@@ -514,7 +514,7 @@ public extension Lytics {
     /// entity identifier is specified it will instead use that.
     ///
     /// - Parameter identifier: An optional field name and value used to fetch an entity.
-    /// - Returns: The entity identified by the given identifier.
+    /// - Returns: The current user.
     func getProfile(
         _ identifier: EntityIdentifier? = nil
     ) async throws -> LyticsUser {
