@@ -34,6 +34,48 @@ final class RequestBuilderTests: XCTestCase {
         XCTAssertEqual(request.body, requestData)
     }
 
+    func testPersonalizationRequest() throws {
+        let table = "user"
+        let fieldName = "_uid"
+        let fieldVal = Mock.uuidString
+        let fields: [String]? = ["email", "idfa"]
+        let segments = true
+        let meta = true
+
+        let sut = RequestBuilder(
+            baseURL: Constants.defaultBaseURL,
+            apiToken: Mock.apiToken
+        )
+
+        let request = sut.entity(
+            table: table,
+            fieldName: fieldName,
+            fieldVal: fieldVal,
+            fields: fields,
+            segments: segments,
+            meta: meta
+        )
+
+        XCTAssertEqual(request.method, .get)
+        XCTAssertEqual(request.url, URL(string: "https://api.lytics.io/api/entity/\(table)/\(fieldName)/\(fieldVal)")!)
+        XCTAssertEqual(
+            request.parameters,
+            [
+                QueryParameter(name: "fields", value: "email,idfa"),
+                QueryParameter(name: "segments", value: "\(segments)"),
+                QueryParameter(name: "meta", value: "\(meta)")
+            ]
+        )
+        XCTAssertEqual(
+            request.headers,
+            [
+                HeaderField(name: "Content-Type", value: "application/json"),
+                HeaderField(name: "Authorization", value: Mock.apiToken)
+            ]
+        )
+        XCTAssertNil(request.body)
+    }
+
     func testCustomBaseURLRequest() throws {
         var configuration = LyticsConfiguration()
         configuration.baseURL = URL(string: "https://mycustomdomain.com")!
