@@ -26,22 +26,13 @@ extension Loader {
                     fieldVal: identifier.value
                 )
 
-                let perform: @Sendable () async throws -> Entity = {
+                return try await Task.retrying(maxRetryCount: configuration.maxRetryCount) {
                     try await requestPerformer
                         .perform(request)
                         .validate()
                         .decode()
                 }
-
-                if configuration.maxRetryCount > 0 {
-                    return try await Task.retrying(
-                        maxRetryCount: configuration.maxRetryCount,
-                        operation: perform
-                    )
-                    .value
-                } else {
-                    return try await perform()
-                }
+                .value
             }
         )
     }
