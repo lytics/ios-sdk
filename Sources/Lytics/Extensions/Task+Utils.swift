@@ -18,6 +18,33 @@ extension Task where Failure == Error {
             return try await operation()
         }
     }
+
+    // https://www.swiftbysundell.com/articles/retrying-an-async-swift-task/
+    @discardableResult
+    static func retrying(
+        priority: TaskPriority? = nil,
+        maxRetryCount: Int = 3,
+        shouldRetry: @escaping @Sendable (Error) -> Bool = { _ in true },
+        operation: @escaping @Sendable () async throws -> Success
+    ) -> Task {
+        Task(priority: priority) {
+            for _ in 0 ..< maxRetryCount {
+                try Task<Never, Never>.checkCancellation()
+
+                do {
+                    return try await operation()
+                } catch {
+                    guard shouldRetry(error) else {
+                        throw error
+                    }
+                    continue
+                }
+            }
+
+            try Task<Never, Never>.checkCancellation()
+            return try await operation()
+        }
+    }
 }
 
 extension Task where Failure == Never {
