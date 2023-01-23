@@ -26,7 +26,7 @@ extension Loader {
                     fieldVal: identifier.value
                 )
 
-                return try await Task.retrying(maxRetryCount: configuration.maxRetryCount) {
+                return try await Task.retrying(maxRetryCount: configuration.maxLoadRetryAttempts) {
                     try await requestPerformer
                         .perform(request)
                         .validate()
