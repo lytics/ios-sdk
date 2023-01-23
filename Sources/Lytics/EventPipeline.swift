@@ -139,7 +139,7 @@ extension EventPipeline {
                 upload: { await uploader.upload($0) }
             ),
             uploader: uploader,
-            userSettings: .live
+            userSettings: .live()
         )
     }
 }

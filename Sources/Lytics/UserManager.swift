@@ -202,7 +202,7 @@ extension UserManager {
             ),
             encoder: JSONEncoder(),
             idProvider: { UUID().uuidString },
-            storage: .live
+            storage: .live()
         )
     }
 

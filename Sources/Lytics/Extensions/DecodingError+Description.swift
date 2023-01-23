@@ -16,7 +16,7 @@ extension DecodingError.Context {
 
 extension DecodingError {
 
-    /// Return a string with a human readable reason for json decoding failure
+    /// Return a string with a human readable reason for json decoding failure.
     var userDescription: String {
         switch self {
         case let .dataCorrupted(context):

@@ -141,6 +141,18 @@ final class RequestCacheTests: XCTestCase {
         XCTAssertEqual(actualRequest.uploadTask, nil)
     }
 
+    func testLoadNilData() throws {
+        let storage = Storage(
+            write: { _ in },
+            read: { nil },
+            clear: {}
+        )
+
+        let sut = try RequestCache(storage: storage)
+        let actual = try sut.load()
+        XCTAssertNil(actual)
+    }
+
     func testDeleteAll() throws {
         let clearExpectation = expectation(description: "Storage was cleared")
         let storage = Storage(

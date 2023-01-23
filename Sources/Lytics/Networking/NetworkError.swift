@@ -18,7 +18,7 @@ enum NetworkError: Error {
     case invalidResponse(_ response: URLResponse?)
     /// There was a client error: 400-499.
     case clientError(_ response: HTTPURLResponse)
-    /// There was a server error.
+    /// There was a server error: 500 - 599.
     case serverError(_ response: HTTPURLResponse)
     /// There was an error decoding the data.
     case decoding(_ error: DecodingError)

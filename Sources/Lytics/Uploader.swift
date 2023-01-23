@@ -177,7 +177,7 @@ private extension Uploader {
             let response = try await requestPerformer
                 .perform(request)
                 .validate()
-                .decode()
+                .decode(with: decoder)
 
             logger.debug("\(response)")
 
