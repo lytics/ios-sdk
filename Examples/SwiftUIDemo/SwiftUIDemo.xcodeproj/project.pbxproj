@@ -51,6 +51,7 @@
 		C9DE3E5029085BD80047F502 /* ChecklistToggleStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E4F29085BD80047F502 /* ChecklistToggleStyle.swift */; };
 		C9DE3E52290861680047F502 /* LocalEventsHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E51290861680047F502 /* LocalEventsHeader.swift */; };
 		C9DE3E552908CBA10047F502 /* DemoTapEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DE3E542908CBA10047F502 /* DemoTapEvent.swift */; };
+		C9F334F829774A3200D32513 /* View+ErrorAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F334F729774A3200D32513 /* View+ErrorAlert.swift */; };
 		C9F44BD32912B9E6006998BD /* DemoAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F44BD22912B9E6006998BD /* DemoAttributes.swift */; };
 /* End PBXBuildFile section */
 
@@ -120,6 +121,7 @@
 		C9DE3E4F29085BD80047F502 /* ChecklistToggleStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistToggleStyle.swift; sourceTree = "<group>"; };
 		C9DE3E51290861680047F502 /* LocalEventsHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalEventsHeader.swift; sourceTree = "<group>"; };
 		C9DE3E542908CBA10047F502 /* DemoTapEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoTapEvent.swift; sourceTree = "<group>"; };
+		C9F334F729774A3200D32513 /* View+ErrorAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+ErrorAlert.swift"; sourceTree = "<group>"; };
 		C9F44BD22912B9E6006998BD /* DemoAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoAttributes.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -303,6 +305,7 @@
 				C94BF00829097480007E1C25 /* Color+Assets.swift */,
 				C9DE3E40290735FA0047F502 /* Image+Assets.swift */,
 				C94BF00429096EA3007E1C25 /* Task+Utils.swift */,
+				C9F334F729774A3200D32513 /* View+ErrorAlert.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -475,6 +478,7 @@
 				C9F44BD32912B9E6006998BD /* DemoAttributes.swift in Sources */,
 				C9DE3E2C29071E360047F502 /* LoginViewModel.swift in Sources */,
 				C9DC54F228EDC4D800EAD25E /* DemoIdentity.swift in Sources */,
+				C9F334F829774A3200D32513 /* View+ErrorAlert.swift in Sources */,
 				C9DE3E552908CBA10047F502 /* DemoTapEvent.swift in Sources */,
 				C9DE3E32290722A30047F502 /* ProfileViewModel.swift in Sources */,
 				C9739D81293FB3E800CFD435 /* DemoDetailScreenEvent.swift in Sources */,
