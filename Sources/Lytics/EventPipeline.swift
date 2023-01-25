@@ -120,7 +120,7 @@ extension EventPipeline {
         let uploader = Uploader.live(
             logger: logger,
             cache: requestCache,
-            maxRetryCount: configuration.maxRetryCount
+            maxRetryCount: configuration.maxUploadRetryAttempts
         )
 
         return EventPipeline(

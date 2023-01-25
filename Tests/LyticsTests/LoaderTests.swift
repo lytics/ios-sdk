@@ -36,7 +36,7 @@ final class LoaderTests: XCTestCase {
         }
 
         let configuration = LyticsConfiguration(
-            maxRetryCount: 0
+            maxLoadRetryAttempts: 0
         )
 
         let requestBuilder = RequestBuilder(
@@ -73,7 +73,7 @@ final class LoaderTests: XCTestCase {
         }
 
         let configuration = LyticsConfiguration(
-            maxRetryCount: maxRetryCount
+            maxLoadRetryAttempts: maxRetryCount
         )
 
         let requestBuilder = RequestBuilder(
