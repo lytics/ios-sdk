@@ -12,12 +12,10 @@ struct DataUploadRequestBuilder {
 
 extension DataUploadRequestBuilder {
     static func live(
-        apiToken: String,
-        baseURL: URL = Constants.defaultBaseURL,
+        requestBuilder: RequestBuilder,
         dryRun: Bool = false
     ) -> Self {
         let encoder = JSONEncoder()
-        let requestBuilder = RequestBuilder.live(baseURL: baseURL, apiToken: apiToken)
 
         return .init(
             requests: {

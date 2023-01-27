@@ -13,6 +13,7 @@ enum Constants {
 
     static let defaultAnonymousIdentityKey = "_uid"
     static let defaultPrimaryIdentityKey = "_uid"
+    static let defaultEntityTable = "user"
 
     static let defaultBaseURL = URL(string: "https://api.lytics.io")!
     static let defaultAPIPath = ""

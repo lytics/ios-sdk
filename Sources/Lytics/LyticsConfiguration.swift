@@ -44,8 +44,11 @@ public struct LyticsConfiguration: Equatable {
     /// Set to `0` to disable.
     public var maxQueueSize: Int = 10
 
-    /// The max number of times to try and resend an event on failure.
-    public var maxRetryCount: Int = 3
+    /// The maximum number of times to retry failed load requests before throwing an error.
+    public var maxLoadRetryAttempts: Int = 1
+
+    /// The maximum number of times to try and resend an event on failure.
+    public var maxUploadRetryAttempts: Int = 3
 
     /// Session timeout in seconds.
     ///
@@ -63,6 +66,9 @@ public struct LyticsConfiguration: Equatable {
     ///
     /// Set to `nil` to disable all logging.
     public var logLevel: LogLevel? = .error
+
+    /// The table used when fetching user profiles.
+    public var defaultTable: String = Constants.defaultEntityTable
 
     var apiURL: URL {
         if apiPath.isEmpty {

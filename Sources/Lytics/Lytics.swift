@@ -26,6 +26,10 @@ public final class Lytics {
 
     @usableFromInline internal private(set) var eventPipeline: EventPipelineProtocol!
 
+    internal private(set) var configuration: LyticsConfiguration!
+
+    internal private(set) var loader: Loader!
+
     /// A Boolean value indicating whether this instance has been started.
     public private(set) var hasStarted: Bool = false
 
@@ -104,16 +108,28 @@ public final class Lytics {
         if configuration.primaryIdentityKey.isEmpty {
             configuration.primaryIdentityKey = Constants.defaultPrimaryIdentityKey
         }
+        self.configuration = configuration
 
         logger.logLevel = configuration.logLevel
 
         userManager = UserManager.live(configuration: configuration)
         appTrackingTransparency = .live
 
+        let requestBuilder = RequestBuilder.live(
+            baseURL: configuration.apiURL,
+            apiToken: apiToken
+        )
+
+        loader = .live(
+            configuration: configuration,
+            requestBuilder: requestBuilder,
+            requestPerformer: URLSession.live
+        )
+
         eventPipeline = EventPipeline.live(
+            configuration: configuration,
             logger: logger,
-            apiToken: apiToken,
-            configuration: configuration
+            requestBuilder: requestBuilder
         )
 
         appEventTracker = AppEventTracker.live(
@@ -483,6 +499,45 @@ public extension Lytics {
             identifiers: Optional.never,
             properties: properties
         )
+    }
+}
+
+// MARK: - Personalization
+public extension Lytics {
+
+    /// Returns the current user with a user profile from the Entity API.
+    ///
+    /// This method fetches a user profile from the table specified by the ``Lytics/LyticsConfiguration/defaultTable``
+    /// of the `LyticsConfiguration` instance passed to ``start(apiToken:configure:)``. By default,
+    /// it will use the value of current user's primary identity key as defined by
+    /// ``Lytics/LyticsConfiguration/primaryIdentityKey`` of that configuration instance. If an
+    /// entity identifier is specified it will instead use that.
+    ///
+    /// - Parameter identifier: An optional field name and value used to fetch an entity.
+    /// - Returns: The current user.
+    func getProfile(
+        _ identifier: EntityIdentifier? = nil
+    ) async throws -> LyticsUser {
+        var user = await self.user
+
+        let entityIdentifier: EntityIdentifier
+        if let identifier {
+            entityIdentifier = identifier
+        } else {
+            let name = configuration.primaryIdentityKey
+            guard let value = user.identifiers[name]?.description else {
+                throw LyticsError(reason: "Missing value for field `\(name)`.")
+            }
+            entityIdentifier = EntityIdentifier(name: name, value: value)
+        }
+
+        let entity = try await loader.entity(
+            configuration.defaultTable,
+            entityIdentifier
+        )
+
+        user.profile = entity.data
+        return user
     }
 }
 

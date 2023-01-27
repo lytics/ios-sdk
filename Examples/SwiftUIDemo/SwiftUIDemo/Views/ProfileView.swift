@@ -30,6 +30,10 @@ struct ProfileView: View {
         .task {
             await viewModel.getUser()
         }
+        .refreshable {
+            await viewModel.getUser()
+        }
+        .errorAlert(error: $viewModel.error)
     }
 }
 

@@ -6,6 +6,6 @@
 
 import Foundation
 
-struct TestError: Error {
+struct TestError: Error, Equatable {
     let message: String
 }
