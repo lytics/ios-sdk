@@ -30,6 +30,32 @@ extension DataUploadRequestBuilder {
     )
 }
 
+extension DependencyContainer {
+    static func mock(
+        appTrackingTransparency: AppTrackingTransparency = .live,
+        configuration: LyticsConfiguration = .init(),
+        eventPipeline: EventPipelineProtocol = EventPipelineMock(),
+        logger: LyticsLogger = .mock,
+        timestampProvider: @escaping () -> Millisecond = Millisecond.mock,
+        userManager: UserManaging = UserManagerMock<TestIdentifiers, TestAttributes>(),
+        apiToken: String = Mock.apiToken,
+        appEventTracker: AppEventTracking = AppEventTrackerMock(),
+        loader: Loader = .mock
+    ) -> Self {
+        .init(
+            appTrackingTransparency: appTrackingTransparency,
+            configuration: configuration,
+            eventPipeline: eventPipeline,
+            logger: logger,
+            timestampProvider: timestampProvider,
+            userManager: userManager,
+            apiToken: apiToken,
+            appEventTracker: appEventTracker,
+            loader: loader
+        )
+    }
+}
+
 extension Loader {
     static let failing = Self(
         entity: { _, _ in XCTFail("\(Self.self).entity"); return Mock.entity }
