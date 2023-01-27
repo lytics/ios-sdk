@@ -29,7 +29,7 @@ final class UploaderTests: XCTestCase {
         let sut = Uploader(
             logger: .mock,
             requestPerformer: requestPerformer,
-            errorHandler: .mock,
+            errorHandler: .failing,
             cache: RequestCacheMock(onLoad: { nil })
         )
 
@@ -64,7 +64,7 @@ final class UploaderTests: XCTestCase {
         let sut = Uploader(
             logger: .mock,
             requestPerformer: RequestPerformerMock<DataUploadResponse>.failing,
-            errorHandler: .mock,
+            errorHandler: .failing,
             cache: cache
         )
 
@@ -154,7 +154,7 @@ final class UploaderTests: XCTestCase {
         let sut = Uploader(
             logger: .mock,
             requestPerformer: requestPerformer,
-            errorHandler: .mock,
+            errorHandler: .failing,
             cache: cache
         )
 
@@ -251,7 +251,7 @@ final class UploaderTests: XCTestCase {
         let sut = Uploader(
             logger: .mock,
             requestPerformer: requestPerformer,
-            errorHandler: .mock,
+            errorHandler: .failing,
             cache: cache
         )
 
