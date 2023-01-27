@@ -6,14 +6,15 @@
 
 import Foundation
 @testable import Lytics
+import XCTest
 
 actor EventQueueMock: EventQueueing {
     var onEnqueue: (any StreamEvent) -> Void
     var onFlush: () -> Void
 
     init(
-        onEnqueue: @escaping (StreamEvent) -> Void = { _ in },
-        onFlush: @escaping () -> Void = {}
+        onEnqueue: @escaping (StreamEvent) -> Void = { _ in XCTFail("EventQueueMock.onEnqueue") },
+        onFlush: @escaping () -> Void = { XCTFail("EventQueueMock.onFlush") }
     ) {
         self.onEnqueue = onEnqueue
         self.onFlush = onFlush

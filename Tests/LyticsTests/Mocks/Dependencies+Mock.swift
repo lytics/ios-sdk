@@ -57,9 +57,9 @@ extension RequestFailureHandler {
 extension Storage {
     static var mock: Self {
         .init(
-            write: { _ in },
-            read: { nil },
-            clear: {}
+            write: { _ in XCTFail("Storage.write") },
+            read: { XCTFail("Storage.read"); return nil },
+            clear: { XCTFail("Storage.clear") }
         )
     }
 }
