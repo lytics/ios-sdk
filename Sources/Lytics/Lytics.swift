@@ -14,24 +14,14 @@ public final class Lytics {
     /// The shared instance.
     public static let shared: Lytics = .init()
 
-    private var appEventTracker: AppEventTracking!
-
     @usableFromInline internal private(set) var logger: LyticsLogger
 
-    @usableFromInline internal private(set) var userManager: UserManaging!
-
-    @usableFromInline internal private(set) var timestampProvider: () -> Millisecond
-
-    @usableFromInline internal private(set) var appTrackingTransparency: AppTrackingTransparency!
-
-    @usableFromInline internal private(set) var eventPipeline: EventPipelineProtocol!
-
-    internal private(set) var configuration: LyticsConfiguration!
-
-    internal private(set) var loader: Loader!
+    @usableFromInline var dependencies: DependencyContainer!
 
     /// A Boolean value indicating whether this instance has been started.
-    public private(set) var hasStarted: Bool = false
+    public var hasStarted: Bool {
+        dependencies != nil
+    }
 
     /// A Boolean value indicating whether the user has opted in to event collection.
     public var isOptedIn: Bool {
@@ -39,7 +29,7 @@ public final class Lytics {
             assertionFailure("Lytics must be started before accessing `isOptedIn`.")
             return false
         }
-        return eventPipeline.isOptedIn
+        return dependencies.eventPipeline.isOptedIn
     }
 
     /// A Boolean value indicating whether IDFA is enabled.
@@ -49,7 +39,7 @@ public final class Lytics {
             return false
         }
 
-        return appTrackingTransparency.idfa() != nil
+        return dependencies.appTrackingTransparency.idfa() != nil
     }
 
     /// The current Lytics user.
@@ -60,7 +50,7 @@ public final class Lytics {
                 return .init()
             }
 
-            return await userManager.user
+            return await dependencies.userManager.user
         }
     }
 
@@ -69,17 +59,16 @@ public final class Lytics {
     /// > Warning: You must call ``start(apiToken:configure:)`` before using the created instance.
     public convenience init() {
         self.init(
-            logger: .live,
-            timestampProvider: { Date().timeIntervalSince1970.milliseconds }
+            logger: .live
         )
     }
 
     internal init(
         logger: LyticsLogger,
-        timestampProvider: @escaping () -> Millisecond
+        dependencies: DependencyContainer? = nil
     ) {
         self.logger = logger
-        self.timestampProvider = timestampProvider
+        self.dependencies = dependencies
     }
 
     /// Configures this Lytics SDK instance.
@@ -108,48 +97,24 @@ public final class Lytics {
         if configuration.primaryIdentityKey.isEmpty {
             configuration.primaryIdentityKey = Constants.defaultPrimaryIdentityKey
         }
-        self.configuration = configuration
 
         logger.logLevel = configuration.logLevel
 
-        userManager = UserManager.live(configuration: configuration)
-        appTrackingTransparency = .live
-
-        let requestBuilder = RequestBuilder.live(
-            baseURL: configuration.apiURL,
-            apiToken: apiToken
-        )
-
-        loader = .live(
-            configuration: configuration,
-            requestBuilder: requestBuilder,
-            requestPerformer: URLSession.live
-        )
-
-        eventPipeline = EventPipeline.live(
+        dependencies = .live(
+            apiToken: apiToken,
             configuration: configuration,
             logger: logger,
-            requestBuilder: requestBuilder
-        )
-
-        appEventTracker = AppEventTracker.live(
-            configuration: configuration,
-            logger: logger,
-            userManager: userManager,
-            eventPipeline: eventPipeline,
-            onEvent: { [weak self] event in
+            appEventHandler: { [weak self] event in
                 if case .didEnterBackground = event {
                     self?.dispatch()
                 }
             }
         )
 
-        appEventTracker.startTracking(
+        dependencies.appEventTracker.startTracking(
             lifecycleEvents: NotificationCenter.default.lifecycleEvents(),
             versionTracker: AppVersionTracker.live
         )
-
-        hasStarted = true
     }
 }
 
@@ -176,22 +141,22 @@ public extension Lytics {
             return
         }
 
-        let timestamp = timestamp ?? timestampProvider()
+        let timestamp = timestamp ?? dependencies.timestampProvider()
         Task(priority: .background) {
             var eventIdentifiers = [String: AnyCodable]()
             if let identifiers {
                 do {
-                    eventIdentifiers = try await userManager
+                    eventIdentifiers = try await dependencies.userManager
                         .updateIdentifiers(with: identifiers)
                         .mapValues(AnyCodable.init(_:))
                 } catch {
-                    logger.error(error.localizedDescription)
+                    dependencies.logger.error(error.localizedDescription)
                 }
             } else {
-                eventIdentifiers = await userManager.identifiers.mapValues(AnyCodable.init(_:))
+                eventIdentifiers = await dependencies.userManager.identifiers.mapValues(AnyCodable.init(_:))
             }
 
-            await eventPipeline.event(
+            await dependencies.eventPipeline.event(
                 stream: stream,
                 timestamp: timestamp,
                 name: name,
@@ -271,14 +236,14 @@ public extension Lytics {
             return
         }
 
-        let timestamp = timestamp ?? timestampProvider()
+        let timestamp = timestamp ?? dependencies.timestampProvider()
         Task(priority: .background) {
             do {
                 if shouldSend {
-                    let user = try await userManager.update(
+                    let user = try await dependencies.userManager.update(
                         with: UserUpdate(identifiers: identifiers, attributes: attributes))
 
-                    await eventPipeline.event(
+                    await dependencies.eventPipeline.event(
                         stream: stream,
                         timestamp: timestamp,
                         name: name,
@@ -288,7 +253,7 @@ public extension Lytics {
                         )
                     )
                 } else {
-                    try await userManager.apply(
+                    try await dependencies.userManager.apply(
                         UserUpdate(identifiers: identifiers, attributes: attributes))
                 }
             } catch {
@@ -350,14 +315,14 @@ public extension Lytics {
             return
         }
 
-        let timestamp = timestamp ?? timestampProvider()
+        let timestamp = timestamp ?? dependencies.timestampProvider()
         Task(priority: .background) {
             do {
                 if shouldSend {
-                    let user = try await userManager.update(
+                    let user = try await dependencies.userManager.update(
                         with: UserUpdate(identifiers: identifiers, attributes: attributes))
 
-                    await eventPipeline.event(
+                    await dependencies.eventPipeline.event(
                         stream: stream,
                         timestamp: timestamp,
                         name: name,
@@ -368,7 +333,7 @@ public extension Lytics {
                         )
                     )
                 } else {
-                    try await userManager.apply(
+                    try await dependencies.userManager.apply(
                         UserUpdate(identifiers: identifiers, attributes: attributes))
                 }
             } catch {
@@ -451,22 +416,22 @@ public extension Lytics {
             return
         }
 
-        let timestamp = timestamp ?? timestampProvider()
+        let timestamp = timestamp ?? dependencies.timestampProvider()
         Task(priority: .background) {
             var eventIdentifiers = [String: AnyCodable]()
             if let identifiers {
                 do {
-                    eventIdentifiers = try await userManager
+                    eventIdentifiers = try await dependencies.userManager
                         .updateIdentifiers(with: identifiers)
                         .mapValues(AnyCodable.init(_:))
                 } catch {
                     logger.error(error.localizedDescription)
                 }
             } else {
-                eventIdentifiers = await userManager.identifiers.mapValues(AnyCodable.init(_:))
+                eventIdentifiers = await dependencies.userManager.identifiers.mapValues(AnyCodable.init(_:))
             }
 
-            await eventPipeline.event(
+            await dependencies.eventPipeline.event(
                 stream: stream,
                 timestamp: timestamp,
                 name: name,
@@ -524,15 +489,15 @@ public extension Lytics {
         if let identifier {
             entityIdentifier = identifier
         } else {
-            let name = configuration.primaryIdentityKey
+            let name = dependencies.configuration.primaryIdentityKey
             guard let value = user.identifiers[name]?.description else {
                 throw LyticsError(reason: "Missing value for field `\(name)`.")
             }
             entityIdentifier = EntityIdentifier(name: name, value: value)
         }
 
-        let entity = try await loader.entity(
-            configuration.defaultTable,
+        let entity = try await dependencies.loader.entity(
+            dependencies.configuration.defaultTable,
             entityIdentifier
         )
 
@@ -552,7 +517,7 @@ public extension Lytics {
         _ userActivity: NSUserActivity,
         stream: String? = nil
     ) {
-        let timestamp = timestampProvider()
+        let timestamp = dependencies.timestampProvider()
 
         // Create closure since `NSUserActivity` is not `Sendable`
         let eventProvider: ([String: AnyCodable]?) -> UserActivityEvent = {
@@ -560,12 +525,12 @@ public extension Lytics {
         }
 
         Task(priority: .background) {
-            await eventPipeline.event(
+            await dependencies.eventPipeline.event(
                 stream: stream,
                 timestamp: timestamp,
                 name: EventNames.deepLink,
                 event: eventProvider(
-                    await userManager.identifiers
+                    await dependencies.userManager.identifiers
                         .mapValues(AnyCodable.init(_:)))
             )
         }
@@ -581,16 +546,16 @@ public extension Lytics {
         options: [UIApplication.OpenURLOptionsKey: Any]? = nil,
         stream: String? = nil
     ) {
-        let timestamp = timestampProvider()
+        let timestamp = dependencies.timestampProvider()
         Task(priority: .background) {
-            await eventPipeline.event(
+            await dependencies.eventPipeline.event(
                 stream: stream,
                 timestamp: timestamp,
                 name: EventNames.url,
                 event: URLEvent(
                     url: url,
                     options: Dictionary(options),
-                    identifiers: await userManager.identifiers
+                    identifiers: await dependencies.userManager.identifiers
                         .mapValues(AnyCodable.init(_:))
                 )
             )
@@ -605,7 +570,7 @@ public extension Lytics {
         _ shortcutItem: UIApplicationShortcutItem,
         stream: String? = nil
     ) {
-        let timestamp = timestampProvider()
+        let timestamp = dependencies.timestampProvider()
 
         // Create closure since `UIApplicationShortcutItem` is not `Sendable`
         let eventProvider: ([String: AnyCodable]?) -> ShortcutEvent = {
@@ -613,12 +578,12 @@ public extension Lytics {
         }
 
         Task(priority: .background) {
-            await eventPipeline.event(
+            await dependencies.eventPipeline.event(
                 stream: stream,
                 timestamp: timestamp,
                 name: EventNames.shortcut,
                 event: eventProvider(
-                    await userManager.identifiers
+                    await dependencies.userManager.identifiers
                         .mapValues(AnyCodable.init(_:)))
             )
         }
@@ -636,7 +601,7 @@ public extension Lytics {
         }
 
         logger.debug("Opt in")
-        eventPipeline.optIn()
+        dependencies.eventPipeline.optIn()
     }
 
     /// Opts the user out of event collection.
@@ -647,7 +612,7 @@ public extension Lytics {
         }
 
         logger.debug("Opt out")
-        eventPipeline.optOut()
+        dependencies.eventPipeline.optOut()
     }
 
     /// Requests access to IDFA.
@@ -658,10 +623,10 @@ public extension Lytics {
         }
 
         logger.debug("Requesting tracking authorization ...")
-        let didAuthorize = await appTrackingTransparency.requestAuthorization()
+        let didAuthorize = await dependencies.appTrackingTransparency.requestAuthorization()
 
         if didAuthorize {
-            guard let idfa = appTrackingTransparency.idfa() else {
+            guard let idfa = dependencies.appTrackingTransparency.idfa() else {
                 logger.error("Unable to get IDFA despite authorization")
                 return didAuthorize
             }
@@ -669,7 +634,7 @@ public extension Lytics {
             let update: [String: AnyCodable] = [Constants.idfaKey: AnyCodable(idfa)]
 
             do {
-                try await userManager.updateIdentifiers(with: update)
+                try await dependencies.userManager.updateIdentifiers(with: update)
             } catch {
                 logger.error("\(error)")
             }
@@ -681,7 +646,7 @@ public extension Lytics {
     /// Disables use of IDFA.
     func disableTracking() {
         logger.debug("Disable tracking")
-        appTrackingTransparency.disableIDFA()
+        dependencies.appTrackingTransparency.disableIDFA()
     }
 }
 
@@ -697,7 +662,7 @@ public extension Lytics {
     func dispatch() {
         logger.debug("Dispatch events")
         Task {
-            await eventPipeline.dispatch()
+            await dependencies.eventPipeline.dispatch()
         }
     }
 
@@ -707,7 +672,7 @@ public extension Lytics {
         optOut()
         disableTracking()
         Task {
-            await userManager.clear()
+            await dependencies.userManager.clear()
         }
     }
 }
