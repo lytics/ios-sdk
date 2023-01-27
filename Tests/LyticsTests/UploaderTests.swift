@@ -30,7 +30,7 @@ final class UploaderTests: XCTestCase {
             logger: .mock,
             requestPerformer: requestPerformer,
             errorHandler: .mock,
-            cache: RequestCacheMock()
+            cache: RequestCacheMock(onLoad: { nil })
         )
 
         let initialRequestCount = await sut.pendingRequestCount
