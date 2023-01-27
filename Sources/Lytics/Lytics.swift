@@ -14,9 +14,11 @@ public final class Lytics {
     /// The shared instance.
     public static let shared: Lytics = .init()
 
-    @usableFromInline internal private(set) var logger: LyticsLogger
+    /// The logger.
+    @usableFromInline internal var logger: LyticsLogger
 
-    @usableFromInline var dependencies: DependencyContainer!
+    /// The SDK dependencies.
+    @usableFromInline internal var dependencies: DependencyContainer!
 
     /// A Boolean value indicating whether this instance has been started.
     public var hasStarted: Bool {
