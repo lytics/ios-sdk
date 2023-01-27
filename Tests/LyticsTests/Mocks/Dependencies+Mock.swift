@@ -22,6 +22,20 @@ extension DataUploadRequestBuilder {
     }
 }
 
+extension Loader {
+    static var failing: Self {
+        .init(
+            entity: { _, _ in XCTFail("\(Self.self).entity"); return Mock.entity }
+        )
+    }
+
+    static var mock: Self {
+        .init(
+            entity: { _, _ in Mock.entity }
+        )
+    }
+}
+
 extension LyticsLogger {
     static var mock: Self {
         .init(log: { _, _, _, _, _ in })
