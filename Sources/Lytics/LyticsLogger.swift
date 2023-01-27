@@ -30,6 +30,7 @@ public enum LogLevel: Comparable, Equatable {
     }
 }
 
+/// An object for writing interpolated messages to the logging system.
 @usableFromInline
 struct LyticsLogger {
     var logLevel: LogLevel? = .error
