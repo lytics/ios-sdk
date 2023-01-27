@@ -25,7 +25,7 @@ extension DependencyContainer {
         apiToken: String,
         configuration: LyticsConfiguration,
         logger: LyticsLogger,
-        appEventHandler: @escaping (AppLifecycleEvent) -> Void
+        appEventHandler: @escaping @Sendable (AppLifecycleEvent) -> Void
     ) -> Self {
         let requestBuilder = RequestBuilder.live(
             baseURL: configuration.apiURL,
