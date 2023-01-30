@@ -28,6 +28,15 @@ extension LyticsLogger {
     }
 }
 
+extension RequestBuilder {
+    static var mock: Self {
+        .init(
+            baseURL: Constants.defaultBaseURL,
+            apiToken: Mock.apiToken
+        )
+    }
+}
+
 extension RequestFailureHandler {
     static var failing: Self {
         .init(
