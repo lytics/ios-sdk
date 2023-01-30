@@ -6,6 +6,7 @@
 
 import Foundation
 @testable import Lytics
+import XCTest
 
 final class RequestCacheMock: RequestCaching {
     var onCache: ([any RequestWrapping]) throws -> Void
@@ -13,9 +14,9 @@ final class RequestCacheMock: RequestCaching {
     var onDelete: () throws -> Void
 
     init(
-        onCache: @escaping ([any RequestWrapping]) throws -> Void = { _ in },
-        onLoad: @escaping () throws -> [any RequestWrapping]? = { nil },
-        onDelete: @escaping () throws -> Void = {}
+        onCache: @escaping ([any RequestWrapping]) throws -> Void = { _ in XCTFail("RequestCacheMock.onCache") },
+        onLoad: @escaping () throws -> [any RequestWrapping]? = { XCTFail("RequestCacheMock.onLoad"); return nil },
+        onDelete: @escaping () throws -> Void = { XCTFail("RequestCacheMock.onDelete") }
     ) {
         self.onCache = onCache
         self.onLoad = onLoad

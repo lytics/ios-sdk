@@ -31,14 +31,18 @@ enum Mock {
         attributes: TestAttributes.user1
     )
 
+    static let millisecond: Millisecond = 1_600_000_000_000
+
     static let request = Request<DataUploadResponse>(
         method: .post,
         url: url
     )
 
-    static let uuidString = "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"
-
     static let url = URL(string: "https://api.lytics.io/collect/json/stream")!
+
+    static let user = LyticsUser(identifiers: User1.anyIdentifiers, attributes: User1.anyAttributes)
+
+    static let uuidString = "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"
 
     static var uuid: UUID {
         .init(uuidString: uuidString)!

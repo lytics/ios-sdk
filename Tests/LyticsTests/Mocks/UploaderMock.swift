@@ -6,14 +6,15 @@
 
 import Foundation
 @testable import Lytics
+import XCTest
 
 actor UploaderMock<R: Codable>: Uploading {
     var onUpload: ([Request<R>]) -> Void
     var onStore: () -> Void
 
     init(
-        onUpload: @escaping ([Request<R>]) -> Void = { _ in },
-        onStore: @escaping () -> Void = {}
+        onUpload: @escaping ([Request<R>]) -> Void = { _ in XCTFail("UploaderMock.onUpload") },
+        onStore: @escaping () -> Void = { XCTFail("UploaderMock.onStore") }
     ) {
         self.onUpload = onUpload
         self.onStore = onStore
