@@ -4,9 +4,9 @@
 //  Created by Mathew Gacy on 12/4/22.
 //
 
-import class UIKit.UIApplication
 import AnyCodable
 import Foundation
+import class UIKit.UIApplication
 
 struct URLEvent: Codable, Equatable {
     var url: URL
@@ -15,10 +15,10 @@ struct URLEvent: Codable, Equatable {
 }
 
 extension URLEvent {
-    internal init(
+    init(
         url: URL,
         options: [UIApplication.OpenURLOptionsKey: Any]? = nil,
-        identifiers: [String : AnyCodable]? = nil
+        identifiers: [String: AnyCodable]? = nil
     ) {
         self.url = url
         self.options = options != nil ? Dictionary(uniqueKeysWithValues: options!.map { ($0.rawValue, AnyCodable($1)) }) : nil
