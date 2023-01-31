@@ -11,6 +11,10 @@ struct UserUpdate<I: Encodable, A: Encodable>: Encodable {
     var identifiers: I?
     var attributes: A?
 
+    @usableFromInline var hasContent: Bool {
+        identifiers != nil || attributes != nil
+    }
+
     @usableFromInline
     init(identifiers: I? = nil, attributes: A? = nil) {
         self.identifiers = identifiers
