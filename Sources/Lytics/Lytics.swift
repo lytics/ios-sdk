@@ -14,6 +14,9 @@ public final class Lytics {
     /// The shared instance.
     public static let shared: Lytics = .init()
 
+    /// A function which is called when an internal sanity check fails.
+    private let assertionFailure: (@autoclosure @escaping () -> String, StaticString, UInt) -> Void
+
     /// The logger.
     @usableFromInline internal var logger: LyticsLogger
 
@@ -27,8 +30,7 @@ public final class Lytics {
 
     /// A Boolean value indicating whether the user has opted in to event collection.
     public var isOptedIn: Bool {
-        guard hasStarted else {
-            assertionFailure("Lytics must be started before accessing `isOptedIn`.")
+        guard hasStarted() else {
             return false
         }
         return dependencies.eventPipeline.isOptedIn
@@ -36,22 +38,18 @@ public final class Lytics {
 
     /// A Boolean value indicating whether IDFA is enabled.
     public var isIDFAEnabled: Bool {
-        guard hasStarted else {
-            assertionFailure("Lytics must be started before accessing `isIDFAEnabled`.")
+        guard hasStarted() else {
             return false
         }
-
         return dependencies.appTrackingTransparency.idfa() != nil
     }
 
     /// The current Lytics user.
     public var user: LyticsUser {
         get async {
-            guard hasStarted else {
-                assertionFailure("Lytics must be started before accessing `user`.")
+            guard hasStarted() else {
                 return .init()
             }
-
             return await dependencies.userManager.user
         }
     }
@@ -66,9 +64,11 @@ public final class Lytics {
     }
 
     internal init(
+        assertionFailure: @escaping (@autoclosure @escaping () -> String, StaticString, UInt) -> Void = Swift.assertionFailure,
         logger: LyticsLogger,
         dependencies: DependencyContainer? = nil
     ) {
+        self.assertionFailure = assertionFailure
         self.logger = logger
         self.dependencies = dependencies
     }
@@ -84,7 +84,7 @@ public final class Lytics {
         }
 
         guard apiToken.isNotEmpty else {
-            assertionFailure("Lytics must be started with a non-empty API token")
+            assertionFailure("Lytics must be started with a non-empty API token", #file, #line)
             return
         }
 
@@ -117,6 +117,21 @@ public final class Lytics {
             lifecycleEvents: NotificationCenter.default.lifecycleEvents(),
             versionTracker: AppVersionTracker.live
         )
+    }
+
+    /// Returns a Boolean indicating whether this instance has been started.
+    ///
+    /// This will call `assertionFailure` if called before the instance has been started.
+    private func hasStarted(
+        file: StaticString = #file,
+        function: StaticString = #function,
+        line: UInt = #line
+    ) -> Bool {
+        guard dependencies != nil else {
+            assertionFailure("Lytics must be started before accessing `\(function)`.", file, line)
+            return false
+        }
+        return true
     }
 }
 
@@ -442,8 +457,7 @@ internal extension Lytics {
         priority: TaskPriority? = .background,
         function: StaticString = #function
     ) {
-        guard hasStarted else {
-            assertionFailure("Lytics must be started before using \(function)")
+        guard hasStarted() else {
             return
         }
 
@@ -476,8 +490,7 @@ internal extension Lytics {
         function: StaticString = #function,
         eventProvider: @escaping @Sendable ([String: AnyCodable]) -> E
     ) {
-        guard hasStarted else {
-            assertionFailure("Lytics must be started before using \(function)")
+        guard hasStarted() else {
             return
         }
 
@@ -512,8 +525,7 @@ internal extension Lytics {
         function: StaticString = #function,
         eventProvider: @escaping @Sendable ([String: AnyCodable]) -> E
     ) {
-        guard hasStarted else {
-            assertionFailure("Lytics must be started before using \(function)")
+        guard hasStarted() else {
             return
         }
 
@@ -556,8 +568,7 @@ internal extension Lytics {
         function: StaticString = #function,
         eventProvider: @escaping @Sendable (LyticsUser) -> E
     ) {
-        guard hasStarted else {
-            assertionFailure("Lytics must be started before using \(function)")
+        guard hasStarted() else {
             return
         }
 
@@ -676,8 +687,7 @@ public extension Lytics {
 
     /// Opts the user in to event collection.
     func optIn() {
-        guard hasStarted else {
-            assertionFailure("Lytics must be started before using \(#function)")
+        guard hasStarted() else {
             return
         }
 
@@ -687,8 +697,7 @@ public extension Lytics {
 
     /// Opts the user out of event collection.
     func optOut() {
-        guard hasStarted else {
-            assertionFailure("Lytics must be started before using \(#function)")
+        guard hasStarted() else {
             return
         }
 
@@ -698,8 +707,7 @@ public extension Lytics {
 
     /// Requests access to IDFA.
     func requestTrackingAuthorization() async -> Bool {
-        guard hasStarted else {
-            assertionFailure("Lytics must be started before using \(#function)")
+        guard hasStarted() else {
             return false
         }
 
