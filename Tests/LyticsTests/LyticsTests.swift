@@ -800,7 +800,6 @@ extension LyticsTests {
 
     func testUpdateUserAndUploadHandlesError() async {
         let expectedLogLevel = OSLogType.error
-        let expectedEvent = Event<TestCart>(identifiers: [:], properties: .user1)
 
         var actualLogLevel: OSLogType!
         let loggerExpectation = expectation(description: "Error logged")
