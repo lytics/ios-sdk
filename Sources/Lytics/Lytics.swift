@@ -556,7 +556,7 @@ public extension Lytics {
                 name: EventNames.url,
                 event: URLEvent(
                     url: url,
-                    options: Dictionary(options),
+                    options: options,
                     identifiers: await dependencies.userManager.identifiers
                         .mapValues(AnyCodable.init(_:))
                 )
