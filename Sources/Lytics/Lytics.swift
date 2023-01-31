@@ -608,6 +608,10 @@ public extension Lytics {
     func getProfile(
         _ identifier: EntityIdentifier? = nil
     ) async throws -> LyticsUser {
+        guard hasStarted() else {
+            throw LyticsError(reason: "Lytics must be started before accessing `\(#function)`.")
+        }
+
         var user = await self.user
 
         let entityIdentifier: EntityIdentifier
@@ -734,6 +738,10 @@ public extension Lytics {
 
     /// Disables use of IDFA.
     func disableTracking() {
+        guard hasStarted() else {
+            return
+        }
+
         logger.debug("Disable tracking")
         dependencies.appTrackingTransparency.disableIDFA()
     }
@@ -749,6 +757,10 @@ public extension Lytics {
 
     /// Flushes the event queue by sending all events in the queue immediately.
     func dispatch() {
+        guard hasStarted() else {
+            return
+        }
+
         logger.debug("Dispatch events")
         Task {
             await dependencies.eventPipeline.dispatch()
@@ -757,6 +769,10 @@ public extension Lytics {
 
     /// Clears all stored user information.
     func reset() {
+        guard hasStarted() else {
+            return
+        }
+
         logger.debug("Reset")
         optOut()
         disableTracking()
