@@ -12,7 +12,6 @@ struct DependencyContainer {
     @usableFromInline var appTrackingTransparency: AppTrackingTransparency
     @usableFromInline var configuration: LyticsConfiguration
     @usableFromInline var eventPipeline: EventPipelineProtocol
-    @usableFromInline var logger: LyticsLogger
     @usableFromInline var timestampProvider: () -> Millisecond
     @usableFromInline var userManager: UserManaging
     var apiToken: String
@@ -44,7 +43,6 @@ extension DependencyContainer {
             appTrackingTransparency: .live,
             configuration: configuration,
             eventPipeline: eventPipeline,
-            logger: logger,
             timestampProvider: { Date().timeIntervalSince1970.milliseconds },
             userManager: userManager,
             apiToken: apiToken,

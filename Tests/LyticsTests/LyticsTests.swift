@@ -6,6 +6,7 @@
 
 import AnyCodable
 @testable import Lytics
+import os.log
 import XCTest
 
 final class LyticsTests: XCTestCase {
@@ -528,13 +529,8 @@ extension LyticsTests {
             }
         )
 
-        let updateExpectation = expectation(description: "User updated")
         let userManager = UserManagerMock<Never, Never>(
-            onUpdate: { _ in
-                defer { updateExpectation.fulfill() }
-
-                return Mock.user
-            }
+            user: Mock.user
         )
 
         let sut = Lytics(
@@ -665,6 +661,121 @@ extension LyticsTests {
         XCTAssertEqual(actualName, expectedName)
         XCTAssertEqual(actualTimestamp, expectedTimestamp)
         XCTAssertEqual(actualEvent, expectedEvent)
+    }
+}
+
+// MARK: - Event Helper Methods
+extension LyticsTests {
+    func testUpdateUserHandlesError() async {
+        let expectedLogLevel = OSLogType.error
+
+        var actualLogLevel: OSLogType!
+        let loggerExpectation = expectation(description: "Error logged")
+        let logger = LyticsLogger.test(
+            log: { level, _, _, _, _ in
+                actualLogLevel = level
+                loggerExpectation.fulfill()
+            }
+        )
+
+        let userManager = UserManagerMock<TestIdentifiers, TestAttributes>(
+            onApply: { _ in throw TestError(message: "Error") }
+        )
+
+        let sut = Lytics(
+             logger: logger,
+             dependencies: .test(userManager: userManager)
+        )
+
+        sut.updateUser(with: UserUpdate(identifiers: TestIdentifiers.user1, attributes: TestAttributes.user1))
+
+        await waitForExpectations(timeout: expectationTimeout)
+        XCTAssertEqual(actualLogLevel, expectedLogLevel)
+    }
+
+    func testUpdateIdentifiersAndUploadHandlesError() async {
+        let expectedLogLevel = OSLogType.error
+        let expectedEvent = Event<TestCart>(identifiers: [:], properties: .user1)
+
+        var actualLogLevel: OSLogType!
+        let loggerExpectation = expectation(description: "Error logged")
+        let logger = LyticsLogger.test(
+            log: { level, _, _, _, _ in
+                actualLogLevel = level
+                loggerExpectation.fulfill()
+            }
+        )
+
+        let eventExpectation = expectation(description: "Event uploaded")
+        var actualEvent: Event<TestCart>!
+        let eventPipeline = EventPipelineMock(
+            onEvent: { _, _, _, event in
+                actualEvent = event as? Event<TestCart>
+                eventExpectation.fulfill()
+            }
+        )
+
+        let userManager = UserManagerMock<TestIdentifiers, TestAttributes>(
+            onUpdateIdentifiers: { _ in throw TestError(message: "Error") }
+        )
+
+        let sut = Lytics(
+             logger: logger,
+             dependencies: .test(
+                eventPipeline: eventPipeline,
+                userManager: userManager
+             )
+        )
+
+        sut.updateIdentifiersAndUpload(
+            stream: expectedStream,
+            name: expectedName,
+            timestamp: Mock.millisecond,
+            identifiers: TestIdentifiers.user1
+        ) { eventIdentifiers in
+            Event<TestCart>(identifiers: eventIdentifiers, properties: .user1)
+        }
+
+        await waitForExpectations(timeout: expectationTimeout)
+        XCTAssertEqual(actualLogLevel, expectedLogLevel)
+        XCTAssertEqual(actualEvent, expectedEvent)
+    }
+
+    func testUpdateUserAndUploadHandlesError() async {
+        let expectedLogLevel = OSLogType.error
+        let expectedEvent = Event<TestCart>(identifiers: [:], properties: .user1)
+
+        var actualLogLevel: OSLogType!
+        let loggerExpectation = expectation(description: "Error logged")
+        let logger = LyticsLogger.test(
+            log: { level, _, _, _, _ in
+                actualLogLevel = level
+                loggerExpectation.fulfill()
+            }
+        )
+
+        let userManager = UserManagerMock<TestIdentifiers, TestAttributes>(
+            onUpdate: { _ in throw TestError(message: "Error") }
+        )
+
+        let sut = Lytics(
+             logger: logger,
+             dependencies: .test(userManager: userManager)
+        )
+
+        let userUpdate = UserUpdate(identifiers: TestIdentifiers.user1, attributes: TestAttributes.user1)
+
+        sut.updateUserAndUpload(
+            stream: expectedStream,
+            name: expectedName,
+            timestamp: Mock.millisecond,
+            userUpdate: userUpdate
+        ) { user in
+            Event<TestCart>(identifiers: user.identifiers, properties: .user1)
+        }
+
+        await waitForExpectations(timeout: expectationTimeout)
+        XCTAssertEqual(actualLogLevel, expectedLogLevel)
     }
 }
 
