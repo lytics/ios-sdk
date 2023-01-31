@@ -9,18 +9,18 @@ import Foundation
 import XCTest
 
 actor UserManagerMock<Identifiers: Encodable, Attributes: Encodable>: UserManaging {
-    var onApply: (UserUpdate<Identifiers, Attributes>) -> Void
+    var onApply: (UserUpdate<Identifiers, Attributes>) throws -> Void
     var onClear: () -> Void
-    var onUpdate: (UserUpdate<Identifiers, Attributes>) -> LyticsUser
-    var onUpdateAttributes: (Attributes) -> [String: Any]
-    var onUpdateIdentifiers: (Identifiers) -> [String: Any]
+    var onUpdate: (UserUpdate<Identifiers, Attributes>) throws -> LyticsUser
+    var onUpdateAttributes: (Attributes) throws -> [String: Any]
+    var onUpdateIdentifiers: (Identifiers) throws -> [String: Any]
 
     init(
-        onApply: @escaping (UserUpdate<Identifiers, Attributes>) -> Void = { _ in XCTFail("UserManagerMock.onApply") },
+        onApply: @escaping (UserUpdate<Identifiers, Attributes>) throws -> Void = { _ in XCTFail("UserManagerMock.onApply") },
         onClear: @escaping () -> Void = { XCTFail("UserManagerMock.onClear") },
-        onUpdate: @escaping (UserUpdate<Identifiers, Attributes>) -> LyticsUser = { _ in XCTFail("UserManagerMock.onUpdate"); return .init() },
-        onUpdateAttributes: @escaping (Attributes) -> [String: Any] = { _ in XCTFail("UserManagerMock.onUpdateAttributes"); return [:] },
-        onUpdateIdentifiers: @escaping (Identifiers) -> [String: Any] = { _ in XCTFail("UserManagerMock.onUpdateIdentifiers"); return [:] },
+        onUpdate: @escaping (UserUpdate<Identifiers, Attributes>) throws -> LyticsUser = { _ in XCTFail("UserManagerMock.onUpdate"); return .init() },
+        onUpdateAttributes: @escaping (Attributes) throws -> [String: Any] = { _ in XCTFail("UserManagerMock.onUpdateAttributes"); return [:] },
+        onUpdateIdentifiers: @escaping (Identifiers) throws -> [String: Any] = { _ in XCTFail("UserManagerMock.onUpdateIdentifiers"); return [:] },
         identifiers: [String: Any] = [:],
         attributes: [String: Any]? = nil,
         user: LyticsUser = .init()
@@ -43,22 +43,22 @@ actor UserManagerMock<Identifiers: Encodable, Attributes: Encodable>: UserManagi
 
     func updateIdentifiers<T: Encodable>(with other: T) throws -> [String: Any] {
         let identifiers = other as! Identifiers
-        return onUpdateIdentifiers(identifiers)
+        return try onUpdateIdentifiers(identifiers)
     }
 
     func updateAttributes<T: Encodable>(with other: T) throws -> [String: Any] {
         let attributes = other as! Attributes
-        return onUpdateAttributes(attributes)
+        return try onUpdateAttributes(attributes)
     }
 
     func apply<I: Encodable, A: Encodable>(_ userUpdate: UserUpdate<I, A>) throws {
         let update = userUpdate as! UserUpdate<Identifiers, Attributes>
-        onApply(update)
+        try onApply(update)
     }
 
     func update<I: Encodable, A: Encodable>(with userUpdate: UserUpdate<I, A>) throws -> LyticsUser {
         let update = userUpdate as! UserUpdate<Identifiers, Attributes>
-        return onUpdate(update)
+        return try onUpdate(update)
     }
 
     func clear() {
