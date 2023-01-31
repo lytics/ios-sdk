@@ -526,7 +526,7 @@ internal extension Lytics {
                     .updateIdentifiers(with: identifiers)
                     .mapValues(AnyCodable.init(_:))
             } catch {
-                dependencies.logger.error(error.localizedDescription)
+                logger.error(error.localizedDescription)
             }
 
             await dependencies.eventPipeline.event(
