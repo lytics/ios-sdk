@@ -631,22 +631,11 @@ public extension Lytics {
         _ userActivity: NSUserActivity,
         stream: String? = nil
     ) {
-        let timestamp = dependencies.timestampProvider()
-
-        // Create closure since `NSUserActivity` is not `Sendable`
-        let eventProvider: ([String: AnyCodable]?) -> UserActivityEvent = {
-            UserActivityEvent(userActivity, identifiers: $0)
-        }
-
-        Task(priority: .background) {
-            await dependencies.eventPipeline.event(
-                stream: stream,
-                timestamp: timestamp,
-                name: EventNames.deepLink,
-                event: eventProvider(
-                    await dependencies.userManager.identifiers
-                        .mapValues(AnyCodable.init(_:)))
-            )
+        let event = UserActivityEvent(userActivity)
+        upload(stream: stream, name: EventNames.deepLink, timestamp: nil) { eventIdentifiers in
+            var copy = event
+            copy.identifiers = eventIdentifiers
+            return copy
         }
     }
 
@@ -660,19 +649,8 @@ public extension Lytics {
         options: [UIApplication.OpenURLOptionsKey: Any]? = nil,
         stream: String? = nil
     ) {
-        let timestamp = dependencies.timestampProvider()
-        Task(priority: .background) {
-            await dependencies.eventPipeline.event(
-                stream: stream,
-                timestamp: timestamp,
-                name: EventNames.url,
-                event: URLEvent(
-                    url: url,
-                    options: options,
-                    identifiers: await dependencies.userManager.identifiers
-                        .mapValues(AnyCodable.init(_:))
-                )
-            )
+        upload(stream: stream, name: EventNames.url, timestamp: nil) { eventIdentifiers in
+            URLEvent(url: url, options: options, identifiers: eventIdentifiers)
         }
     }
 
@@ -684,22 +662,11 @@ public extension Lytics {
         _ shortcutItem: UIApplicationShortcutItem,
         stream: String? = nil
     ) {
-        let timestamp = dependencies.timestampProvider()
-
-        // Create closure since `UIApplicationShortcutItem` is not `Sendable`
-        let eventProvider: ([String: AnyCodable]?) -> ShortcutEvent = {
-            ShortcutEvent(shortcutItem, identifiers: $0)
-        }
-
-        Task(priority: .background) {
-            await dependencies.eventPipeline.event(
-                stream: stream,
-                timestamp: timestamp,
-                name: EventNames.shortcut,
-                event: eventProvider(
-                    await dependencies.userManager.identifiers
-                        .mapValues(AnyCodable.init(_:)))
-            )
+        let event = ShortcutEvent(shortcutItem)
+        upload(stream: stream, name: EventNames.shortcut, timestamp: nil) { eventIdentifiers in
+            var copy = event
+            copy.identifiers = eventIdentifiers
+            return copy
         }
     }
 }
