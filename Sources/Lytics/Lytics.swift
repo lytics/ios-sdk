@@ -138,35 +138,17 @@ public extension Lytics {
         identifiers: I?,
         properties: P?
     ) {
-        guard hasStarted else {
-            assertionFailure("Lytics must be started before using \(#function)")
-            return
-        }
-
-        let timestamp = timestamp ?? dependencies.timestampProvider()
-        Task(priority: .background) {
-            var eventIdentifiers = [String: AnyCodable]()
-            if let identifiers {
-                do {
-                    eventIdentifiers = try await dependencies.userManager
-                        .updateIdentifiers(with: identifiers)
-                        .mapValues(AnyCodable.init(_:))
-                } catch {
-                    dependencies.logger.error(error.localizedDescription)
-                }
-            } else {
-                eventIdentifiers = await dependencies.userManager.identifiers.mapValues(AnyCodable.init(_:))
-            }
-
-            await dependencies.eventPipeline.event(
+        let eventProvider: @Sendable ([String: AnyCodable]) -> Event = { .init(identifiers: $0, properties: properties) }
+        if let identifiers {
+            updateIdentifiersAndUpload(
                 stream: stream,
-                timestamp: timestamp,
                 name: name,
-                event: Event(
-                    identifiers: eventIdentifiers,
-                    properties: properties
-                )
+                timestamp: timestamp,
+                identifiers: identifiers,
+                eventProvider: eventProvider
             )
+        } else {
+            upload(stream: stream, name: name, timestamp: timestamp, eventProvider: eventProvider)
         }
     }
 
@@ -183,13 +165,7 @@ public extension Lytics {
         timestamp: Millisecond? = nil,
         properties: P?
     ) {
-        track(
-            stream: stream,
-            name: name,
-            timestamp: timestamp,
-            identifiers: Optional.never,
-            properties: properties
-        )
+        upload(stream: stream, name: name, timestamp: timestamp) { Event(identifiers: $0, properties: properties) }
     }
 
     /// Tracks a custom event.
@@ -203,13 +179,7 @@ public extension Lytics {
         name: String? = nil,
         timestamp: Millisecond? = nil
     ) {
-        track(
-            stream: stream,
-            name: name,
-            timestamp: timestamp,
-            identifiers: Optional.never,
-            properties: Optional.never
-        )
+        upload(stream: stream, name: name, timestamp: timestamp) { Event(identifiers: $0, properties: Optional.never) }
     }
 
     /// Updates the user properties and optionally emit an identity event.
@@ -229,38 +199,21 @@ public extension Lytics {
         attributes: A?,
         shouldSend: Bool = true
     ) {
-        guard hasStarted else {
-            assertionFailure("Lytics must be started before using \(#function)")
-            return
-        }
-
-        guard identifiers != nil || attributes != nil else {
-            return
-        }
-
-        let timestamp = timestamp ?? dependencies.timestampProvider()
-        Task(priority: .background) {
-            do {
-                if shouldSend {
-                    let user = try await dependencies.userManager.update(
-                        with: UserUpdate(identifiers: identifiers, attributes: attributes))
-
-                    await dependencies.eventPipeline.event(
-                        stream: stream,
-                        timestamp: timestamp,
-                        name: name,
-                        event: IdentityEvent(
-                            identifiers: user.identifiers,
-                            attributes: user.attributes
-                        )
-                    )
-                } else {
-                    try await dependencies.userManager.apply(
-                        UserUpdate(identifiers: identifiers, attributes: attributes))
-                }
-            } catch {
-                logger.error(error.localizedDescription)
+        let userUpdate = UserUpdate(identifiers: identifiers, attributes: attributes)
+        if shouldSend {
+            updateUserAndUpload(
+                stream: stream,
+                name: name,
+                timestamp: timestamp,
+                userUpdate: userUpdate
+            ) { user in
+                IdentityEvent(
+                    identifiers: user.identifiers,
+                    attributes: user.attributes
+                )
             }
+        } else {
+            updateUser(with: userUpdate)
         }
     }
 
@@ -279,14 +232,22 @@ public extension Lytics {
         identifiers: I?,
         shouldSend: Bool = true
     ) {
-        identify(
-            stream: stream,
-            name: name,
-            timestamp: timestamp,
-            identifiers: identifiers,
-            attributes: Optional.never,
-            shouldSend: shouldSend
-        )
+        let userUpdate = UserUpdate(identifiers: identifiers, attributes: Optional.never)
+        if shouldSend {
+            updateUserAndUpload(
+                stream: stream,
+                name: name,
+                timestamp: timestamp,
+                userUpdate: userUpdate
+            ) { user in
+                IdentityEvent(
+                    identifiers: user.identifiers,
+                    attributes: user.attributes
+                )
+            }
+        } else {
+            updateUser(with: userUpdate)
+        }
     }
 
     /// Updates a user consent properties and optionally emit a special event that represents an app user's explicit consent.
@@ -308,39 +269,26 @@ public extension Lytics {
         consent: C?,
         shouldSend: Bool = true
     ) {
-        guard hasStarted else {
-            assertionFailure("Lytics must be started before using \(#function)")
+        let userUpdate = UserUpdate(identifiers: identifiers, attributes: attributes)
+        guard userUpdate.hasContent || consent != nil else {
             return
         }
 
-        guard identifiers != nil || attributes != nil || consent != nil else {
-            return
-        }
-
-        let timestamp = timestamp ?? dependencies.timestampProvider()
-        Task(priority: .background) {
-            do {
-                if shouldSend {
-                    let user = try await dependencies.userManager.update(
-                        with: UserUpdate(identifiers: identifiers, attributes: attributes))
-
-                    await dependencies.eventPipeline.event(
-                        stream: stream,
-                        timestamp: timestamp,
-                        name: name,
-                        event: ConsentEvent(
-                            identifiers: user.identifiers,
-                            attributes: user.attributes,
-                            consent: consent
-                        )
-                    )
-                } else {
-                    try await dependencies.userManager.apply(
-                        UserUpdate(identifiers: identifiers, attributes: attributes))
-                }
-            } catch {
-                logger.error(error.localizedDescription)
+        if shouldSend {
+            updateUserAndUpload(
+                stream: stream,
+                name: name,
+                timestamp: timestamp,
+                userUpdate: userUpdate
+            ) { user in
+                ConsentEvent(
+                    identifiers: user.identifiers,
+                    attributes: user.attributes,
+                    consent: consent
+                )
             }
+        } else {
+            updateUser(with: userUpdate)
         }
     }
 
@@ -361,15 +309,27 @@ public extension Lytics {
         consent: C?,
         shouldSend: Bool = true
     ) {
-        self.consent(
-            stream: stream,
-            name: name,
-            timestamp: timestamp,
-            identifiers: Optional.never,
-            attributes: attributes,
-            consent: consent,
-            shouldSend: shouldSend
-        )
+        let userUpdate = UserUpdate(identifiers: Optional.never, attributes: attributes)
+        guard userUpdate.hasContent || consent != nil else {
+            return
+        }
+
+        if shouldSend {
+            updateUserAndUpload(
+                stream: stream,
+                name: name,
+                timestamp: timestamp,
+                userUpdate: userUpdate
+            ) { user in
+                ConsentEvent(
+                    identifiers: user.identifiers,
+                    attributes: user.attributes,
+                    consent: consent
+                )
+            }
+        } else {
+            updateUser(with: userUpdate)
+        }
     }
 
     /// Updates a user consent properties and optionally emit a special event that represents an app user's explicit consent.
@@ -387,15 +347,27 @@ public extension Lytics {
         consent: C?,
         shouldSend: Bool = true
     ) {
-        self.consent(
-            stream: stream,
-            name: name,
-            timestamp: timestamp,
-            identifiers: Optional.never,
-            attributes: Optional.never,
-            consent: consent,
-            shouldSend: shouldSend
-        )
+        let userUpdate = UserUpdate(identifiers: Optional.never, attributes: Optional.never)
+        guard userUpdate.hasContent || consent != nil else {
+            return
+        }
+
+        if shouldSend {
+            updateUserAndUpload(
+                stream: stream,
+                name: name,
+                timestamp: timestamp,
+                userUpdate: userUpdate
+            ) { user in
+                ConsentEvent(
+                    identifiers: user.identifiers,
+                    attributes: user.attributes,
+                    consent: consent
+                )
+            }
+        } else {
+            updateUser(with: userUpdate)
+        }
     }
 
     /// Emits an event representing a screen or page view. Device properties are injected into the payload before emitting.
@@ -413,36 +385,24 @@ public extension Lytics {
         identifiers: I?,
         properties: P?
     ) {
-        guard hasStarted else {
-            assertionFailure("Lytics must be started before using \(#function)")
-            return
+        let eventProvider: @Sendable ([String: AnyCodable]) -> ScreenEvent = { eventIdentifiers in
+            ScreenEvent(
+                device: Device(),
+                identifiers: eventIdentifiers,
+                properties: properties
+            )
         }
 
-        let timestamp = timestamp ?? dependencies.timestampProvider()
-        Task(priority: .background) {
-            var eventIdentifiers = [String: AnyCodable]()
-            if let identifiers {
-                do {
-                    eventIdentifiers = try await dependencies.userManager
-                        .updateIdentifiers(with: identifiers)
-                        .mapValues(AnyCodable.init(_:))
-                } catch {
-                    logger.error(error.localizedDescription)
-                }
-            } else {
-                eventIdentifiers = await dependencies.userManager.identifiers.mapValues(AnyCodable.init(_:))
-            }
-
-            await dependencies.eventPipeline.event(
+        if let identifiers {
+            updateIdentifiersAndUpload(
                 stream: stream,
-                timestamp: timestamp,
                 name: name,
-                event: ScreenEvent(
-                    device: Device(),
-                    identifiers: eventIdentifiers,
-                    properties: properties
-                )
+                timestamp: timestamp,
+                identifiers: identifiers,
+                eventProvider: eventProvider
             )
+        } else {
+            upload(stream: stream, name: name, timestamp: timestamp, eventProvider: eventProvider)
         }
     }
 
@@ -459,13 +419,13 @@ public extension Lytics {
         timestamp: Millisecond? = nil,
         properties: P?
     ) {
-        screen(
-            stream: stream,
-            name: name,
-            timestamp: timestamp,
-            identifiers: Optional.never,
-            properties: properties
-        )
+        upload(stream: stream, name: name, timestamp: timestamp) { eventIdentifiers in
+            ScreenEvent(
+                device: Device(),
+                identifiers: eventIdentifiers,
+                properties: properties
+            )
+        }
     }
 }
 
