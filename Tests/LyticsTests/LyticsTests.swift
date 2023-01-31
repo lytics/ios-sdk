@@ -58,6 +58,14 @@ extension LyticsTests {
         XCTAssertEqual(actual, expected)
     }
 
+    func testGetIsOptedInBeforeStarting() {
+        let failureExpectation = expectation(description: "Not started failure")
+        let sut = Lytics(assertionFailure: { _, _, _ in failureExpectation.fulfill() }, logger: .mock)
+
+        _ = sut.isOptedIn
+        waitForExpectations(timeout: expectationTimeout)
+    }
+
     func testGetIsIDFAEnabledWhenEnabled() async {
         let expectedEnabled = true
 
@@ -104,6 +112,14 @@ extension LyticsTests {
         XCTAssertEqual(actualEnabled, expectedEnabled)
     }
 
+    func testGetIsIDFAEnabledBeforeStarting() {
+        let failureExpectation = expectation(description: "Not started failure")
+        let sut = Lytics(assertionFailure: { _, _, _ in failureExpectation.fulfill() }, logger: .mock)
+
+        _ = sut.isIDFAEnabled
+        waitForExpectations(timeout: expectationTimeout)
+    }
+
     func testGetUser() async {
         let expectedUser = Mock.user
 
@@ -120,6 +136,20 @@ extension LyticsTests {
 
         let actualUser = await sut.user
         XCTAssertEqual(actualUser, expectedUser)
+    }
+
+    func testGetUserBeforeStarting() async {
+        let failureExpectation = expectation(description: "Not started failure")
+        let sut = Lytics(assertionFailure: { _, _, _ in failureExpectation.fulfill() }, logger: .mock)
+
+        await _ = sut.user
+        await waitForExpectations(timeout: expectationTimeout)
+    }
+
+    func testHasStartedAfterStarting() {
+        let sut = Lytics()
+        sut.start(apiToken: Mock.apiToken)
+        XCTAssertEqual(sut.hasStarted, true)
     }
 }
 
@@ -693,6 +723,16 @@ extension LyticsTests {
         XCTAssertEqual(actualLogLevel, expectedLogLevel)
     }
 
+    func testtestUpdateUserBeforeStarting() {
+        let failureExpectation = expectation(description: "Not started failure")
+
+        let sut = Lytics(assertionFailure: { _, _, _ in failureExpectation.fulfill() }, logger: .mock)
+
+        sut.updateUser(with: UserUpdate(identifiers: TestIdentifiers.user1, attributes: TestAttributes.user1))
+
+        waitForExpectations(timeout: expectationTimeout)
+    }
+
     func testUpdateIdentifiersAndUploadHandlesError() async {
         let expectedLogLevel = OSLogType.error
         let expectedEvent = Event<TestCart>(identifiers: [:], properties: .user1)
@@ -741,9 +781,25 @@ extension LyticsTests {
         XCTAssertEqual(actualEvent, expectedEvent)
     }
 
+    func testUpdateIdentifiersAndUploadBeforeStarting() {
+        let failureExpectation = expectation(description: "Not started failure")
+
+        let sut = Lytics(assertionFailure: { _, _, _ in failureExpectation.fulfill() }, logger: .mock)
+
+        sut.updateIdentifiersAndUpload(
+            stream: expectedStream,
+            name: expectedName,
+            timestamp: Mock.millisecond,
+            identifiers: TestIdentifiers.user1
+        ) { eventIdentifiers in
+            Event<TestCart>(identifiers: eventIdentifiers, properties: .user1)
+        }
+
+        waitForExpectations(timeout: expectationTimeout)
+    }
+
     func testUpdateUserAndUploadHandlesError() async {
         let expectedLogLevel = OSLogType.error
-        let expectedEvent = Event<TestCart>(identifiers: [:], properties: .user1)
 
         var actualLogLevel: OSLogType!
         let loggerExpectation = expectation(description: "Error logged")
@@ -776,6 +832,23 @@ extension LyticsTests {
 
         await waitForExpectations(timeout: expectationTimeout)
         XCTAssertEqual(actualLogLevel, expectedLogLevel)
+    }
+
+    func testUpdateUserAndUploadBeforeStarting() {
+        let failureExpectation = expectation(description: "Not started failure")
+
+        let sut = Lytics(assertionFailure: { _, _, _ in failureExpectation.fulfill() }, logger: .mock)
+
+        sut.updateUserAndUpload(
+            stream: expectedStream,
+            name: expectedName,
+            timestamp: Mock.millisecond,
+            userUpdate: UserUpdate(identifiers: TestIdentifiers.user1, attributes: TestAttributes.user1)
+        ) { user in
+            Event<TestCart>(identifiers: user.identifiers, properties: .user1)
+        }
+
+        waitForExpectations(timeout: expectationTimeout)
     }
 }
 
@@ -901,6 +974,21 @@ extension LyticsTests {
         let errorExpectation = expectation(description: "Error thrown")
         do {
             _ = try await sut.getProfile()
+        } catch {
+            errorExpectation.fulfill()
+        }
+
+        await waitForExpectations(timeout: expectationTimeout)
+    }
+
+    func testGetProfileBeforeStarting() async {
+        let failureExpectation = expectation(description: "Not started failure")
+
+        let sut = Lytics(assertionFailure: { _, _, _ in failureExpectation.fulfill() }, logger: .mock)
+
+        let errorExpectation = expectation(description: "Error thrown")
+        do {
+            let actualUser = try await sut.getProfile()
         } catch {
             errorExpectation.fulfill()
         }
@@ -1100,6 +1188,14 @@ extension LyticsTests {
         await waitForExpectations(timeout: expectationTimeout)
     }
 
+    func testOptInBeforeStarting() {
+        let failureExpectation = expectation(description: "Not started failure")
+        let sut = Lytics(assertionFailure: { _, _, _ in failureExpectation.fulfill() }, logger: .mock)
+
+        sut.optIn()
+        waitForExpectations(timeout: expectationTimeout)
+    }
+
     func testOptOut() async {
         let optOutExpectation = expectation(description: "Opted out")
         let eventPipeline = EventPipelineMock(onOptOut: { optOutExpectation.fulfill() })
@@ -1111,6 +1207,14 @@ extension LyticsTests {
 
         sut.optOut()
         await waitForExpectations(timeout: expectationTimeout)
+    }
+
+    func testOptOutBeforeStarting() {
+        let failureExpectation = expectation(description: "Not started failure")
+        let sut = Lytics(assertionFailure: { _, _, _ in failureExpectation.fulfill() }, logger: .mock)
+
+        sut.optOut()
+        waitForExpectations(timeout: expectationTimeout)
     }
 
     func testRequestTrackingAuthorization() async {
@@ -1154,6 +1258,14 @@ extension LyticsTests {
         XCTAssertEqual(actualIdentifierDictionary, ["idfa": AnyCodable(expectedIDFA)])
     }
 
+    func testRequestTrackingAuthorizationBeforeStarting() async {
+        let failureExpectation = expectation(description: "Not started failure")
+        let sut = Lytics(assertionFailure: { _, _, _ in failureExpectation.fulfill() }, logger: .mock)
+
+        _ = await sut.requestTrackingAuthorization()
+        await waitForExpectations(timeout: expectationTimeout)
+    }
+
     func testDisableTracking() async {
         let disableExpectation = expectation(description: "Tracking disabled")
         let appTrackingTransparency = AppTrackingTransparency.test(
@@ -1167,6 +1279,14 @@ extension LyticsTests {
 
         sut.disableTracking()
         await waitForExpectations(timeout: expectationTimeout)
+    }
+
+    func testDisableTrackingBeforeStarting() {
+        let failureExpectation = expectation(description: "Not started failure")
+        let sut = Lytics(assertionFailure: { _, _, _ in failureExpectation.fulfill() }, logger: .mock)
+
+        sut.disableTracking()
+        waitForExpectations(timeout: expectationTimeout)
     }
 }
 
@@ -1187,6 +1307,14 @@ extension LyticsTests {
 
         sut.dispatch()
         await waitForExpectations(timeout: expectationTimeout)
+    }
+
+    func testDispatchBeforeStarting() {
+        let failureExpectation = expectation(description: "Not started failure")
+        let sut = Lytics(assertionFailure: { _, _, _ in failureExpectation.fulfill() }, logger: .mock)
+
+        sut.dispatch()
+        waitForExpectations(timeout: expectationTimeout)
     }
 
     func testReset() async {
@@ -1216,5 +1344,13 @@ extension LyticsTests {
 
         sut.reset()
         await waitForExpectations(timeout: expectationTimeout)
+    }
+
+    func testResetBeforeStarting() {
+        let failureExpectation = expectation(description: "Not started failure")
+        let sut = Lytics(assertionFailure: { _, _, _ in failureExpectation.fulfill() }, logger: .mock)
+
+        sut.reset()
+        waitForExpectations(timeout: expectationTimeout)
     }
 }
