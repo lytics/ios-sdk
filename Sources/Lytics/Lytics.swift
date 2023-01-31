@@ -127,7 +127,7 @@ public final class Lytics {
         function: StaticString = #function,
         line: UInt = #line
     ) -> Bool {
-        guard dependencies != nil else {
+        guard hasStarted else {
             assertionFailure("Lytics must be started before accessing `\(function)`.", file, line)
             return false
         }
