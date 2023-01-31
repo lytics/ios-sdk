@@ -469,6 +469,158 @@ public extension Lytics {
     }
 }
 
+// MARK: - Event Helpers
+internal extension Lytics {
+
+    /// Updates the current user with the given update.
+    /// - Parameters:
+    ///   - userUpdate: An update to apply to the current user.
+    ///   - priority: The priority of the task.
+    @usableFromInline
+    func updateUser<I: Encodable, A: Encodable>(
+        with userUpdate: UserUpdate<I, A>,
+        priority: TaskPriority? = .background,
+        function: StaticString = #function
+    ) {
+        guard hasStarted else {
+            assertionFailure("Lytics must be started before using \(function)")
+            return
+        }
+
+        guard userUpdate.hasContent else {
+            return
+        }
+
+        Task(priority: priority) {
+            do {
+                try await dependencies.userManager.apply(userUpdate)
+            } catch {
+                logger.error(error.localizedDescription)
+            }
+        }
+    }
+
+    /// Uploads an event.
+    /// - Parameters:
+    ///   - stream: The DataType, or "Table" of type of data being uploaded.
+    ///   - name: The event name.
+    ///   - timestamp: A custom timestamp for the event.
+    ///   - priority: The priority of the task.
+    ///   - eventProvider: A closure returning the event to send.
+    @usableFromInline
+    func upload<E: Encodable>(
+        stream: String?,
+        name: String?,
+        timestamp: Millisecond?,
+        priority: TaskPriority? = .background,
+        function: StaticString = #function,
+        eventProvider: @escaping @Sendable ([String: AnyCodable]) -> E
+    ) {
+        guard hasStarted else {
+            assertionFailure("Lytics must be started before using \(function)")
+            return
+        }
+
+        let timestamp = timestamp ?? dependencies.timestampProvider()
+        Task(priority: priority) {
+            let eventIdentifiers = await dependencies.userManager.identifiers.mapValues(AnyCodable.init(_:))
+
+            await dependencies.eventPipeline.event(
+                stream: stream,
+                timestamp: timestamp,
+                name: name,
+                event: eventProvider(eventIdentifiers)
+            )
+        }
+    }
+
+    /// Updates the current user identifiers and uploads an event.
+    /// - Parameters:
+    ///   - stream: The DataType, or "Table" of type of data being uploaded.
+    ///   - name: The event name.
+    ///   - timestamp: A custom timestamp for the event.
+    ///   - identifiers: A value representing additional identifiers to associate with this event.
+    ///   - priority: The priority of the task.
+    ///   - eventProvider: A closure returning the event to send.
+    @usableFromInline
+    func updateIdentifiersAndUpload<I: Encodable, E: Encodable>(
+        stream: String?,
+        name: String?,
+        timestamp: Millisecond?,
+        identifiers: I,
+        priority: TaskPriority? = .background,
+        function: StaticString = #function,
+        eventProvider: @escaping @Sendable ([String: AnyCodable]) -> E
+    ) {
+        guard hasStarted else {
+            assertionFailure("Lytics must be started before using \(function)")
+            return
+        }
+
+        let timestamp = timestamp ?? dependencies.timestampProvider()
+        Task(priority: priority) {
+            var eventIdentifiers = [String: AnyCodable]()
+
+            do {
+                eventIdentifiers = try await dependencies.userManager
+                    .updateIdentifiers(with: identifiers)
+                    .mapValues(AnyCodable.init(_:))
+            } catch {
+                dependencies.logger.error(error.localizedDescription)
+            }
+
+            await dependencies.eventPipeline.event(
+                stream: stream,
+                timestamp: timestamp,
+                name: name,
+                event: eventProvider(eventIdentifiers)
+            )
+        }
+    }
+
+    /// Updates the current user with the given update and uploads an event.
+    /// - Parameters:
+    ///   - stream: The DataType, or "Table" of type of data being uploaded.
+    ///   - name: The event name.
+    ///   - timestamp: A custom timestamp for the event.
+    ///   - userUpdate: An update to apply to the current user.
+    ///   - priority: The priority of the task.
+    ///   - eventProvider: A closure returning the event to send.
+    @usableFromInline
+    func updateUserAndUpload<I: Encodable, A: Encodable, E: Encodable>(
+        stream: String?,
+        name: String?,
+        timestamp: Millisecond?,
+        userUpdate: UserUpdate<I, A>,
+        priority: TaskPriority? = .background,
+        function: StaticString = #function,
+        eventProvider: @escaping @Sendable (LyticsUser) -> E
+    ) {
+        guard hasStarted else {
+            assertionFailure("Lytics must be started before using \(function)")
+            return
+        }
+
+        let timestamp = timestamp ?? dependencies.timestampProvider()
+        Task(priority: priority) {
+            do {
+                let user = userUpdate.hasContent ?
+                    try await dependencies.userManager.update(with: userUpdate) :
+                    await dependencies.userManager.user
+
+                await dependencies.eventPipeline.event(
+                    stream: stream,
+                    timestamp: timestamp,
+                    name: name,
+                    event: eventProvider(user)
+                )
+            } catch {
+                logger.error(error.localizedDescription)
+            }
+        }
+    }
+}
+
 // MARK: - Personalization
 public extension Lytics {
 
