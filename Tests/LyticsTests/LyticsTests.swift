@@ -528,13 +528,8 @@ extension LyticsTests {
             }
         )
 
-        let updateExpectation = expectation(description: "User updated")
         let userManager = UserManagerMock<Never, Never>(
-            onUpdate: { _ in
-                defer { updateExpectation.fulfill() }
-
-                return Mock.user
-            }
+            user: Mock.user
         )
 
         let sut = Lytics(
