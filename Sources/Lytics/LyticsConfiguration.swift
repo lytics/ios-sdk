@@ -9,11 +9,15 @@ import Foundation
 /// Lytics SDK configuration.
 public struct LyticsConfiguration: Equatable {
 
-    /// The base URL to which requests will be made.
-    public var baseURL: URL = Constants.defaultBaseURL
+    /// The data upload endpoint.
+    ///
+    /// The stream name will be appended to this URL.
+    public var collectionEndpoint: URL = Constants.collectionEndpoint
 
-    /// Additional path components for the API.
-    public var apiPath: String = Constants.defaultAPIPath
+    /// The entity (personalization or profile) endpoint.
+    ///
+    ///  The table name, field name, and field value will be appended to this URL.
+    public var entityEndpoint: URL = Constants.entityEndpoint
 
     /// Default stream name to which events will be sent if not explicitly set for an event.
     public var defaultStream: String = Constants.defaultStream
@@ -69,12 +73,4 @@ public struct LyticsConfiguration: Equatable {
 
     /// The table used when fetching user profiles.
     public var defaultTable: String = Constants.defaultEntityTable
-
-    var apiURL: URL {
-        if apiPath.isEmpty {
-            return baseURL
-        } else {
-            return baseURL.appendingPathComponent(apiPath, isDirectory: false)
-        }
-    }
 }

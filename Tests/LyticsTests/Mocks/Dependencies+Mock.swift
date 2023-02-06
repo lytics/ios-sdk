@@ -122,8 +122,9 @@ extension Millisecond {
 
 extension RequestBuilder {
     static let mock = Self(
-        baseURL: Constants.defaultBaseURL,
-        apiToken: Mock.apiToken
+        apiToken: Mock.apiToken,
+        collectionEndpoint: Constants.collectionEndpoint,
+        entityEndpoint: Constants.entityEndpoint
     )
 }
 

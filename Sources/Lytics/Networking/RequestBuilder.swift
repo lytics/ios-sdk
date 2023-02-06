@@ -8,33 +8,18 @@ import Foundation
 
 /// A `RequestBuilder` builds requests for Lytics API endpoints.
 struct RequestBuilder {
-
-    enum Route: PathProvider {
-        /// Path: `/collect/json/{stream}/`.
-        case dataUpload(String)
-        /// Path: `/api/entity/{table}/{field}/{value}`.
-        case personalization(table: String, field: String, value: String)
-
-        var path: String {
-            switch self {
-            case let .dataUpload(stream):
-                return "/collect/json/\(stream)"
-            case let .personalization(table, field, value):
-                return "/api/entity/\(table)/\(field)/\(value)"
-            }
-        }
-    }
-
-    private let baseURL: URL
     private let apiToken: String
+    private let collectionEndpoint: URL
+    private let entityEndpoint: URL
 
     private var authHeader: HeaderField {
         .authorization(apiToken)
     }
 
-    init(baseURL: URL, apiToken: String) {
-        self.baseURL = baseURL
+    init(apiToken: String, collectionEndpoint: URL, entityEndpoint: URL) {
         self.apiToken = apiToken
+        self.collectionEndpoint = collectionEndpoint
+        self.entityEndpoint = entityEndpoint
     }
 
     /// Uploads event to API.
@@ -57,7 +42,8 @@ struct RequestBuilder {
         parameters.appendOrSet(timestampField.flatMap(QueryParameter.timestampField))
         parameters.appendOrSet(filename.flatMap(QueryParameter.filename))
 
-        return post(.dataUpload(stream), data: data, parameters: parameters)
+        let url = collectionEndpoint.appendingPathComponent(stream, isDirectory: false)
+        return post(url, data: data, parameters: parameters)
     }
 
     /// Fetches the attributes of and segments to which an entity belongs.
@@ -83,26 +69,27 @@ struct RequestBuilder {
         parameters.appendOrSet(segments.flatMap(QueryParameter.segments))
         parameters.appendOrSet(meta.flatMap(QueryParameter.meta))
 
-        return get(.personalization(table: table, field: fieldName, value: fieldVal), parameters: parameters)
+        let url = entityEndpoint.appendingPathComponent("/\(table)/\(fieldName)/\(fieldVal)", isDirectory: false)
+        return get(url, parameters: parameters)
     }
 }
 
 extension RequestBuilder {
-    static func live(baseURL: URL, apiToken: String) -> Self {
-        .init(baseURL: baseURL, apiToken: apiToken)
+    static func live(apiToken: String, configuration: LyticsConfiguration) -> Self {
+        .init(
+            apiToken: apiToken,
+            collectionEndpoint: configuration.collectionEndpoint,
+            entityEndpoint: configuration.entityEndpoint
+        )
     }
 }
 
 private extension RequestBuilder {
-    func url(for route: Route) -> URL {
-        baseURL.appending(route)
+    func get<T>(_ url: URL, parameters: [QueryParameter]? = nil, contentType: HeaderField.ContentType = .json) -> Request<T> {
+        .init(method: .get, url: url, parameters: parameters, headers: [.contentType(contentType), authHeader])
     }
 
-    func get<T>(_ route: Route, parameters: [QueryParameter]? = nil, contentType: HeaderField.ContentType = .json) -> Request<T> {
-        .init(method: .get, url: url(for: route), parameters: parameters, headers: [.contentType(contentType), authHeader])
-    }
-
-    func post<T>(_ route: Route, data: Data, parameters: [QueryParameter]? = nil, contentType: HeaderField.ContentType = .json) -> Request<T> {
-        .init(method: .post, url: url(for: route), parameters: parameters, headers: [.contentType(contentType), authHeader], body: data)
+    func post<T>(_ url: URL, data: Data, parameters: [QueryParameter]? = nil, contentType: HeaderField.ContentType = .json) -> Request<T> {
+        .init(method: .post, url: url, parameters: parameters, headers: [.contentType(contentType), authHeader], body: data)
     }
 }
