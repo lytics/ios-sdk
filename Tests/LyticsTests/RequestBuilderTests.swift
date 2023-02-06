@@ -12,8 +12,9 @@ final class RequestBuilderTests: XCTestCase {
         let requestData = Data("Hello, world!".utf8)
 
         let sut = RequestBuilder(
-            baseURL: Constants.defaultBaseURL,
-            apiToken: Mock.apiToken
+            apiToken: Mock.apiToken,
+            collectionEndpoint: Constants.collectionEndpoint,
+            entityEndpoint: Constants.entityEndpoint
         )
 
         let request = sut.dataUpload(
@@ -43,8 +44,9 @@ final class RequestBuilderTests: XCTestCase {
         let meta = true
 
         let sut = RequestBuilder(
-            baseURL: Constants.defaultBaseURL,
-            apiToken: Mock.apiToken
+            apiToken: Mock.apiToken,
+            collectionEndpoint: Constants.collectionEndpoint,
+            entityEndpoint: Constants.entityEndpoint
         )
 
         let request = sut.entity(
@@ -78,13 +80,10 @@ final class RequestBuilderTests: XCTestCase {
 
     func testCustomBaseURLRequest() throws {
         var configuration = LyticsConfiguration()
-        configuration.baseURL = URL(string: "https://mycustomdomain.com")!
-        configuration.apiPath = "/c/tacos"
+        configuration.collectionEndpoint = URL(string: "https://mycustomdomain.com/c/tacos/collect/json")!
+        configuration.entityEndpoint = URL(string: "https://mycustomdomain.com/")!
 
-        let sut = RequestBuilder(
-            baseURL: configuration.apiURL,
-            apiToken: Mock.apiToken
-        )
+        let sut = RequestBuilder.live(apiToken: Mock.apiToken, configuration: configuration)
 
         let request = sut.dataUpload(
             stream: Stream.one,
