@@ -14,53 +14,43 @@ public final class Lytics {
     /// The shared instance.
     public static let shared: Lytics = .init()
 
-    private var appEventTracker: AppEventTracking!
+    /// A function which is called when an internal sanity check fails.
+    private let assertionFailure: (@autoclosure @escaping () -> String, StaticString, UInt) -> Void
 
-    @usableFromInline internal private(set) var logger: LyticsLogger
+    /// The logger.
+    @usableFromInline internal var logger: LyticsLogger
 
-    @usableFromInline internal private(set) var userManager: UserManaging!
-
-    @usableFromInline internal private(set) var timestampProvider: () -> Millisecond
-
-    @usableFromInline internal private(set) var appTrackingTransparency: AppTrackingTransparency!
-
-    @usableFromInline internal private(set) var eventPipeline: EventPipelineProtocol!
-
-    internal private(set) var configuration: LyticsConfiguration!
-
-    internal private(set) var loader: Loader!
+    /// The SDK dependencies.
+    @usableFromInline internal var dependencies: DependencyContainer!
 
     /// A Boolean value indicating whether this instance has been started.
-    public private(set) var hasStarted: Bool = false
+    public var hasStarted: Bool {
+        dependencies != nil
+    }
 
     /// A Boolean value indicating whether the user has opted in to event collection.
     public var isOptedIn: Bool {
-        guard hasStarted else {
-            assertionFailure("Lytics must be started before accessing `isOptedIn`.")
+        guard hasStarted() else {
             return false
         }
-        return eventPipeline.isOptedIn
+        return dependencies.eventPipeline.isOptedIn
     }
 
     /// A Boolean value indicating whether IDFA is enabled.
     public var isIDFAEnabled: Bool {
-        guard hasStarted else {
-            assertionFailure("Lytics must be started before accessing `isIDFAEnabled`.")
+        guard hasStarted() else {
             return false
         }
-
-        return appTrackingTransparency.idfa() != nil
+        return dependencies.appTrackingTransparency.idfa() != nil
     }
 
     /// The current Lytics user.
     public var user: LyticsUser {
         get async {
-            guard hasStarted else {
-                assertionFailure("Lytics must be started before accessing `user`.")
+            guard hasStarted() else {
                 return .init()
             }
-
-            return await userManager.user
+            return await dependencies.userManager.user
         }
     }
 
@@ -69,17 +59,18 @@ public final class Lytics {
     /// > Warning: You must call ``start(apiToken:configure:)`` before using the created instance.
     public convenience init() {
         self.init(
-            logger: .live,
-            timestampProvider: { Date().timeIntervalSince1970.milliseconds }
+            logger: .live
         )
     }
 
     internal init(
+        assertionFailure: @escaping (@autoclosure @escaping () -> String, StaticString, UInt) -> Void = Swift.assertionFailure,
         logger: LyticsLogger,
-        timestampProvider: @escaping () -> Millisecond
+        dependencies: DependencyContainer? = nil
     ) {
+        self.assertionFailure = assertionFailure
         self.logger = logger
-        self.timestampProvider = timestampProvider
+        self.dependencies = dependencies
     }
 
     /// Configures this Lytics SDK instance.
@@ -93,7 +84,7 @@ public final class Lytics {
         }
 
         guard apiToken.isNotEmpty else {
-            assertionFailure("Lytics must be started with a non-empty API token")
+            assertionFailure("Lytics must be started with a non-empty API token", #file, #line)
             return
         }
 
@@ -108,48 +99,39 @@ public final class Lytics {
         if configuration.primaryIdentityKey.isEmpty {
             configuration.primaryIdentityKey = Constants.defaultPrimaryIdentityKey
         }
-        self.configuration = configuration
 
         logger.logLevel = configuration.logLevel
 
-        userManager = UserManager.live(configuration: configuration)
-        appTrackingTransparency = .live
-
-        let requestBuilder = RequestBuilder.live(
-            baseURL: configuration.apiURL,
-            apiToken: apiToken
-        )
-
-        loader = .live(
-            configuration: configuration,
-            requestBuilder: requestBuilder,
-            requestPerformer: URLSession.live
-        )
-
-        eventPipeline = EventPipeline.live(
+        dependencies = .live(
+            apiToken: apiToken,
             configuration: configuration,
             logger: logger,
-            requestBuilder: requestBuilder
-        )
-
-        appEventTracker = AppEventTracker.live(
-            configuration: configuration,
-            logger: logger,
-            userManager: userManager,
-            eventPipeline: eventPipeline,
-            onEvent: { [weak self] event in
+            appEventHandler: { [weak self] event in
                 if case .didEnterBackground = event {
                     self?.dispatch()
                 }
             }
         )
 
-        appEventTracker.startTracking(
+        dependencies.appEventTracker.startTracking(
             lifecycleEvents: NotificationCenter.default.lifecycleEvents(),
             versionTracker: AppVersionTracker.live
         )
+    }
 
-        hasStarted = true
+    /// Returns a Boolean indicating whether this instance has been started.
+    ///
+    /// This will call `assertionFailure` if called before the instance has been started.
+    private func hasStarted(
+        file: StaticString = #file,
+        function: StaticString = #function,
+        line: UInt = #line
+    ) -> Bool {
+        guard hasStarted else {
+            assertionFailure("Lytics must be started before accessing `\(function)`.", file, line)
+            return false
+        }
+        return true
     }
 }
 
@@ -171,35 +153,17 @@ public extension Lytics {
         identifiers: I?,
         properties: P?
     ) {
-        guard hasStarted else {
-            assertionFailure("Lytics must be started before using \(#function)")
-            return
-        }
-
-        let timestamp = timestamp ?? timestampProvider()
-        Task(priority: .background) {
-            var eventIdentifiers = [String: AnyCodable]()
-            if let identifiers {
-                do {
-                    eventIdentifiers = try await userManager
-                        .updateIdentifiers(with: identifiers)
-                        .mapValues(AnyCodable.init(_:))
-                } catch {
-                    logger.error(error.localizedDescription)
-                }
-            } else {
-                eventIdentifiers = await userManager.identifiers.mapValues(AnyCodable.init(_:))
-            }
-
-            await eventPipeline.event(
+        let eventProvider: @Sendable ([String: AnyCodable]) -> Event = { .init(identifiers: $0, properties: properties) }
+        if let identifiers {
+            updateIdentifiersAndUpload(
                 stream: stream,
-                timestamp: timestamp,
                 name: name,
-                event: Event(
-                    identifiers: eventIdentifiers,
-                    properties: properties
-                )
+                timestamp: timestamp,
+                identifiers: identifiers,
+                eventProvider: eventProvider
             )
+        } else {
+            upload(stream: stream, name: name, timestamp: timestamp, eventProvider: eventProvider)
         }
     }
 
@@ -216,13 +180,7 @@ public extension Lytics {
         timestamp: Millisecond? = nil,
         properties: P?
     ) {
-        track(
-            stream: stream,
-            name: name,
-            timestamp: timestamp,
-            identifiers: Optional.never,
-            properties: properties
-        )
+        upload(stream: stream, name: name, timestamp: timestamp) { Event(identifiers: $0, properties: properties) }
     }
 
     /// Tracks a custom event.
@@ -236,13 +194,7 @@ public extension Lytics {
         name: String? = nil,
         timestamp: Millisecond? = nil
     ) {
-        track(
-            stream: stream,
-            name: name,
-            timestamp: timestamp,
-            identifiers: Optional.never,
-            properties: Optional.never
-        )
+        upload(stream: stream, name: name, timestamp: timestamp) { Event(identifiers: $0, properties: Optional.never) }
     }
 
     /// Updates the user properties and optionally emit an identity event.
@@ -262,38 +214,21 @@ public extension Lytics {
         attributes: A?,
         shouldSend: Bool = true
     ) {
-        guard hasStarted else {
-            assertionFailure("Lytics must be started before using \(#function)")
-            return
-        }
-
-        guard identifiers != nil || attributes != nil else {
-            return
-        }
-
-        let timestamp = timestamp ?? timestampProvider()
-        Task(priority: .background) {
-            do {
-                if shouldSend {
-                    let user = try await userManager.update(
-                        with: UserUpdate(identifiers: identifiers, attributes: attributes))
-
-                    await eventPipeline.event(
-                        stream: stream,
-                        timestamp: timestamp,
-                        name: name,
-                        event: IdentityEvent(
-                            identifiers: user.identifiers,
-                            attributes: user.attributes
-                        )
-                    )
-                } else {
-                    try await userManager.apply(
-                        UserUpdate(identifiers: identifiers, attributes: attributes))
-                }
-            } catch {
-                logger.error(error.localizedDescription)
+        let userUpdate = UserUpdate(identifiers: identifiers, attributes: attributes)
+        if shouldSend {
+            updateUserAndUpload(
+                stream: stream,
+                name: name,
+                timestamp: timestamp,
+                userUpdate: userUpdate
+            ) { user in
+                IdentityEvent(
+                    identifiers: user.identifiers,
+                    attributes: user.attributes
+                )
             }
+        } else {
+            updateUser(with: userUpdate)
         }
     }
 
@@ -312,14 +247,22 @@ public extension Lytics {
         identifiers: I?,
         shouldSend: Bool = true
     ) {
-        identify(
-            stream: stream,
-            name: name,
-            timestamp: timestamp,
-            identifiers: identifiers,
-            attributes: Optional.never,
-            shouldSend: shouldSend
-        )
+        let userUpdate = UserUpdate(identifiers: identifiers, attributes: Optional.never)
+        if shouldSend {
+            updateUserAndUpload(
+                stream: stream,
+                name: name,
+                timestamp: timestamp,
+                userUpdate: userUpdate
+            ) { user in
+                IdentityEvent(
+                    identifiers: user.identifiers,
+                    attributes: user.attributes
+                )
+            }
+        } else {
+            updateUser(with: userUpdate)
+        }
     }
 
     /// Updates a user consent properties and optionally emit a special event that represents an app user's explicit consent.
@@ -341,39 +284,26 @@ public extension Lytics {
         consent: C?,
         shouldSend: Bool = true
     ) {
-        guard hasStarted else {
-            assertionFailure("Lytics must be started before using \(#function)")
+        let userUpdate = UserUpdate(identifiers: identifiers, attributes: attributes)
+        guard userUpdate.hasContent || consent != nil else {
             return
         }
 
-        guard identifiers != nil || attributes != nil || consent != nil else {
-            return
-        }
-
-        let timestamp = timestamp ?? timestampProvider()
-        Task(priority: .background) {
-            do {
-                if shouldSend {
-                    let user = try await userManager.update(
-                        with: UserUpdate(identifiers: identifiers, attributes: attributes))
-
-                    await eventPipeline.event(
-                        stream: stream,
-                        timestamp: timestamp,
-                        name: name,
-                        event: ConsentEvent(
-                            identifiers: user.identifiers,
-                            attributes: user.attributes,
-                            consent: consent
-                        )
-                    )
-                } else {
-                    try await userManager.apply(
-                        UserUpdate(identifiers: identifiers, attributes: attributes))
-                }
-            } catch {
-                logger.error(error.localizedDescription)
+        if shouldSend {
+            updateUserAndUpload(
+                stream: stream,
+                name: name,
+                timestamp: timestamp,
+                userUpdate: userUpdate
+            ) { user in
+                ConsentEvent(
+                    identifiers: user.identifiers,
+                    attributes: user.attributes,
+                    consent: consent
+                )
             }
+        } else {
+            updateUser(with: userUpdate)
         }
     }
 
@@ -394,15 +324,27 @@ public extension Lytics {
         consent: C?,
         shouldSend: Bool = true
     ) {
-        self.consent(
-            stream: stream,
-            name: name,
-            timestamp: timestamp,
-            identifiers: Optional.never,
-            attributes: attributes,
-            consent: consent,
-            shouldSend: shouldSend
-        )
+        let userUpdate = UserUpdate(identifiers: Optional.never, attributes: attributes)
+        guard userUpdate.hasContent || consent != nil else {
+            return
+        }
+
+        if shouldSend {
+            updateUserAndUpload(
+                stream: stream,
+                name: name,
+                timestamp: timestamp,
+                userUpdate: userUpdate
+            ) { user in
+                ConsentEvent(
+                    identifiers: user.identifiers,
+                    attributes: user.attributes,
+                    consent: consent
+                )
+            }
+        } else {
+            updateUser(with: userUpdate)
+        }
     }
 
     /// Updates a user consent properties and optionally emit a special event that represents an app user's explicit consent.
@@ -420,15 +362,27 @@ public extension Lytics {
         consent: C?,
         shouldSend: Bool = true
     ) {
-        self.consent(
-            stream: stream,
-            name: name,
-            timestamp: timestamp,
-            identifiers: Optional.never,
-            attributes: Optional.never,
-            consent: consent,
-            shouldSend: shouldSend
-        )
+        let userUpdate = UserUpdate(identifiers: Optional.never, attributes: Optional.never)
+        guard userUpdate.hasContent || consent != nil else {
+            return
+        }
+
+        if shouldSend {
+            updateUserAndUpload(
+                stream: stream,
+                name: name,
+                timestamp: timestamp,
+                userUpdate: userUpdate
+            ) { user in
+                ConsentEvent(
+                    identifiers: user.identifiers,
+                    attributes: user.attributes,
+                    consent: consent
+                )
+            }
+        } else {
+            updateUser(with: userUpdate)
+        }
     }
 
     /// Emits an event representing a screen or page view. Device properties are injected into the payload before emitting.
@@ -446,36 +400,24 @@ public extension Lytics {
         identifiers: I?,
         properties: P?
     ) {
-        guard hasStarted else {
-            assertionFailure("Lytics must be started before using \(#function)")
-            return
+        let eventProvider: @Sendable ([String: AnyCodable]) -> ScreenEvent = { eventIdentifiers in
+            ScreenEvent(
+                device: Device(),
+                identifiers: eventIdentifiers,
+                properties: properties
+            )
         }
 
-        let timestamp = timestamp ?? timestampProvider()
-        Task(priority: .background) {
-            var eventIdentifiers = [String: AnyCodable]()
-            if let identifiers {
-                do {
-                    eventIdentifiers = try await userManager
-                        .updateIdentifiers(with: identifiers)
-                        .mapValues(AnyCodable.init(_:))
-                } catch {
-                    logger.error(error.localizedDescription)
-                }
-            } else {
-                eventIdentifiers = await userManager.identifiers.mapValues(AnyCodable.init(_:))
-            }
-
-            await eventPipeline.event(
+        if let identifiers {
+            updateIdentifiersAndUpload(
                 stream: stream,
-                timestamp: timestamp,
                 name: name,
-                event: ScreenEvent(
-                    device: Device(),
-                    identifiers: eventIdentifiers,
-                    properties: properties
-                )
+                timestamp: timestamp,
+                identifiers: identifiers,
+                eventProvider: eventProvider
             )
+        } else {
+            upload(stream: stream, name: name, timestamp: timestamp, eventProvider: eventProvider)
         }
     }
 
@@ -492,13 +434,161 @@ public extension Lytics {
         timestamp: Millisecond? = nil,
         properties: P?
     ) {
-        screen(
-            stream: stream,
-            name: name,
-            timestamp: timestamp,
-            identifiers: Optional.never,
-            properties: properties
-        )
+        upload(stream: stream, name: name, timestamp: timestamp) { eventIdentifiers in
+            ScreenEvent(
+                device: Device(),
+                identifiers: eventIdentifiers,
+                properties: properties
+            )
+        }
+    }
+}
+
+// MARK: - Event Helpers
+internal extension Lytics {
+
+    /// Updates the current user with the given update.
+    /// - Parameters:
+    ///   - userUpdate: An update to apply to the current user.
+    ///   - priority: The priority of the task.
+    @usableFromInline
+    func updateUser<I: Encodable, A: Encodable>(
+        with userUpdate: UserUpdate<I, A>,
+        priority: TaskPriority? = .background,
+        function: StaticString = #function
+    ) {
+        guard hasStarted() else {
+            return
+        }
+
+        guard userUpdate.hasContent else {
+            return
+        }
+
+        Task(priority: priority) {
+            do {
+                try await dependencies.userManager.apply(userUpdate)
+            } catch {
+                logger.error(error.localizedDescription)
+            }
+        }
+    }
+
+    /// Uploads an event.
+    /// - Parameters:
+    ///   - stream: The DataType, or "Table" of type of data being uploaded.
+    ///   - name: The event name.
+    ///   - timestamp: A custom timestamp for the event.
+    ///   - priority: The priority of the task.
+    ///   - eventProvider: A closure returning the event to send.
+    @usableFromInline
+    func upload<E: Encodable>(
+        stream: String?,
+        name: String?,
+        timestamp: Millisecond?,
+        priority: TaskPriority? = .background,
+        function: StaticString = #function,
+        eventProvider: @escaping @Sendable ([String: AnyCodable]) -> E
+    ) {
+        guard hasStarted() else {
+            return
+        }
+
+        let timestamp = timestamp ?? dependencies.timestampProvider()
+        Task(priority: priority) {
+            let eventIdentifiers = await dependencies.userManager.identifiers.mapValues(AnyCodable.init(_:))
+
+            await dependencies.eventPipeline.event(
+                stream: stream,
+                timestamp: timestamp,
+                name: name,
+                event: eventProvider(eventIdentifiers)
+            )
+        }
+    }
+
+    /// Updates the current user identifiers and uploads an event.
+    /// - Parameters:
+    ///   - stream: The DataType, or "Table" of type of data being uploaded.
+    ///   - name: The event name.
+    ///   - timestamp: A custom timestamp for the event.
+    ///   - identifiers: A value representing additional identifiers to associate with this event.
+    ///   - priority: The priority of the task.
+    ///   - eventProvider: A closure returning the event to send.
+    @usableFromInline
+    func updateIdentifiersAndUpload<I: Encodable, E: Encodable>(
+        stream: String?,
+        name: String?,
+        timestamp: Millisecond?,
+        identifiers: I,
+        priority: TaskPriority? = .background,
+        function: StaticString = #function,
+        eventProvider: @escaping @Sendable ([String: AnyCodable]) -> E
+    ) {
+        guard hasStarted() else {
+            return
+        }
+
+        let timestamp = timestamp ?? dependencies.timestampProvider()
+        Task(priority: priority) {
+            var eventIdentifiers = [String: AnyCodable]()
+
+            do {
+                eventIdentifiers = try await dependencies.userManager
+                    .updateIdentifiers(with: identifiers)
+                    .mapValues(AnyCodable.init(_:))
+            } catch {
+                logger.error(error.localizedDescription)
+            }
+
+            await dependencies.eventPipeline.event(
+                stream: stream,
+                timestamp: timestamp,
+                name: name,
+                event: eventProvider(eventIdentifiers)
+            )
+        }
+    }
+
+    /// Updates the current user with the given update and uploads an event.
+    /// - Parameters:
+    ///   - stream: The DataType, or "Table" of type of data being uploaded.
+    ///   - name: The event name.
+    ///   - timestamp: A custom timestamp for the event.
+    ///   - userUpdate: An update to apply to the current user.
+    ///   - priority: The priority of the task.
+    ///   - eventProvider: A closure returning the event to send.
+    @usableFromInline
+    func updateUserAndUpload<I: Encodable, A: Encodable, E: Encodable>(
+        stream: String?,
+        name: String?,
+        timestamp: Millisecond?,
+        userUpdate: UserUpdate<I, A>,
+        priority: TaskPriority? = .background,
+        function: StaticString = #function,
+        eventProvider: @escaping @Sendable (LyticsUser) -> E
+    ) {
+        guard hasStarted() else {
+            return
+        }
+
+        let timestamp = timestamp ?? dependencies.timestampProvider()
+        Task(priority: priority) {
+            do {
+                let user = userUpdate.hasContent ?
+                    try await dependencies.userManager.update(with: userUpdate) :
+                    await dependencies.userManager.user
+
+                await dependencies.eventPipeline.event(
+                    stream: stream,
+                    timestamp: timestamp,
+                    name: name,
+                    event: eventProvider(user)
+                )
+            } catch {
+                logger.error(error.localizedDescription)
+            }
+        }
     }
 }
 
@@ -518,21 +608,25 @@ public extension Lytics {
     func getProfile(
         _ identifier: EntityIdentifier? = nil
     ) async throws -> LyticsUser {
+        guard hasStarted() else {
+            throw LyticsError(reason: "Lytics must be started before accessing `\(#function)`.")
+        }
+
         var user = await self.user
 
         let entityIdentifier: EntityIdentifier
         if let identifier {
             entityIdentifier = identifier
         } else {
-            let name = configuration.primaryIdentityKey
+            let name = dependencies.configuration.primaryIdentityKey
             guard let value = user.identifiers[name]?.description else {
                 throw LyticsError(reason: "Missing value for field `\(name)`.")
             }
             entityIdentifier = EntityIdentifier(name: name, value: value)
         }
 
-        let entity = try await loader.entity(
-            configuration.defaultTable,
+        let entity = try await dependencies.loader.entity(
+            dependencies.configuration.defaultTable,
             entityIdentifier
         )
 
@@ -552,22 +646,11 @@ public extension Lytics {
         _ userActivity: NSUserActivity,
         stream: String? = nil
     ) {
-        let timestamp = timestampProvider()
-
-        // Create closure since `NSUserActivity` is not `Sendable`
-        let eventProvider: ([String: AnyCodable]?) -> UserActivityEvent = {
-            UserActivityEvent(userActivity, identifiers: $0)
-        }
-
-        Task(priority: .background) {
-            await eventPipeline.event(
-                stream: stream,
-                timestamp: timestamp,
-                name: EventNames.deepLink,
-                event: eventProvider(
-                    await userManager.identifiers
-                        .mapValues(AnyCodable.init(_:)))
-            )
+        let event = UserActivityEvent(userActivity)
+        upload(stream: stream, name: EventNames.deepLink, timestamp: nil) { eventIdentifiers in
+            var copy = event
+            copy.identifiers = eventIdentifiers
+            return copy
         }
     }
 
@@ -581,19 +664,8 @@ public extension Lytics {
         options: [UIApplication.OpenURLOptionsKey: Any]? = nil,
         stream: String? = nil
     ) {
-        let timestamp = timestampProvider()
-        Task(priority: .background) {
-            await eventPipeline.event(
-                stream: stream,
-                timestamp: timestamp,
-                name: EventNames.url,
-                event: URLEvent(
-                    url: url,
-                    options: Dictionary(options),
-                    identifiers: await userManager.identifiers
-                        .mapValues(AnyCodable.init(_:))
-                )
-            )
+        upload(stream: stream, name: EventNames.url, timestamp: nil) { eventIdentifiers in
+            URLEvent(url: url, options: options, identifiers: eventIdentifiers)
         }
     }
 
@@ -605,22 +677,11 @@ public extension Lytics {
         _ shortcutItem: UIApplicationShortcutItem,
         stream: String? = nil
     ) {
-        let timestamp = timestampProvider()
-
-        // Create closure since `UIApplicationShortcutItem` is not `Sendable`
-        let eventProvider: ([String: AnyCodable]?) -> ShortcutEvent = {
-            ShortcutEvent(shortcutItem, identifiers: $0)
-        }
-
-        Task(priority: .background) {
-            await eventPipeline.event(
-                stream: stream,
-                timestamp: timestamp,
-                name: EventNames.shortcut,
-                event: eventProvider(
-                    await userManager.identifiers
-                        .mapValues(AnyCodable.init(_:)))
-            )
+        let event = ShortcutEvent(shortcutItem)
+        upload(stream: stream, name: EventNames.shortcut, timestamp: nil) { eventIdentifiers in
+            var copy = event
+            copy.identifiers = eventIdentifiers
+            return copy
         }
     }
 }
@@ -630,38 +691,35 @@ public extension Lytics {
 
     /// Opts the user in to event collection.
     func optIn() {
-        guard hasStarted else {
-            assertionFailure("Lytics must be started before using \(#function)")
+        guard hasStarted() else {
             return
         }
 
         logger.debug("Opt in")
-        eventPipeline.optIn()
+        dependencies.eventPipeline.optIn()
     }
 
     /// Opts the user out of event collection.
     func optOut() {
-        guard hasStarted else {
-            assertionFailure("Lytics must be started before using \(#function)")
+        guard hasStarted() else {
             return
         }
 
         logger.debug("Opt out")
-        eventPipeline.optOut()
+        dependencies.eventPipeline.optOut()
     }
 
     /// Requests access to IDFA.
     func requestTrackingAuthorization() async -> Bool {
-        guard hasStarted else {
-            assertionFailure("Lytics must be started before using \(#function)")
+        guard hasStarted() else {
             return false
         }
 
         logger.debug("Requesting tracking authorization ...")
-        let didAuthorize = await appTrackingTransparency.requestAuthorization()
+        let didAuthorize = await dependencies.appTrackingTransparency.requestAuthorization()
 
         if didAuthorize {
-            guard let idfa = appTrackingTransparency.idfa() else {
+            guard let idfa = dependencies.appTrackingTransparency.idfa() else {
                 logger.error("Unable to get IDFA despite authorization")
                 return didAuthorize
             }
@@ -669,7 +727,7 @@ public extension Lytics {
             let update: [String: AnyCodable] = [Constants.idfaKey: AnyCodable(idfa)]
 
             do {
-                try await userManager.updateIdentifiers(with: update)
+                try await dependencies.userManager.updateIdentifiers(with: update)
             } catch {
                 logger.error("\(error)")
             }
@@ -680,8 +738,12 @@ public extension Lytics {
 
     /// Disables use of IDFA.
     func disableTracking() {
+        guard hasStarted() else {
+            return
+        }
+
         logger.debug("Disable tracking")
-        appTrackingTransparency.disableIDFA()
+        dependencies.appTrackingTransparency.disableIDFA()
     }
 }
 
@@ -695,19 +757,27 @@ public extension Lytics {
 
     /// Flushes the event queue by sending all events in the queue immediately.
     func dispatch() {
+        guard hasStarted() else {
+            return
+        }
+
         logger.debug("Dispatch events")
         Task {
-            await eventPipeline.dispatch()
+            await dependencies.eventPipeline.dispatch()
         }
     }
 
     /// Clears all stored user information.
     func reset() {
+        guard hasStarted() else {
+            return
+        }
+
         logger.debug("Reset")
         optOut()
         disableTracking()
         Task {
-            await userManager.clear()
+            await dependencies.userManager.clear()
         }
     }
 }

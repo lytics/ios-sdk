@@ -11,7 +11,7 @@ extension EncodingError {
     /// Return a string with a human readable reason for json encoding failure.
     var userDescription: String {
         switch self {
-        case .invalidValue(_, let context):
+        case let .invalidValue(_, context):
             return context.debugDescription
         @unknown default:
             return localizedDescription

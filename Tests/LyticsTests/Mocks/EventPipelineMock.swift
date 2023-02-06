@@ -6,12 +6,13 @@
 
 import Foundation
 @testable import Lytics
+import XCTest
 
 struct EventPipelineMock: EventPipelineProtocol {
-    var onEvent: (String?, Millisecond, String?, Any) -> Void = { _, _, _, _ in }
-    var onOptIn: () -> Void = {}
-    var onOptOut: () -> Void = {}
-    var onDispatch: () -> Void = {}
+    var onEvent: (String?, Millisecond, String?, Any) -> Void = { _, _, _, _ in XCTFail("\(Self.self).onEvent") }
+    var onOptIn: () -> Void = { XCTFail("\(Self.self).onOptIn") }
+    var onOptOut: () -> Void = { XCTFail("\(Self.self).onOptOut") }
+    var onDispatch: () -> Void = { XCTFail("\(Self.self).onDispatch") }
     var isOptedIn: Bool = true
 
     func event<E>(

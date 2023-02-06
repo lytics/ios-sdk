@@ -21,7 +21,7 @@ final class AppEventTrackerTests: XCTestCase {
             configuration: .init(stream: "Stream", trackApplicationLifecycleEvents: true),
             logger: .mock,
             eventProvider: AppEventProvider(identifiers: { [:] }),
-            eventPipeline: EventPipelineMock(),
+            eventPipeline: EventPipelineMock(onEvent: { _, _, _, _ in }),
             onEvent: eventHandler
         )
 
@@ -60,7 +60,7 @@ final class AppEventTrackerTests: XCTestCase {
             configuration: .init(stream: "Stream", trackApplicationLifecycleEvents: true),
             logger: .mock,
             eventProvider: AppEventProvider(identifiers: { [:] }),
-            eventPipeline: EventPipelineMock(),
+            eventPipeline: EventPipelineMock(onEvent: { _, _, _, _ in }),
             onEvent: eventHandler
         )
 

@@ -18,7 +18,7 @@ struct ShortcutEvent: Codable, Equatable {
 }
 
 extension ShortcutEvent {
-    init(_ shortcutItem: UIApplicationShortcutItem, identifiers: [String: AnyCodable]?) {
+    init(_ shortcutItem: UIApplicationShortcutItem, identifiers: [String: AnyCodable]? = nil) {
         self.localizedTitle = shortcutItem.localizedTitle
         self.localizedSubtitle = shortcutItem.localizedSubtitle
         self.type = shortcutItem.type
