@@ -8,10 +8,14 @@
 import XCTest
 
 final class LoaderTests: XCTestCase {
-    let baseURLString = "https://example.com"
+    let entityURLString = "https://example.com/api/entity"
     let table = "test"
     let field = "test_field"
     let value = "test_value"
+
+    var entityURL: URL {
+        .init(string: entityURLString)!
+    }
 
     var identifier: EntityIdentifier {
         .init(
@@ -40,8 +44,9 @@ final class LoaderTests: XCTestCase {
         )
 
         let requestBuilder = RequestBuilder(
-            baseURL: URL(string: baseURLString)!,
-            apiToken: Mock.apiToken
+            apiToken: Mock.apiToken,
+            collectionEndpoint: Constants.collectionEndpoint,
+            entityEndpoint: entityURL
         )
 
         let sut = Loader.live(
@@ -57,7 +62,7 @@ final class LoaderTests: XCTestCase {
         XCTAssertEqual(actualEntity, expectedEntity)
         XCTAssertEqual(
             performedRequest.url.absoluteString,
-            "\(baseURLString)/api/entity/\(table)/\(field)/\(value)"
+            "\(entityURLString)/\(table)/\(field)/\(value)"
         )
     }
 
@@ -77,8 +82,9 @@ final class LoaderTests: XCTestCase {
         )
 
         let requestBuilder = RequestBuilder(
-            baseURL: URL(string: baseURLString)!,
-            apiToken: Mock.apiToken
+            apiToken: Mock.apiToken,
+            collectionEndpoint: Constants.collectionEndpoint,
+            entityEndpoint: entityURL
         )
 
         let sut = Loader.live(
