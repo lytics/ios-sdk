@@ -1,5 +1,5 @@
 //
-//  Never+Encodable.swift
+//  Never+Codable.swift
 //
 //  Created by Mathew Gacy on 9/19/22.
 //
@@ -17,7 +17,7 @@ extension Never: Codable {
             Never.self,
             DecodingError.Context(
                 codingPath: container.codingPath,
-                debugDescription: "Unable to instantiate `Never` as it has no values.",
+                debugDescription: "`Never` has no values to instantiate.",
                 underlyingError: nil
             )
         )
