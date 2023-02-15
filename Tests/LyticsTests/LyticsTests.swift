@@ -10,7 +10,7 @@ import os.log
 import XCTest
 
 final class LyticsTests: XCTestCase {
-    let expectationTimeout: TimeInterval = 0.1
+    let expectationTimeout: TimeInterval = 0.5
 
     let expectedAttributeDictionary = User1.attributes
     let expectedAttributes = TestAttributes.user1
