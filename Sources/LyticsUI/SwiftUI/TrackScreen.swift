@@ -17,7 +17,7 @@ import SwiftUI
 ///         .trackScreen(stream: "stream", name: "event")
 /// }
 /// ```
-public struct TrackScreen<I: Encodable, P: Encodable>: ViewModifier {
+public struct TrackScreen<I: Codable, P: Codable>: ViewModifier {
     let lytics: Lytics
     let stream: String?
     let name: String?
@@ -68,7 +68,7 @@ public extension View {
     ///   - name: The event name.
     ///   - identifiers: A value representing additional identifiers to associate with this event.
     ///   - properties:  A value representing the event properties.
-    func trackScreen<I: Encodable, P: Encodable>(
+    func trackScreen<I: Codable, P: Codable>(
         with lytics: Lytics = .shared,
         stream: String? = nil,
         name: String? = nil,
@@ -90,7 +90,7 @@ public extension View {
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
     ///   - identifiers: A value representing additional identifiers to associate with this event.
-    func trackScreen<I: Encodable>(
+    func trackScreen<I: Codable>(
         with lytics: Lytics = .shared,
         stream: String? = nil,
         name: String? = nil,
@@ -111,7 +111,7 @@ public extension View {
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
     ///   - properties:  A value representing the event properties.
-    func trackScreen<P: Encodable>(
+    func trackScreen<P: Codable>(
         with lytics: Lytics = .shared,
         stream: String? = nil,
         name: String? = nil,
