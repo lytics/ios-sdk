@@ -7,11 +7,25 @@
 import Foundation
 
 /// A path to a specific key in a nested dictionary.
+///
+/// Use a dict path to access values in a nested dictionary.
+///
+/// ```swift
+/// var dict: [String: Any] = [
+///     "outer": [
+///         "inner": 5
+///     ]
+///  ]
+///
+/// let current = dict[dictPath: "outer.inner"] // 5
+/// dict[dictPath: "outer.inner"] = 6 // ["outer": ["inner": 6]]
+/// ```
 public enum DictPath: Codable, Equatable, Hashable {
     indirect case nested(_ key: String, _ remaining: DictPath)
     case tail(_ key: String)
     case none
 
+    /// The string representation of the dictionary path.
     public var path: String {
         switch self {
         case let .nested(key, remaining) where remaining.path.isNotEmpty:
@@ -26,7 +40,23 @@ public enum DictPath: Codable, Equatable, Hashable {
     }
 }
 
-extension DictPath {
+public extension DictPath {
+
+    /// Creates a new instance with the given array of keys.
+    ///
+    /// Example Usage:
+    ///
+    /// ```swift
+    /// let dict: [String: Any] = [
+    ///     "outer": [
+    ///         "inner": 5
+    ///     ]
+    ///  ]
+    ///
+    /// let path = DictPath(keys: ["outer", "inner"])
+    /// let value = dict[dictPath: path] // 5
+    /// ```
+    /// - Parameter keys: The key pahts of the new instance.
     init?(keys: [String]) {
         guard keys.isNotEmpty else {
             return nil
@@ -47,7 +77,23 @@ extension DictPath {
         }
     }
 
-    public init(_ path: String) {
+    /// Creates a new instance with the given key path.
+    ///
+    /// Example Usage:
+    ///
+    /// ```swift
+    /// let dict: [String: Any] = [
+    ///     "outer": [
+    ///         "inner": 5
+    ///     ]
+    ///  ]
+    ///
+    /// let path = DictPath("outer.inner")
+    /// let value = dict[dictPath: path] // 5
+    /// ```
+    ///
+    /// - Parameter path: The value of the new instance.
+    init(_ path: String) {
         var keys = path.components(separatedBy: ".")
         let head = keys.removeFirst()
 
@@ -62,14 +108,21 @@ extension DictPath {
 }
 
 extension DictPath: ExpressibleByStringLiteral {
+
+    /// Creates an instance initialized to the given string value.
+    /// - Parameter value: The value of the new instance.
     public init(stringLiteral value: String) {
         self.init(value)
     }
 
+    /// Creates an instance initialized to the given value.
+    /// - Parameter value: The value of the new instance.
     public init(unicodeScalarLiteral value: String) {
         self.init(value)
     }
 
+    /// Creates an instance initialized to the given value.
+    /// - Parameter value: The value of the new instance.
     public init(extendedGraphemeClusterLiteral value: String) {
         self.init(value)
     }
@@ -77,6 +130,8 @@ extension DictPath: ExpressibleByStringLiteral {
 
 // MARK: - Dictionary+DictPath
 public extension Dictionary where Key == String {
+
+    /// Accesses the value associated with the given key for reading and writing.
     subscript(dictPath dictPath: DictPath) -> Any? {
         get {
             switch dictPath {
