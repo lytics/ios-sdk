@@ -24,6 +24,61 @@ final class DictPathTests: XCTestCase {
             "germany": ["FRA", "MUC", "HAM", "TXL"]
         ]
     ]
+
+    func testGetNone() {
+        let none = DictPath.none
+        let nestedNone = DictPath.nested("countries", none)
+
+        XCTAssertNil(dict[dictPath: none])
+        XCTAssertNil(dict[dictPath: nestedNone])
+    }
+
+    func testGetNested() {
+        let actual = dict[dictPath: "countries.japan.capital.name"] as? String
+        XCTAssertEqual(actual, "tokyo")
+    }
+
+    func testGetAbsentKey() {
+        XCTAssertNil(dict[dictPath: "countries.germany"])
+    }
+
+    func testSetNone() {
+        let none = DictPath("")
+        let nestedNone = DictPath.nested("nested", none)
+
+        let nested: [String: String] = ["key": "value"]
+        var dict: [String: Any] = [
+            "nested": nested,
+            "other": 5
+        ]
+
+        dict[dictPath: none] = "updated"
+        var actual = dict["nested"] as? [String: String]
+        XCTAssertEqual(actual, nested)
+
+        dict[dictPath: nestedNone] = "updated"
+        actual = dict["nested"] as? [String: String]
+        XCTAssertEqual(actual, nested)
+    }
+
+    func testSetNested() {
+        var dict = self.dict
+
+        dict[dictPath: "countries.japan.capital.name"] = "other"
+
+        let countries = dict["countries"] as! [String: Any]
+        let japan = countries["japan"] as! [String: Any]
+        let capital = japan["capital"] as! [String: String]
+
+        let expected = [
+            "name": "other",
+            "lat": "35.6895",
+            "lon": "139.6917"
+        ]
+
+        XCTAssertEqual(capital, expected)
+    }
+
     func testPath() {
         let none = DictPath.none
         XCTAssertEqual(none.path, "")

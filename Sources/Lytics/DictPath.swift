@@ -74,3 +74,51 @@ extension DictPath: ExpressibleByStringLiteral {
         self.init(value)
     }
 }
+
+// MARK: - Dictionary+DictPath
+public extension Dictionary where Key == String {
+    subscript(dictPath dictPath: DictPath) -> Any? {
+        get {
+            switch dictPath {
+            case .none:
+                return nil
+
+            case let .tail(key):
+                return self[key]
+
+            case let .nested(key, remainingPath):
+                switch self[key] {
+                case let nestedDict as [Key: Any]:
+                    return nestedDict[dictPath: remainingPath]
+
+                default:
+                    return nil
+                }
+            }
+        }
+        set {
+            switch dictPath {
+            case .none:
+                return
+
+            case let .tail(key):
+                switch newValue {
+                case let wrapped as Value:
+                    self[key] = wrapped
+                default:
+                    self[key] = nil
+                }
+
+            case let .nested(key, remainingPath):
+                switch self[key] {
+                case var nestedDict as [Key: Any]:
+                    nestedDict[dictPath: remainingPath] = newValue
+                    self[key] = nestedDict.isNotEmpty ? nestedDict as? Value : nil
+
+                default:
+                    return
+                }
+            }
+        }
+    }
+}
