@@ -15,8 +15,8 @@ enum Constants {
     static let defaultPrimaryIdentityKey = "_uid"
     static let defaultEntityTable = "user"
 
-    static let defaultBaseURL = URL(string: "https://api.lytics.io")!
-    static let defaultAPIPath = ""
+    static let collectionEndpoint = URL(string: "https://api.lytics.io/collect/json")!
+    static let entityEndpoint = URL(string: "https://api.lytics.io/api/entity")!
     static let defaultStream: String = "ios_sdk"
     static let idfaKey: String = "idfa"
     static let defaultAppVersion = "0.0"

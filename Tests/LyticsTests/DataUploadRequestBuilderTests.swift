@@ -11,8 +11,8 @@ import XCTest
 
 final class DataUploadRequestBuilderTests: XCTestCase {
     let requestBuilder: RequestBuilder = .live(
-        baseURL: Constants.defaultBaseURL,
-        apiToken: User1.apiToken
+        apiToken: User1.apiToken,
+        configuration: LyticsConfiguration()
     )
 
     func testEncodeEmpty() throws {

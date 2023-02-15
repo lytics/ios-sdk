@@ -27,8 +27,8 @@ extension DependencyContainer {
         appEventHandler: @escaping @Sendable (AppLifecycleEvent) -> Void
     ) -> Self {
         let requestBuilder = RequestBuilder.live(
-            baseURL: configuration.apiURL,
-            apiToken: apiToken
+            apiToken: apiToken,
+            configuration: configuration
         )
 
         let eventPipeline = EventPipeline.live(

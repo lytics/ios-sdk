@@ -713,8 +713,8 @@ extension LyticsTests {
         )
 
         let sut = Lytics(
-             logger: logger,
-             dependencies: .test(userManager: userManager)
+            logger: logger,
+            dependencies: .test(userManager: userManager)
         )
 
         sut.updateUser(with: UserUpdate(identifiers: TestIdentifiers.user1, attributes: TestAttributes.user1))
@@ -760,11 +760,11 @@ extension LyticsTests {
         )
 
         let sut = Lytics(
-             logger: logger,
-             dependencies: .test(
+            logger: logger,
+            dependencies: .test(
                 eventPipeline: eventPipeline,
                 userManager: userManager
-             )
+            )
         )
 
         sut.updateIdentifiersAndUpload(
@@ -815,8 +815,8 @@ extension LyticsTests {
         )
 
         let sut = Lytics(
-             logger: logger,
-             dependencies: .test(userManager: userManager)
+            logger: logger,
+            dependencies: .test(userManager: userManager)
         )
 
         let userUpdate = UserUpdate(identifiers: TestIdentifiers.user1, attributes: TestAttributes.user1)

@@ -77,8 +77,8 @@ final class CodableRequestContainerTests: XCTestCase {
     func testEncodeAndDecode() throws {
         let requestBuilder = DataUploadRequestBuilder.live(
             requestBuilder: .live(
-                baseURL: Constants.defaultBaseURL,
-                apiToken: Mock.apiToken
+                apiToken: Mock.apiToken,
+                configuration: LyticsConfiguration()
             )
         )
 
