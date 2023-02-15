@@ -988,7 +988,7 @@ extension LyticsTests {
 
         let errorExpectation = expectation(description: "Error thrown")
         do {
-            let actualUser = try await sut.getProfile()
+            _ = try await sut.getProfile()
         } catch {
             errorExpectation.fulfill()
         }
