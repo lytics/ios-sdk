@@ -127,3 +127,29 @@ extension UtilityTests {
         XCTAssertThrowsError(try initialData.append(jsonArray: &additionalData))
     }
 }
+
+// MARK: - Never Codable Conformance
+extension UtilityTests {
+    struct ImpossibleNever: Codable {
+        let value: Never
+    }
+
+    struct PossibleNever: Codable {
+        var value: Never? = nil
+    }
+
+    func testEncodeNeverValue() throws {
+        let expectedValue = Data("{}".utf8)
+
+        let actualValue = try JSONEncoder().encode(PossibleNever(value: nil))
+        XCTAssertEqual(actualValue, expectedValue)
+    }
+
+    func testDecodeNeverValueThrows() {
+        let json = Data("""
+        {"value":null}
+        """.utf8)
+
+        XCTAssertThrowsError(_ = try JSONDecoder().decode(ImpossibleNever.self, from: json))
+    }
+}
