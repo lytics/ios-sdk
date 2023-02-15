@@ -13,7 +13,7 @@ extension Never: Codable {
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.unkeyedContainer()
-        throw DecodingError.typeMismatch(
+        throw DecodingError.valueNotFound(
             Never.self,
             DecodingError.Context(
                 codingPath: container.codingPath,
