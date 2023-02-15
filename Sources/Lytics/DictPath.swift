@@ -25,3 +25,52 @@ public enum DictPath: Codable, Equatable, Hashable {
         }
     }
 }
+
+extension DictPath {
+    init?(keys: [String]) {
+        guard keys.isNotEmpty else {
+            return nil
+        }
+
+        var copy = keys
+        let head = copy.removeFirst()
+        guard head.isNotEmpty else {
+            return nil
+        }
+
+        if copy.isEmpty {
+            self = .tail(head)
+        } else if let remaining = DictPath(keys: copy) {
+            self = .nested(head, remaining)
+        } else {
+            self = .tail(head)
+        }
+    }
+
+    public init(_ path: String) {
+        var keys = path.components(separatedBy: ".")
+        let head = keys.removeFirst()
+
+        if head.isEmpty {
+            self = .none
+        } else if let remaining = DictPath(keys: keys) {
+            self = .nested(head, remaining)
+        } else {
+            self = .tail(head)
+        }
+    }
+}
+
+extension DictPath: ExpressibleByStringLiteral {
+    public init(stringLiteral value: String) {
+        self.init(value)
+    }
+
+    public init(unicodeScalarLiteral value: String) {
+        self.init(value)
+    }
+
+    public init(extendedGraphemeClusterLiteral value: String) {
+        self.init(value)
+    }
+}
