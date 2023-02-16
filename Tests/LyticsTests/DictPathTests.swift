@@ -79,6 +79,19 @@ final class DictPathTests: XCTestCase {
         XCTAssertEqual(capital, expected)
     }
 
+    func testSetNilRemovesEmptyDict() {
+        var dict: [String: Any] = [
+            "a": [
+                "b": [
+                    "c": "d"
+                ]
+            ]
+        ]
+
+        dict[dictPath: "a.b.c"] = nil
+        XCTAssert(dict.isEmpty)
+    }
+
     func testPath() {
         let none = DictPath.none
         XCTAssertEqual(none.path, "")
