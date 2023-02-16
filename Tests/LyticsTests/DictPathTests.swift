@@ -4,8 +4,8 @@
 //  Created by Mathew Gacy on 2/13/23.
 //
 
-@testable import Lytics
 import Foundation
+@testable import Lytics
 import XCTest
 
 final class DictPathTests: XCTestCase {
@@ -46,7 +46,7 @@ final class DictPathTests: XCTestCase {
         let none = DictPath("")
         let nestedNone = DictPath.nested("nested", none)
 
-        let nested: [String: String] = ["key": "value"]
+        let nested = ["key": "value"]
         var dict: [String: Any] = [
             "nested": nested,
             "other": 5

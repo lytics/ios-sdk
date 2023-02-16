@@ -107,6 +107,7 @@ public extension DictPath {
     }
 }
 
+// MARK: ExpressibleByStringLiteral
 extension DictPath: ExpressibleByStringLiteral {
 
     /// Creates an instance initialized to the given string value.
