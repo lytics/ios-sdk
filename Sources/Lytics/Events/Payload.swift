@@ -6,7 +6,6 @@
 
 import Foundation
 
-@usableFromInline
 struct Payload<E: Encodable>: StreamEvent {
     var stream: String
     var timestamp: Millisecond
@@ -14,7 +13,6 @@ struct Payload<E: Encodable>: StreamEvent {
     var name: String?
     var event: E
 
-    @usableFromInline
     init(
         stream: String,
         timestamp: Millisecond,
@@ -29,7 +27,6 @@ struct Payload<E: Encodable>: StreamEvent {
         self.event = event
     }
 
-    @usableFromInline
     init(
         stream: String,
         sessionTimestamp: (Millisecond, Int?),
@@ -43,7 +40,6 @@ struct Payload<E: Encodable>: StreamEvent {
         self.event = event
     }
 
-    @usableFromInline
     func encode(to encoder: Encoder) throws {
         var container: KeyedEncodingContainer<Payload<E>.CodingKeys> = encoder.container(keyedBy: CodingKeys.self)
 
