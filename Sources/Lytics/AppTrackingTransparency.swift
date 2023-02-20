@@ -7,17 +7,16 @@
 import AdSupport
 import AppTrackingTransparency
 
-@usableFromInline
 struct AppTrackingTransparency {
-    @usableFromInline var authorizationStatus: () -> ATTrackingManager.AuthorizationStatus
-    @usableFromInline var disableIDFA: () -> Void
-    @usableFromInline var enableIDFA: () -> Void
-    @usableFromInline var idfa: () -> String?
-    @usableFromInline var requestAuthorization: () async -> Bool
+    var authorizationStatus: () -> ATTrackingManager.AuthorizationStatus
+    var disableIDFA: () -> Void
+    var enableIDFA: () -> Void
+    var idfa: () -> String?
+    var requestAuthorization: () async -> Bool
 }
 
 extension AppTrackingTransparency {
-    @usableFromInline static var live: Self {
+    static var live: Self {
         let userDefaults = UserDefaults.standard
 
         return AppTrackingTransparency(
