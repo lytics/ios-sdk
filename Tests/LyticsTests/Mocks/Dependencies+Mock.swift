@@ -70,14 +70,14 @@ extension DependencyContainer {
         loader: Loader = .test()
     ) -> Self {
         .init(
+            apiToken: apiToken,
+            appEventTracker: appEventTracker,
             appTrackingTransparency: appTrackingTransparency,
             configuration: configuration,
             eventPipeline: eventPipeline,
+            loader: loader,
             timestampProvider: timestampProvider,
-            userManager: userManager,
-            apiToken: apiToken,
-            appEventTracker: appEventTracker,
-            loader: loader
+            userManager: userManager
         )
     }
 }
