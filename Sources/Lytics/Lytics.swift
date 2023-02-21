@@ -146,7 +146,7 @@ public extension Lytics {
     ///   - identifiers: A value representing additional identifiers to associate with this event.
     ///   - properties: A value  representing the event properties.
     @inlinable
-    func track<I: Encodable, P: Encodable>(
+    func track<I: Codable, P: Codable>(
         stream: String? = nil,
         name: String? = nil,
         timestamp: Millisecond? = nil,
@@ -174,7 +174,7 @@ public extension Lytics {
     ///   - timestamp: A custom timestamp for the event.
     ///   - event: A value representing the event properties.
     @inlinable
-    func track<P: Encodable>(
+    func track<P: Codable>(
         stream: String? = nil,
         name: String? = nil,
         timestamp: Millisecond? = nil,
@@ -206,7 +206,7 @@ public extension Lytics {
     ///   - attributes: A value representing additional information about a user.
     ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
     @inlinable
-    func identify<I: Encodable, A: Encodable>(
+    func identify<I: Codable, A: Codable>(
         stream: String? = nil,
         name: String? = nil,
         timestamp: Millisecond? = nil,
@@ -240,7 +240,7 @@ public extension Lytics {
     ///   - identifiers: A value representing user identifiers.
     ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
     @inlinable
-    func identify<I: Encodable>(
+    func identify<I: Codable>(
         stream: String? = nil,
         name: String? = nil,
         timestamp: Millisecond? = nil,
@@ -275,7 +275,7 @@ public extension Lytics {
     ///   - consent: A value representing consent properties.
     ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
     @inlinable
-    func consent<I: Encodable, A: Encodable, C: Encodable>(
+    func consent<I: Codable, A: Codable, C: Codable>(
         stream: String? = nil,
         name: String? = nil,
         timestamp: Millisecond? = nil,
@@ -316,7 +316,7 @@ public extension Lytics {
     ///   - consent: A value representing consent properties.
     ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
     @inlinable
-    func consent<A: Encodable, C: Encodable>(
+    func consent<A: Codable, C: Codable>(
         stream: String? = nil,
         name: String? = nil,
         timestamp: Millisecond? = nil,
@@ -355,7 +355,7 @@ public extension Lytics {
     ///   - consent: A value representing consent properties.
     ///   - shouldSend: A Boolean value indicating whether an event should be emitted.
     @inlinable
-    func consent<C: Encodable>(
+    func consent<C: Codable>(
         stream: String? = nil,
         name: String? = nil,
         timestamp: Millisecond? = nil,
@@ -393,7 +393,7 @@ public extension Lytics {
     ///   - identifiers:  A value representing additional identifiers to associate with this event.
     ///   - properties: A value representing the event properties.
     @inlinable
-    func screen<I: Encodable, P: Encodable>(
+    func screen<I: Codable, P: Codable>(
         stream: String? = nil,
         name: String? = nil,
         timestamp: Millisecond? = nil,
@@ -428,7 +428,7 @@ public extension Lytics {
     ///   - timestamp: A custom timestamp for the event.
     ///   - properties: A value representing the event properties.
     @inlinable
-    func screen<P: Encodable>(
+    func screen<P: Codable>(
         stream: String? = nil,
         name: String? = nil,
         timestamp: Millisecond? = nil,

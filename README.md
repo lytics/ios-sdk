@@ -54,7 +54,7 @@ struct MyApp: App {
 
 ## Sending Data
 
-The Lytics event methods are generic, allowing you to define your own `Encodable` types and use the SDK with full type-safety.
+The Lytics event methods are generic, allowing you to define your own `Codable` types and use the SDK with full type-safety.
 
 ```swift
 struct MyIdentifier: Codable {
