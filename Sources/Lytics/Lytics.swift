@@ -23,6 +23,9 @@ public final class Lytics {
     /// The SDK dependencies.
     @usableFromInline internal var dependencies: DependencyContainer!
 
+    /// The priority for tasks.
+    @usableFromInline internal var taskPriority: TaskPriority?
+
     /// A Boolean value indicating whether this instance has been started.
     public var hasStarted: Bool {
         dependencies != nil
@@ -59,17 +62,20 @@ public final class Lytics {
     /// > Warning: You must call ``start(apiToken:configure:)`` before using the created instance.
     public convenience init() {
         self.init(
-            logger: .live
+            logger: .live,
+            eventTaskPriority: .low
         )
     }
 
     internal init(
         assertionFailure: @escaping (@autoclosure @escaping () -> String, StaticString, UInt) -> Void = Swift.assertionFailure,
         logger: LyticsLogger,
+        eventTaskPriority: TaskPriority? = nil,
         dependencies: DependencyContainer? = nil
     ) {
         self.assertionFailure = assertionFailure
         self.logger = logger
+        self.taskPriority = eventTaskPriority
         self.dependencies = dependencies
     }
 
@@ -450,11 +456,9 @@ internal extension Lytics {
     /// Updates the current user with the given update.
     /// - Parameters:
     ///   - userUpdate: An update to apply to the current user.
-    ///   - priority: The priority of the task.
     @usableFromInline
     func updateUser<I: Encodable, A: Encodable>(
         with userUpdate: UserUpdate<I, A>,
-        priority: TaskPriority? = .background,
         function: StaticString = #function
     ) {
         guard hasStarted() else {
@@ -465,7 +469,7 @@ internal extension Lytics {
             return
         }
 
-        Task(priority: priority) {
+        Task(priority: taskPriority) {
             do {
                 try await dependencies.userManager.apply(userUpdate)
             } catch {
@@ -479,14 +483,12 @@ internal extension Lytics {
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
     ///   - timestamp: A custom timestamp for the event.
-    ///   - priority: The priority of the task.
     ///   - eventProvider: A closure returning the event to send.
     @usableFromInline
     func upload<E: Encodable>(
         stream: String?,
         name: String?,
         timestamp: Millisecond?,
-        priority: TaskPriority? = .background,
         function: StaticString = #function,
         eventProvider: @escaping @Sendable ([String: AnyCodable]) -> E
     ) {
@@ -495,7 +497,7 @@ internal extension Lytics {
         }
 
         let timestamp = timestamp ?? dependencies.timestampProvider()
-        Task(priority: priority) {
+        Task(priority: taskPriority) {
             let eventIdentifiers = await dependencies.userManager.identifiers.mapValues(AnyCodable.init(_:))
 
             await dependencies.eventPipeline.event(
@@ -513,7 +515,6 @@ internal extension Lytics {
     ///   - name: The event name.
     ///   - timestamp: A custom timestamp for the event.
     ///   - identifiers: A value representing additional identifiers to associate with this event.
-    ///   - priority: The priority of the task.
     ///   - eventProvider: A closure returning the event to send.
     @usableFromInline
     func updateIdentifiersAndUpload<I: Encodable, E: Encodable>(
@@ -521,7 +522,6 @@ internal extension Lytics {
         name: String?,
         timestamp: Millisecond?,
         identifiers: I,
-        priority: TaskPriority? = .background,
         function: StaticString = #function,
         eventProvider: @escaping @Sendable ([String: AnyCodable]) -> E
     ) {
@@ -530,7 +530,7 @@ internal extension Lytics {
         }
 
         let timestamp = timestamp ?? dependencies.timestampProvider()
-        Task(priority: priority) {
+        Task(priority: taskPriority) {
             var eventIdentifiers = [String: AnyCodable]()
 
             do {
@@ -556,7 +556,6 @@ internal extension Lytics {
     ///   - name: The event name.
     ///   - timestamp: A custom timestamp for the event.
     ///   - userUpdate: An update to apply to the current user.
-    ///   - priority: The priority of the task.
     ///   - eventProvider: A closure returning the event to send.
     @usableFromInline
     func updateUserAndUpload<I: Encodable, A: Encodable, E: Encodable>(
@@ -564,7 +563,6 @@ internal extension Lytics {
         name: String?,
         timestamp: Millisecond?,
         userUpdate: UserUpdate<I, A>,
-        priority: TaskPriority? = .background,
         function: StaticString = #function,
         eventProvider: @escaping @Sendable (LyticsUser) -> E
     ) {
@@ -573,7 +571,7 @@ internal extension Lytics {
         }
 
         let timestamp = timestamp ?? dependencies.timestampProvider()
-        Task(priority: priority) {
+        Task(priority: taskPriority) {
             do {
                 let user = userUpdate.hasContent ?
                     try await dependencies.userManager.update(with: userUpdate) :
