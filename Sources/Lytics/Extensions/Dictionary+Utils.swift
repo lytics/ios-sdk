@@ -35,3 +35,34 @@ extension Dictionary where Key == AnyCodable, Value == AnyCodable {
         self.init(uniqueKeysWithValues: other.map { (AnyCodable($0), AnyCodable($1)) })
     }
 }
+
+extension Dictionary where Key == String, Value == Any {
+
+    /// Updates the encoded value at a specified dictionary path by appliying a given transformation.
+    /// - Parameters:
+    ///   - dictPath: A dictionary path to the encoded value.
+    ///   - toValue: A closure that decodes the encoded value.
+    ///   - fromValue: A closure that encodes the transformed value.
+    ///   - transform: A closure that updates the value at the specified dictionary path.
+    mutating func updateValue<V: Codable>(
+        at dictPath: DictPath,
+        toValue: (Self) throws -> V = JSONDecoder().decodeJSONObject,
+        fromValue: (V) throws -> Self = JSONEncoder().encodeJSONObject,
+        transform: (inout V?) -> Void
+    ) rethrows {
+        var value: V?
+        if let currentValue = self[dict: dictPath] {
+            value = try toValue(currentValue)
+        } else {
+            value = nil
+        }
+
+        // Update with transformed value
+        transform(&value)
+        if let value {
+            self[dictPath: dictPath] = try fromValue(value)
+        } else {
+            self[dictPath: dictPath] = nil
+        }
+    }
+}
