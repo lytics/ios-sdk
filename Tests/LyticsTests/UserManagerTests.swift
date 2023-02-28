@@ -148,7 +148,7 @@ final class UserManagerTests: XCTestCase {
         }
 
         await waitForExpectations(timeout: expectationTimeout)
-        XCTAssertEqual(caughtError!.userDescription, "Unable to creation a dictionary from 1.")
+        XCTAssertEqual(caughtError!.userDescription, "Unable to create a dictionary from 1.")
     }
 
     func testApply() async throws {
