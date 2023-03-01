@@ -58,6 +58,52 @@ extension UtilityTests {
     }
 }
 
+// MARK: - Transforming Dictionary-Encoded Values
+extension UtilityTests {
+    func testUpdateExistingValue() throws {
+        let newValue = "updated"
+        let expected: [String: Any] = [
+            "email": "someemail@lytics.com",
+            "userID": 1_234,
+            "nested": [
+                "a": 1,
+                "b": newValue
+            ]
+        ]
+
+        var values = User1.anyIdentifiers
+        try values.updateValue(at: "nested") { (value: inout Nested?) in
+            value?.b = newValue
+        }
+
+        Assert.identifierEquality(values, expected: expected)
+    }
+
+    func testUpdateAbsentValue() throws {
+        var values: [String: Any] = [
+            "email": "someemail@lytics.com",
+            "userID": 1_234
+        ]
+
+        try values.updateValue(at: "nested") { (value: inout Nested?) in
+            value = Nested(a: User1.a, b: User1.b)
+        }
+
+        Assert.identifierEquality(values, expected: User1.anyIdentifiers)
+    }
+
+    func testUpdateRemovingValue() throws {
+        var values = User1.anyIdentifiers
+        try values.updateValue(at: "nested") { (value: inout Nested?) in
+            value = nil
+        }
+
+        XCTAssertEqual(values["email"] as! String, "someemail@lytics.com")
+        XCTAssertEqual(values["userID"] as! Int, 1_234)
+        XCTAssertNil(values["nested"])
+    }
+}
+
 // MARK: - Appending JSON Array Data
 extension UtilityTests {
     var emptyJSONData: Data {
