@@ -102,6 +102,36 @@ extension UtilityTests {
         XCTAssertEqual(values["userID"] as! Int, 1_234)
         XCTAssertNil(values["nested"])
     }
+
+    func testUpdatePrimitiveValue() {
+        let newValue = "updated"
+        let expected: [String: Any] = [
+            "email": "someemail@lytics.com",
+            "userID": 1_234,
+            "nested": [
+                "a": 1,
+                "b": newValue
+            ]
+        ]
+
+        var values = User1.anyIdentifiers
+        values.updateValue(at: "nested.b") { (value: inout String?) in
+            value = newValue
+        }
+
+        Assert.identifierEquality(values, expected: expected)
+    }
+
+    func testRemovePrimitiveValue() {
+        var values = User1.anyIdentifiers
+        values.updateValue(at: "nested.b") { (value: inout String?) in
+            value = nil
+        }
+
+        XCTAssertEqual(values["email"] as! String, "someemail@lytics.com")
+        XCTAssertEqual(values["userID"] as! Int, 1_234)
+        XCTAssertEqual(values["nested"] as! [String: Int], ["a": 1])
+    }
 }
 
 // MARK: - Appending JSON Array Data
