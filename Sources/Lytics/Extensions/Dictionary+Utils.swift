@@ -65,4 +65,18 @@ extension Dictionary where Key == String, Value == Any {
             self[dictPath: dictPath] = nil
         }
     }
+
+    /// Updates the primitive value at a specified dictionary path by appliying a given
+    /// transformation.
+    /// - Parameters:
+    ///   - dictPath: A dictionary path to the encoded value.
+    ///   - transform: A closure that updates the value at the specified dictionary path.
+    mutating func updateValue<V: Primitive>(
+        at dictPath: DictPath,
+        transform: (inout V?) -> Void
+    ) {
+        var value = self[dict: dictPath] as? V
+        transform(&value)
+        self[dictPath: dictPath] = value
+    }
 }
