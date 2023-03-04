@@ -14,6 +14,8 @@ actor UserManagerMock<Identifiers: Encodable, Attributes: Encodable>: UserManagi
     var onUpdate: (UserUpdate<Identifiers, Attributes>) throws -> LyticsUser
     var onUpdateAttributes: (Attributes) throws -> [String: Any]
     var onUpdateIdentifiers: (Identifiers) throws -> [String: Any]
+    var onRemoveIdentifier: (DictPath) -> Void
+    var onRemoveAttribute: (DictPath) -> Void
 
     init(
         onApply: @escaping (UserUpdate<Identifiers, Attributes>) throws -> Void = { _ in XCTFail("UserManagerMock.onApply") },
@@ -21,6 +23,8 @@ actor UserManagerMock<Identifiers: Encodable, Attributes: Encodable>: UserManagi
         onUpdate: @escaping (UserUpdate<Identifiers, Attributes>) throws -> LyticsUser = { _ in XCTFail("UserManagerMock.onUpdate"); return .init() },
         onUpdateAttributes: @escaping (Attributes) throws -> [String: Any] = { _ in XCTFail("UserManagerMock.onUpdateAttributes"); return [:] },
         onUpdateIdentifiers: @escaping (Identifiers) throws -> [String: Any] = { _ in XCTFail("UserManagerMock.onUpdateIdentifiers"); return [:] },
+        onRemoveIdentifier: @escaping (DictPath) -> Void = { _ in XCTFail("UserManagerMock.onRemoveIdentifier") },
+        onRemoveAttribute: @escaping (DictPath) -> Void = { _ in XCTFail("UserManagerMock.onRemoveAttribute") },
         identifiers: [String: Any] = [:],
         attributes: [String: Any]? = nil,
         user: LyticsUser = .init()
@@ -30,6 +34,8 @@ actor UserManagerMock<Identifiers: Encodable, Attributes: Encodable>: UserManagi
         self.onUpdate = onUpdate
         self.onUpdateAttributes = onUpdateAttributes
         self.onUpdateIdentifiers = onUpdateIdentifiers
+        self.onRemoveIdentifier = onRemoveIdentifier
+        self.onRemoveAttribute = onRemoveAttribute
         self.identifiers = identifiers
         self.attributes = attributes
         self.user = user
@@ -59,6 +65,14 @@ actor UserManagerMock<Identifiers: Encodable, Attributes: Encodable>: UserManagi
     func update<I: Encodable, A: Encodable>(with userUpdate: UserUpdate<I, A>) throws -> LyticsUser {
         let update = userUpdate as! UserUpdate<Identifiers, Attributes>
         return try onUpdate(update)
+    }
+
+    func removeIdentifier(_ dictPath: DictPath) {
+        onRemoveIdentifier(dictPath)
+    }
+
+    func removeAttribute(_ dictPath: DictPath) {
+        onRemoveAttribute(dictPath)
     }
 
     func clear() {
