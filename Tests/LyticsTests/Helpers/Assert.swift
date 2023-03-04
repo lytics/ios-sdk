@@ -11,39 +11,52 @@ import XCTest
 /// Helper for testing equality of untyped dictionaries.
 enum Assert {
 
+    // MARK: - Helpers
+
+    static func valueEquality<T: Equatable>(_ value1: [String: Any], _ value2: [String: Any], at dictPath: DictPath, type: T.Type) {
+        if let value = value2[dictPath: dictPath] {
+            XCTAssertEqual(value1[dictPath: dictPath] as! T, value as! T)
+        } else {
+            XCTAssertNil(value1[dictPath: dictPath])
+        }
+    }
+
     // MARK: - Untyped
 
     static func attributeEquality(_ object: [String: Any], expected: [String: Any]) {
-        XCTAssertEqual(object["firstName"] as! String, expected["firstName"] as! String)
-        XCTAssertEqual(object["titles"] as! [String], expected["titles"] as! [String])
+        Assert.valueEquality(object, expected, at: "firstName", type: String.self)
+        Assert.valueEquality(object, expected, at: "titles", type: [String].self)
     }
 
     static func cartEquality(_ object: [String: Any], expected: [String: Any]) {
-        XCTAssertEqual(object["orderID"] as! String, expected["orderID"] as! String)
-        XCTAssertEqual(object["total"] as! Float, expected["total"] as! Float)
+        Assert.valueEquality(object, expected, at: "orderID", type: String.self)
+        Assert.valueEquality(object, expected, at: "total", type: Float.self)
     }
 
     static func consentEquality(_ object: [String: Any], expected: [String: Any]) {
-        XCTAssertEqual(object["document"] as! String, expected["document"] as! String)
-        XCTAssertEqual(object["timestamp"] as! String, expected["timestamp"] as! String)
-        XCTAssertEqual(object["consented"] as! Bool, expected["consented"] as! Bool)
+        Assert.valueEquality(object, expected, at: "document", type: String.self)
+        Assert.valueEquality(object, expected, at: "timestamp", type: String.self)
+        Assert.valueEquality(object, expected, at: "consented", type: Bool.self)
     }
 
     static func identifierEquality(_ object: [String: Any], expected: [String: Any]) {
-        XCTAssertEqual(object["email"] as! String, expected["email"] as! String)
-        XCTAssertEqual(object["userID"] as! Int, expected["userID"] as! Int)
+        Assert.valueEquality(object, expected, at: "email", type: String.self)
+        Assert.valueEquality(object, expected, at: "userID", type: Int.self)
 
-        // Nested
-        let nested = object["nested"] as! [String: Any]
-        let expectedNested = expected["nested"] as! [String: Any]
-        XCTAssertEqual(nested["a"] as! Int, expectedNested["a"] as! Int)
-        XCTAssertEqual(nested["b"] as! String, expectedNested["b"] as! String)
+        if expected["nested"] != nil {
+            XCTAssertNotNil(object["nested"])
+        } else {
+            XCTAssertNil(object["nested"])
+        }
+
+        Assert.valueEquality(object, expected, at: "nested.a", type: Int.self)
+        Assert.valueEquality(object, expected, at: "nested.b", type: String.self)
     }
 
     static func payloadMemberEquality(_ object: [String: Any], expected: [String: Any]) {
-        XCTAssertEqual(object["name"] as! String, expected["name"] as! String)
-        XCTAssertEqual(object["_ts"] as! Int64, expected["_ts"] as! Int64)
-        XCTAssertEqual(object["_sesstart"] as! Int?, expected["_sesstart"] as! Int?)
+        Assert.valueEquality(object, expected, at: "name", type: String.self)
+        Assert.valueEquality(object, expected, at: "_ts", type: Int64.self)
+        Assert.valueEquality(object, expected, at: "_sesstart", type: Int?.self)
     }
 
     // MARK: - Untyped Events
