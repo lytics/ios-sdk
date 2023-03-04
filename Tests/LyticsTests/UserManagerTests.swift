@@ -348,6 +348,56 @@ final class UserManagerTests: XCTestCase {
         )
     }
 
+    func testRemoveIdentifier() async {
+        let expectedIdentifiers: [String: Any] = [
+            "email": "someemail@lytics.com",
+            "userID": 1_234,
+            "nested": [
+                "a": 1
+            ]
+        ]
+
+        var storedIdentifiers: [String: Any]! = User1.anyIdentifiers
+        let storage = UserStorage.mock(
+            identifiers: { storedIdentifiers },
+            storeIdentifiers: { storedIdentifiers = $0 }
+        )
+
+        let sut = UserManager(
+            configuration: .init(),
+            encoder: .init(),
+            idProvider: { Mock.uuidString },
+            storage: storage
+        )
+
+        await sut.removeIdentifier("nested.b")
+
+        Assert.identifierEquality(storedIdentifiers, expected: expectedIdentifiers)
+    }
+
+    func testRemoveAttribute() async {
+        let expectedAttributes: [String: Any] = [
+            "firstName": "Jane"
+        ]
+
+        var storedAttributes: [String: Any]? = User1.anyAttributes
+        let storage = UserStorage.mock(
+            attributes: { storedAttributes },
+            storeAttributes: { storedAttributes = $0 }
+        )
+
+        let sut = UserManager(
+            configuration: .init(),
+            encoder: .init(),
+            idProvider: { Mock.uuidString },
+            storage: storage
+        )
+
+        await sut.removeAttribute("titles")
+
+        Assert.attributeEquality(storedAttributes!, expected: expectedAttributes)
+    }
+
     func testClear() async {
         let anonymousIdentityKey = "id"
 
