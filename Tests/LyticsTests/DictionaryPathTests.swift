@@ -1,5 +1,5 @@
 //
-//  DictPathTests.swift
+//  DictionaryPathTests.swift
 //
 //  Created by Mathew Gacy on 2/13/23.
 //
@@ -8,7 +8,7 @@ import Foundation
 @testable import Lytics
 import XCTest
 
-final class DictPathTests: XCTestCase {
+final class DictionaryPathTests: XCTestCase {
     let dict: [String: Any] = [
         "countries": [
             "japan": [
