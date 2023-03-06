@@ -1318,13 +1318,13 @@ extension LyticsTests {
     }
 
     func testRemoveIdentifier() async {
-        let expectedDictPath = DictionaryPath("identifier")
+        let expectedPath = DictionaryPath("identifier")
 
-        var actualDictPath: DictionaryPath!
+        var actualPath: DictionaryPath!
         let removalExpectation = expectation(description: "Identifier removed")
         let userManager = UserManagerMock<Never, Never>(
             onRemoveIdentifier: { path in
-                actualDictPath = path
+                actualPath = path
                 removalExpectation.fulfill()
             }
         )
@@ -1336,20 +1336,20 @@ extension LyticsTests {
             )
         )
 
-        sut.removeIdentifier(expectedDictPath)
+        sut.removeIdentifier(expectedPath)
 
         await waitForExpectations(timeout: expectationTimeout)
-        XCTAssertEqual(actualDictPath, expectedDictPath)
+        XCTAssertEqual(actualPath, expectedPath)
     }
 
     func testRemoveAttribute() async {
-        let expectedDictPath = DictionaryPath("attribute")
+        let expectedPath = DictionaryPath("attribute")
 
-        var actualDictPath: DictionaryPath!
+        var actualPath: DictionaryPath!
         let removalExpectation = expectation(description: "Attribute removed")
         let userManager = UserManagerMock<Never, Never>(
             onRemoveAttribute: { path in
-                actualDictPath = path
+                actualPath = path
                 removalExpectation.fulfill()
             }
         )
@@ -1361,10 +1361,10 @@ extension LyticsTests {
             )
         )
 
-        sut.removeAttribute(expectedDictPath)
+        sut.removeAttribute(expectedPath)
 
         await waitForExpectations(timeout: expectationTimeout)
-        XCTAssertEqual(actualDictPath, expectedDictPath)
+        XCTAssertEqual(actualPath, expectedPath)
     }
 
     func testReset() async {

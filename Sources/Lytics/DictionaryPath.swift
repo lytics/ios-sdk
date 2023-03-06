@@ -8,7 +8,7 @@ import Foundation
 
 /// A path to a specific key in a nested dictionary.
 ///
-/// Use a dict path to access values in a nested dictionary.
+/// Use a dictionary path to access values in a nested dictionary.
 ///
 /// ```swift
 /// var dict: [String: Any] = [
