@@ -43,11 +43,11 @@ protocol UserManaging: Actor {
 
     /// Removes the identifier as the specified dict path.
     /// - Parameter dictPath: A dict path to the identifier to remove.
-    func removeIdentifier(_ dictPath: DictPath)
+    func removeIdentifier(_ dictPath: DictionaryPath)
 
     /// Removes the attribute as the specified dict path.
     /// - Parameter dictPath: A dict path to the attribute to remove.
-    func removeAttribute(_ dictPath: DictPath)
+    func removeAttribute(_ dictPath: DictionaryPath)
 
     /// Clear all stored user information.
     func clear()

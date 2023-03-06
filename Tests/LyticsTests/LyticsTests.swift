@@ -1318,9 +1318,9 @@ extension LyticsTests {
     }
 
     func testRemoveIdentifier() async {
-        let expectedDictPath = DictPath("identifier")
+        let expectedDictPath = DictionaryPath("identifier")
 
-        var actualDictPath: DictPath!
+        var actualDictPath: DictionaryPath!
         let removalExpectation = expectation(description: "Identifier removed")
         let userManager = UserManagerMock<Never, Never>(
             onRemoveIdentifier: { path in
@@ -1343,9 +1343,9 @@ extension LyticsTests {
     }
 
     func testRemoveAttribute() async {
-        let expectedDictPath = DictPath("attribute")
+        let expectedDictPath = DictionaryPath("attribute")
 
-        var actualDictPath: DictPath!
+        var actualDictPath: DictionaryPath!
         let removalExpectation = expectation(description: "Attribute removed")
         let userManager = UserManagerMock<Never, Never>(
             onRemoveAttribute: { path in

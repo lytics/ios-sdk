@@ -145,14 +145,14 @@ actor UserManager: UserManaging {
     /// Removes the identifier at the specified dict path.
     /// - Parameter dictPath: A dict path to the identifier to remove.
     @usableFromInline
-    func removeIdentifier(_ dictPath: DictPath) {
+    func removeIdentifier(_ dictPath: DictionaryPath) {
         identifiers[dictPath: dictPath] = nil
     }
 
     /// Removes the attribute at the specified dict path.
     /// - Parameter dictPath: A dict path to the attribute to remove.
     @usableFromInline
-    func removeAttribute(_ dictPath: DictPath) {
+    func removeAttribute(_ dictPath: DictionaryPath) {
         attributes?[dictPath: dictPath] = nil
     }
 

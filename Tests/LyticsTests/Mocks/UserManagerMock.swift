@@ -14,8 +14,8 @@ actor UserManagerMock<Identifiers: Encodable, Attributes: Encodable>: UserManagi
     var onUpdate: (UserUpdate<Identifiers, Attributes>) throws -> LyticsUser
     var onUpdateAttributes: (Attributes) throws -> [String: Any]
     var onUpdateIdentifiers: (Identifiers) throws -> [String: Any]
-    var onRemoveIdentifier: (DictPath) -> Void
-    var onRemoveAttribute: (DictPath) -> Void
+    var onRemoveIdentifier: (DictionaryPath) -> Void
+    var onRemoveAttribute: (DictionaryPath) -> Void
 
     init(
         onApply: @escaping (UserUpdate<Identifiers, Attributes>) throws -> Void = { _ in XCTFail("UserManagerMock.onApply") },
@@ -23,8 +23,8 @@ actor UserManagerMock<Identifiers: Encodable, Attributes: Encodable>: UserManagi
         onUpdate: @escaping (UserUpdate<Identifiers, Attributes>) throws -> LyticsUser = { _ in XCTFail("UserManagerMock.onUpdate"); return .init() },
         onUpdateAttributes: @escaping (Attributes) throws -> [String: Any] = { _ in XCTFail("UserManagerMock.onUpdateAttributes"); return [:] },
         onUpdateIdentifiers: @escaping (Identifiers) throws -> [String: Any] = { _ in XCTFail("UserManagerMock.onUpdateIdentifiers"); return [:] },
-        onRemoveIdentifier: @escaping (DictPath) -> Void = { _ in XCTFail("UserManagerMock.onRemoveIdentifier") },
-        onRemoveAttribute: @escaping (DictPath) -> Void = { _ in XCTFail("UserManagerMock.onRemoveAttribute") },
+        onRemoveIdentifier: @escaping (DictionaryPath) -> Void = { _ in XCTFail("UserManagerMock.onRemoveIdentifier") },
+        onRemoveAttribute: @escaping (DictionaryPath) -> Void = { _ in XCTFail("UserManagerMock.onRemoveAttribute") },
         identifiers: [String: Any] = [:],
         attributes: [String: Any]? = nil,
         user: LyticsUser = .init()
@@ -67,11 +67,11 @@ actor UserManagerMock<Identifiers: Encodable, Attributes: Encodable>: UserManagi
         return try onUpdate(update)
     }
 
-    func removeIdentifier(_ dictPath: DictPath) {
+    func removeIdentifier(_ dictPath: DictionaryPath) {
         onRemoveIdentifier(dictPath)
     }
 
-    func removeAttribute(_ dictPath: DictPath) {
+    func removeAttribute(_ dictPath: DictionaryPath) {
         onRemoveAttribute(dictPath)
     }
 

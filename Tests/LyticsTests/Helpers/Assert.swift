@@ -16,7 +16,7 @@ enum Assert {
     static func valueEquality<T: Equatable>(
         _ value1: [String: Any],
         _ value2: [String: Any],
-        at dictPath: DictPath,
+        at dictPath: DictionaryPath,
         type: T.Type,
         file: StaticString = #filePath,
         line: UInt = #line

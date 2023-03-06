@@ -26,8 +26,8 @@ final class DictPathTests: XCTestCase {
     ]
 
     func testGetNone() {
-        let none = DictPath.none
-        let nestedNone = DictPath.nested("countries", none)
+        let none = DictionaryPath.none
+        let nestedNone = DictionaryPath.nested("countries", none)
 
         XCTAssertNil(dict[dictPath: none])
         XCTAssertNil(dict[dictPath: nestedNone])
@@ -43,8 +43,8 @@ final class DictPathTests: XCTestCase {
     }
 
     func testSetNone() {
-        let none = DictPath("")
-        let nestedNone = DictPath.nested("nested", none)
+        let none = DictionaryPath("")
+        let nestedNone = DictionaryPath.nested("nested", none)
 
         let nested = ["key": "value"]
         var dict: [String: Any] = [
@@ -93,28 +93,28 @@ final class DictPathTests: XCTestCase {
     }
 
     func testPath() {
-        let none = DictPath.none
+        let none = DictionaryPath.none
         XCTAssertEqual(none.path, "")
 
         let root = "root"
 
-        let tail = DictPath.tail(root)
+        let tail = DictionaryPath.tail(root)
         XCTAssertEqual(tail.path, root)
 
-        let nested = DictPath.nested(root, .tail("tail"))
+        let nested = DictionaryPath.nested(root, .tail("tail"))
         XCTAssertEqual(nested.path, "root.tail")
 
-        let noTail = DictPath.nested(root, .none)
+        let noTail = DictionaryPath.nested(root, .none)
         XCTAssertEqual(noTail.path, root)
     }
 
     func testStringLiteral() {
-        let actual: DictPath = "countries.japan.capital.name"
+        let actual: DictionaryPath = "countries.japan.capital.name"
 
-        let name = DictPath.tail("name")
-        let capital = DictPath.nested("capital", name)
-        let japan = DictPath.nested("japan", capital)
-        let expected = DictPath.nested("countries", japan)
+        let name = DictionaryPath.tail("name")
+        let capital = DictionaryPath.nested("capital", name)
+        let japan = DictionaryPath.nested("japan", capital)
+        let expected = DictionaryPath.nested("countries", japan)
 
         XCTAssertEqual(actual, expected)
     }
