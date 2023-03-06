@@ -21,10 +21,10 @@ enum Assert {
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
-        if let value = value2[dictPath: dictPath] {
-            XCTAssertEqual(value1[dictPath: dictPath] as! T, value as! T, file: file, line: line)
+        if let value = value2[path: dictPath] {
+            XCTAssertEqual(value1[path: dictPath] as! T, value as! T, file: file, line: line)
         } else {
-            XCTAssertNil(value1[dictPath: dictPath], file: file, line: line)
+            XCTAssertNil(value1[path: dictPath], file: file, line: line)
         }
     }
 

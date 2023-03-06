@@ -29,17 +29,17 @@ final class DictionaryPathTests: XCTestCase {
         let none = DictionaryPath.none
         let nestedNone = DictionaryPath.nested("countries", none)
 
-        XCTAssertNil(dict[dictPath: none])
-        XCTAssertNil(dict[dictPath: nestedNone])
+        XCTAssertNil(dict[path: none])
+        XCTAssertNil(dict[path: nestedNone])
     }
 
     func testGetNested() {
-        let actual = dict[dictPath: "countries.japan.capital.name"] as? String
+        let actual = dict[path: "countries.japan.capital.name"] as? String
         XCTAssertEqual(actual, "tokyo")
     }
 
     func testGetAbsentKey() {
-        XCTAssertNil(dict[dictPath: "countries.germany"])
+        XCTAssertNil(dict[path: "countries.germany"])
     }
 
     func testSetNone() {
@@ -52,11 +52,11 @@ final class DictionaryPathTests: XCTestCase {
             "other": 5
         ]
 
-        dict[dictPath: none] = "updated"
+        dict[path: none] = "updated"
         var actual = dict["nested"] as? [String: String]
         XCTAssertEqual(actual, nested)
 
-        dict[dictPath: nestedNone] = "updated"
+        dict[path: nestedNone] = "updated"
         actual = dict["nested"] as? [String: String]
         XCTAssertEqual(actual, nested)
     }
@@ -64,7 +64,7 @@ final class DictionaryPathTests: XCTestCase {
     func testSetNested() {
         var dict = self.dict
 
-        dict[dictPath: "countries.japan.capital.name"] = "other"
+        dict[path: "countries.japan.capital.name"] = "other"
 
         let countries = dict["countries"] as! [String: Any]
         let japan = countries["japan"] as! [String: Any]
@@ -88,7 +88,7 @@ final class DictionaryPathTests: XCTestCase {
             ]
         ]
 
-        dict[dictPath: "a.b.c"] = nil
+        dict[path: "a.b.c"] = nil
         XCTAssert(dict.isEmpty)
     }
 
