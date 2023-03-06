@@ -67,12 +67,12 @@ actor UserManagerMock<Identifiers: Encodable, Attributes: Encodable>: UserManagi
         return try onUpdate(update)
     }
 
-    func removeIdentifier(_ dictPath: DictionaryPath) {
-        onRemoveIdentifier(dictPath)
+    func removeIdentifier(_ path: DictionaryPath) {
+        onRemoveIdentifier(path)
     }
 
-    func removeAttribute(_ dictPath: DictionaryPath) {
-        onRemoveAttribute(dictPath)
+    func removeAttribute(_ path: DictionaryPath) {
+        onRemoveAttribute(path)
     }
 
     func clear() {

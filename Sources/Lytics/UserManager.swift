@@ -142,18 +142,18 @@ actor UserManager: UserManaging {
         return LyticsUser(identifiers: updatedIdentifiers, attributes: updatedAttributes)
     }
 
-    /// Removes the identifier at the specified dict path.
-    /// - Parameter dictPath: A dict path to the identifier to remove.
+    /// Removes the identifier at the specified dictionary path.
+    /// - Parameter path: A dictionary path to the identifier to remove.
     @usableFromInline
-    func removeIdentifier(_ dictPath: DictionaryPath) {
-        identifiers[path: dictPath] = nil
+    func removeIdentifier(_ path: DictionaryPath) {
+        identifiers[path: path] = nil
     }
 
-    /// Removes the attribute at the specified dict path.
-    /// - Parameter dictPath: A dict path to the attribute to remove.
+    /// Removes the attribute at the specified dictionary path.
+    /// - Parameter path: A dictionary path to the attribute to remove.
     @usableFromInline
-    func removeAttribute(_ dictPath: DictionaryPath) {
-        attributes?[path: dictPath] = nil
+    func removeAttribute(_ path: DictionaryPath) {
+        attributes?[path: path] = nil
     }
 
     /// Clear all stored user information.
