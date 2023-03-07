@@ -8,7 +8,6 @@ import AnyCodable
 import Foundation
 
 /// An object that manages the current user's identity.
-@usableFromInline
 actor UserManager: UserManaging {
 
     /// Configurable `UserManager` properties.
@@ -27,7 +26,7 @@ actor UserManager: UserManaging {
     private let storage: UserStorage
 
     /// The user identifiers.
-    @usableFromInline private(set) var identifiers: [String: Any] {
+    private(set) var identifiers: [String: Any] {
         get {
             if let identifiers = storage.identifiers() {
                 return identifiers
@@ -43,7 +42,7 @@ actor UserManager: UserManaging {
     }
 
     /// The user attributes.
-    @usableFromInline private(set) var attributes: [String: Any]? {
+    private(set) var attributes: [String: Any]? {
         get {
             storage.attributes()
         }
@@ -53,7 +52,7 @@ actor UserManager: UserManaging {
     }
 
     /// The current user.
-    @usableFromInline var user: LyticsUser {
+    var user: LyticsUser {
         .init(
             identifiers: identifiers.mapValues(AnyCodable.init(_:)),
             attributes: attributes?.mapValues(AnyCodable.init(_:))
@@ -82,7 +81,6 @@ actor UserManager: UserManaging {
     /// - Parameter other: The identifier to update.
     /// - Returns: The updated identifiers.
     @discardableResult
-    @usableFromInline
     func updateIdentifiers<T: Encodable>(with other: T) throws -> [String: Any] {
         let updated = identifiers.deepMerging(try (convert(other)))
         identifiers = updated
@@ -93,7 +91,6 @@ actor UserManager: UserManaging {
     /// - Parameter other: The attribute to update.
     /// - Returns: The updated attributes.
     @discardableResult
-    @usableFromInline
     func updateAttributes<T: Encodable>(with other: T) throws -> [String: Any] {
         let updated: [String: Any]
         if let currentAttributes = attributes {
@@ -108,7 +105,6 @@ actor UserManager: UserManaging {
 
     /// Updates the user with the given update.
     /// - Parameter userUpdate: The update.
-    @usableFromInline
     func apply<I: Encodable, A: Encodable>(_ userUpdate: UserUpdate<I, A>) throws {
         if let attributesUpdate = userUpdate.attributes {
             try updateAttributes(with: attributesUpdate)
@@ -122,7 +118,6 @@ actor UserManager: UserManaging {
     /// Returns the result of updating the user with the given update.
     /// - Parameter userUpdate: The update.
     /// - Returns: The updated user.
-    @usableFromInline
     func update<I: Encodable, A: Encodable>(with userUpdate: UserUpdate<I, A>) throws -> LyticsUser {
         let updatedAttributes: [String: Any]?
         let updatedIdentifiers: [String: Any]
@@ -143,7 +138,6 @@ actor UserManager: UserManaging {
     }
 
     /// Clear all stored user information.
-    @usableFromInline
     func clear() {
         attributes = nil
         identifiers = makeAnonymousIdentifiers()
@@ -193,7 +187,6 @@ private extension UserManager {
 }
 
 extension UserManager {
-    @usableFromInline
     static func live(configuration: LyticsConfiguration) -> UserManager {
         .init(
             configuration: Configuration(

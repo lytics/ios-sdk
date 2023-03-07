@@ -9,14 +9,14 @@ import Foundation
 /// A container for SDK dependencies.
 @usableFromInline
 struct DependencyContainer {
-    @usableFromInline var appTrackingTransparency: AppTrackingTransparency
-    @usableFromInline var configuration: LyticsConfiguration
-    @usableFromInline var eventPipeline: EventPipelineProtocol
-    @usableFromInline var timestampProvider: () -> Millisecond
-    @usableFromInline var userManager: UserManaging
     var apiToken: String
     var appEventTracker: AppEventTracking
+    var appTrackingTransparency: AppTrackingTransparency
+    var configuration: LyticsConfiguration
+    var eventPipeline: EventPipelineProtocol
     var loader: Loader
+    var timestampProvider: () -> Millisecond
+    var userManager: UserManaging
 }
 
 extension DependencyContainer {
@@ -40,11 +40,6 @@ extension DependencyContainer {
         let userManager = UserManager.live(configuration: configuration)
 
         return .init(
-            appTrackingTransparency: .live,
-            configuration: configuration,
-            eventPipeline: eventPipeline,
-            timestampProvider: { Date().timeIntervalSince1970.milliseconds },
-            userManager: userManager,
             apiToken: apiToken,
             appEventTracker: AppEventTracker.live(
                 configuration: configuration,
@@ -53,11 +48,16 @@ extension DependencyContainer {
                 eventPipeline: eventPipeline,
                 onEvent: appEventHandler
             ),
+            appTrackingTransparency: .live,
+            configuration: configuration,
+            eventPipeline: eventPipeline,
             loader: .live(
                 configuration: configuration,
                 requestBuilder: requestBuilder,
                 requestPerformer: URLSession.live
-            )
+            ),
+            timestampProvider: { Date().timeIntervalSince1970.milliseconds },
+            userManager: userManager
         )
     }
 }
