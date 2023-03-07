@@ -7,7 +7,6 @@
 import Foundation
 
 /// An event pipeline.
-@usableFromInline
 struct EventPipeline: EventPipelineProtocol {
 
     /// Configurable `EventPipeline` properties.
@@ -33,7 +32,7 @@ struct EventPipeline: EventPipelineProtocol {
     private let userSettings: UserSettings
 
     /// A Boolean value indicating whether the user has opted in to event collection.
-    @usableFromInline var isOptedIn: Bool {
+    var isOptedIn: Bool {
         userSettings.getOptIn()
     }
 
@@ -59,7 +58,6 @@ struct EventPipeline: EventPipelineProtocol {
     ///   - timestamp: The event timestamp.
     ///   - name: The event name.
     ///   - event: The event.
-    @usableFromInline
     func event<E: Encodable>(
         stream: String?,
         timestamp: Millisecond,
@@ -86,19 +84,16 @@ struct EventPipeline: EventPipelineProtocol {
     }
 
     /// Opts the user in to event collection.
-    @usableFromInline
     func optIn() {
         userSettings.setOptIn(true)
     }
 
     /// Opts the user out of event collection.
-    @usableFromInline
     func optOut() {
         userSettings.setOptIn(false)
     }
 
     /// Force flushes the event queue by sending all events in the queue immediately.
-    @usableFromInline
     func dispatch() async {
         await eventQueue.flush()
     }

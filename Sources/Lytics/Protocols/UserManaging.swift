@@ -8,7 +8,6 @@ import AnyCodable
 import Foundation
 
 /// A type that manages user identifiers and attributes.
-@usableFromInline
 protocol UserManaging: Actor {
 
     /// The user identifiers.
