@@ -16,15 +16,15 @@ enum Assert {
     static func valueEquality<T: Equatable>(
         _ value1: [String: Any],
         _ value2: [String: Any],
-        at dictPath: DictPath,
+        at path: DictionaryPath,
         type: T.Type,
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
-        if let value = value2[dictPath: dictPath] {
-            XCTAssertEqual(value1[dictPath: dictPath] as! T, value as! T, file: file, line: line)
+        if let value = value2[path: path] {
+            XCTAssertEqual(value1[path: path] as! T, value as! T, file: file, line: line)
         } else {
-            XCTAssertNil(value1[dictPath: dictPath], file: file, line: line)
+            XCTAssertNil(value1[path: path], file: file, line: line)
         }
     }
 

@@ -779,19 +779,19 @@ public extension Lytics {
         }
     }
 
-    /// Removes the identifier at the specified dict path.
-    /// - Parameter dictPath: A dict path to the identifier to remove.
-    func removeIdentifier(_ dictPath: DictPath) {
+    /// Removes the identifier at the specified dictionary path.
+    /// - Parameter path: A dictionary path to the identifier to remove.
+    func removeIdentifier(_ path: DictionaryPath) {
         Task {
-            await dependencies.userManager.removeIdentifier(dictPath)
+            await dependencies.userManager.removeIdentifier(path)
         }
     }
 
-    /// Removes the attribute at the specified dict path.
-    /// - Parameter dictPath: A dict path to the attribute to remove.
-    func removeAttribute(_ dictPath: DictPath) {
+    /// Removes the attribute at the specified dictionary path.
+    /// - Parameter path: A dictionary path to the attribute to remove.
+    func removeAttribute(_ path: DictionaryPath) {
         Task {
-            await dependencies.userManager.removeAttribute(dictPath)
+            await dependencies.userManager.removeAttribute(path)
         }
     }
 }

@@ -1,5 +1,5 @@
 //
-//  DictPath.swift
+//  DictionaryPath.swift
 //
 //  Created by Mathew Gacy on 2/13/23.
 //
@@ -8,7 +8,7 @@ import Foundation
 
 /// A path to a specific key in a nested dictionary.
 ///
-/// Use a dict path to access values in a nested dictionary.
+/// Use a dictionary path to access values in a nested dictionary.
 ///
 /// ```swift
 /// var dict: [String: Any] = [
@@ -17,11 +17,11 @@ import Foundation
 ///     ]
 ///  ]
 ///
-/// let current = dict[dictPath: "outer.inner"] // 5
-/// dict[dictPath: "outer.inner"] = 6 // ["outer": ["inner": 6]]
+/// let current = dict[path: "outer.inner"] // 5
+/// dict[path: "outer.inner"] = 6 // ["outer": ["inner": 6]]
 /// ```
-public enum DictPath: Codable, Equatable, Hashable {
-    indirect case nested(_ key: String, _ remaining: DictPath)
+public enum DictionaryPath: Codable, Equatable, Hashable {
+    indirect case nested(_ key: String, _ remaining: DictionaryPath)
     case tail(_ key: String)
     case none
 
@@ -40,7 +40,7 @@ public enum DictPath: Codable, Equatable, Hashable {
     }
 }
 
-public extension DictPath {
+public extension DictionaryPath {
 
     /// Creates a new instance with the given array of keys.
     ///
@@ -53,8 +53,8 @@ public extension DictPath {
     ///     ]
     ///  ]
     ///
-    /// let path = DictPath(keys: ["outer", "inner"])
-    /// let value = dict[dictPath: path] // 5
+    /// let path = DictionaryPath(keys: ["outer", "inner"])
+    /// let value = dict[path: path] // 5
     /// ```
     /// - Parameter keys: The key pahts of the new instance.
     init?(keys: [String]) {
@@ -70,7 +70,7 @@ public extension DictPath {
 
         if copy.isEmpty {
             self = .tail(head)
-        } else if let remaining = DictPath(keys: copy) {
+        } else if let remaining = DictionaryPath(keys: copy) {
             self = .nested(head, remaining)
         } else {
             self = .tail(head)
@@ -88,8 +88,8 @@ public extension DictPath {
     ///     ]
     ///  ]
     ///
-    /// let path = DictPath("outer.inner")
-    /// let value = dict[dictPath: path] // 5
+    /// let path = DictionaryPath("outer.inner")
+    /// let value = dict[path: path] // 5
     /// ```
     ///
     /// - Parameter path: The value of the new instance.
@@ -99,7 +99,7 @@ public extension DictPath {
 
         if head.isEmpty {
             self = .none
-        } else if let remaining = DictPath(keys: keys) {
+        } else if let remaining = DictionaryPath(keys: keys) {
             self = .nested(head, remaining)
         } else {
             self = .tail(head)
@@ -108,7 +108,7 @@ public extension DictPath {
 }
 
 // MARK: ExpressibleByStringLiteral
-extension DictPath: ExpressibleByStringLiteral {
+extension DictionaryPath: ExpressibleByStringLiteral {
 
     /// Creates an instance initialized to the given string value.
     /// - Parameter value: The value of the new instance.
@@ -129,13 +129,13 @@ extension DictPath: ExpressibleByStringLiteral {
     }
 }
 
-// MARK: - Dictionary+DictPath
+// MARK: - Dictionary+DictionaryPath
 public extension Dictionary where Key == String {
 
     /// Accesses the value associated with the given key for reading and writing.
-    subscript(dictPath dictPath: DictPath) -> Any? {
+    subscript(path path: DictionaryPath) -> Any? {
         get {
-            switch dictPath {
+            switch path {
             case .none:
                 return nil
 
@@ -145,7 +145,7 @@ public extension Dictionary where Key == String {
             case let .nested(key, remainingPath):
                 switch self[key] {
                 case let nestedDict as [Key: Any]:
-                    return nestedDict[dictPath: remainingPath]
+                    return nestedDict[path: remainingPath]
 
                 default:
                     return nil
@@ -153,7 +153,7 @@ public extension Dictionary where Key == String {
             }
         }
         set {
-            switch dictPath {
+            switch path {
             case .none:
                 return
 
@@ -168,7 +168,7 @@ public extension Dictionary where Key == String {
             case let .nested(key, remainingPath):
                 switch self[key] {
                 case var nestedDict as [Key: Any]:
-                    nestedDict[dictPath: remainingPath] = newValue
+                    nestedDict[path: remainingPath] = newValue
                     self[key] = nestedDict.isNotEmpty ? nestedDict as? Value : nil
 
                 default:
