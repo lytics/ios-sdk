@@ -148,7 +148,7 @@ final class UserManagerTests: XCTestCase {
         }
 
         await waitForExpectations(timeout: expectationTimeout)
-        XCTAssertEqual(caughtError!.userDescription, "Unable to creation a dictionary from 1.")
+        XCTAssertEqual(caughtError!.userDescription, "Unable to create a dictionary from 1.")
     }
 
     func testApply() async throws {
@@ -346,6 +346,56 @@ final class UserManagerTests: XCTestCase {
                 updatedIdentityKey: updatedIdentityValue
             ]
         )
+    }
+
+    func testRemoveIdentifier() async {
+        let expectedIdentifiers: [String: Any] = [
+            "email": "someemail@lytics.com",
+            "userID": 1_234,
+            "nested": [
+                "a": 1
+            ]
+        ]
+
+        var storedIdentifiers: [String: Any]! = User1.anyIdentifiers
+        let storage = UserStorage.mock(
+            identifiers: { storedIdentifiers },
+            storeIdentifiers: { storedIdentifiers = $0 }
+        )
+
+        let sut = UserManager(
+            configuration: .init(),
+            encoder: .init(),
+            idProvider: { Mock.uuidString },
+            storage: storage
+        )
+
+        await sut.removeIdentifier("nested.b")
+
+        Assert.identifierEquality(storedIdentifiers, expected: expectedIdentifiers)
+    }
+
+    func testRemoveAttribute() async {
+        let expectedAttributes: [String: Any] = [
+            "firstName": "Jane"
+        ]
+
+        var storedAttributes: [String: Any]? = User1.anyAttributes
+        let storage = UserStorage.mock(
+            attributes: { storedAttributes },
+            storeAttributes: { storedAttributes = $0 }
+        )
+
+        let sut = UserManager(
+            configuration: .init(),
+            encoder: .init(),
+            idProvider: { Mock.uuidString },
+            storage: storage
+        )
+
+        await sut.removeAttribute("titles")
+
+        Assert.attributeEquality(storedAttributes!, expected: expectedAttributes)
     }
 
     func testClear() async {

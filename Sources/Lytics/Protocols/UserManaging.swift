@@ -41,6 +41,14 @@ protocol UserManaging: Actor {
     /// - Returns: The updated user.
     func update<A: Encodable, I: Encodable>(with userUpdate: UserUpdate<A, I>) throws -> LyticsUser
 
+    /// Removes the identifier as the specified dict path.
+    /// - Parameter dictPath: A dict path to the identifier to remove.
+    func removeIdentifier(_ dictPath: DictPath)
+
+    /// Removes the attribute as the specified dict path.
+    /// - Parameter dictPath: A dict path to the attribute to remove.
+    func removeAttribute(_ dictPath: DictPath)
+
     /// Clear all stored user information.
     func clear()
 }
