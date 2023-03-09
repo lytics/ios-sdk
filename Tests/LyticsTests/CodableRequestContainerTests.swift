@@ -90,9 +90,6 @@ final class CodableRequestContainerTests: XCTestCase {
         let container = CodableRequestContainer(requests: wrappedRequests)
         let data = try JSONEncoder().encode(container)
 
-        let string = String(decoding: data, as: UTF8.self)
-        print("\(string)\n")
-
         // Decoded
         let decoded = try JSONDecoder().decode(CodableRequestContainer.self, from: data)
         XCTAssertEqual(decoded.requests.count, 2)

@@ -1317,6 +1317,56 @@ extension LyticsTests {
         waitForExpectations(timeout: expectationTimeout)
     }
 
+    func testRemoveIdentifier() async {
+        let expectedPath = DictionaryPath("identifier")
+
+        var actualPath: DictionaryPath!
+        let removalExpectation = expectation(description: "Identifier removed")
+        let userManager = UserManagerMock<Never, Never>(
+            onRemoveIdentifier: { path in
+                actualPath = path
+                removalExpectation.fulfill()
+            }
+        )
+
+        let sut = Lytics(
+            logger: .mock,
+            dependencies: .test(
+                userManager: userManager
+            )
+        )
+
+        sut.removeIdentifier(expectedPath)
+
+        await waitForExpectations(timeout: expectationTimeout)
+        XCTAssertEqual(actualPath, expectedPath)
+    }
+
+    func testRemoveAttribute() async {
+        let expectedPath = DictionaryPath("attribute")
+
+        var actualPath: DictionaryPath!
+        let removalExpectation = expectation(description: "Attribute removed")
+        let userManager = UserManagerMock<Never, Never>(
+            onRemoveAttribute: { path in
+                actualPath = path
+                removalExpectation.fulfill()
+            }
+        )
+
+        let sut = Lytics(
+            logger: .mock,
+            dependencies: .test(
+                userManager: userManager
+            )
+        )
+
+        sut.removeAttribute(expectedPath)
+
+        await waitForExpectations(timeout: expectationTimeout)
+        XCTAssertEqual(actualPath, expectedPath)
+    }
+
     func testReset() async {
         let disableTrackingExpectation = expectation(description: "Tracking disabled")
         let appTrackingTransparency = AppTrackingTransparency.test(

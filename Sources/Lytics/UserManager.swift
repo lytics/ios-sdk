@@ -137,6 +137,20 @@ actor UserManager: UserManaging {
         return LyticsUser(identifiers: updatedIdentifiers, attributes: updatedAttributes)
     }
 
+    /// Removes the identifier at the specified dictionary path.
+    /// - Parameter path: A dictionary path to the identifier to remove.
+    @usableFromInline
+    func removeIdentifier(_ path: DictionaryPath) {
+        identifiers[path: path] = nil
+    }
+
+    /// Removes the attribute at the specified dictionary path.
+    /// - Parameter path: A dictionary path to the attribute to remove.
+    @usableFromInline
+    func removeAttribute(_ path: DictionaryPath) {
+        attributes?[path: path] = nil
+    }
+
     /// Clear all stored user information.
     func clear() {
         attributes = nil
@@ -178,7 +192,7 @@ private extension UserManager {
                 T.self,
                 .init(
                     codingPath: [],
-                    debugDescription: "Unable to creation a dictionary from \(value)."
+                    debugDescription: "Unable to create a dictionary from \(value)."
                 )
             )
         }
