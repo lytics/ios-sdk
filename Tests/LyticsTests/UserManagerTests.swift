@@ -367,6 +367,67 @@ final class UserManagerTests: XCTestCase {
         )
     }
 
+    func testIDFAIsAdded() async {
+        let expectedIDFA = "11111111-1111-1111-1111-111111111111"
+        let expectedIdentifiers: [String: String] = [
+            Constants.defaultAnonymousIdentityKey: Mock.uuidString,
+            Constants.idfaKey: expectedIDFA
+        ]
+
+        let idfaProvider: () -> String? = {
+            expectedIDFA
+        }
+
+        var storedIdentifiers: [String: Any]! = [Constants.defaultAnonymousIdentityKey: Mock.uuidString]
+        let storage = UserStorage.mock(
+            identifiers: { storedIdentifiers },
+            storeIdentifiers: { storedIdentifiers = $0 }
+        )
+
+        let sut = UserManager(
+            configuration: .init(),
+            encoder: .init(),
+            idfaProvider: idfaProvider,
+            idProvider: { Mock.uuidString },
+            storage: storage
+        )
+
+        let actualIdentifiers = await sut.identifiers
+        XCTAssertEqual(actualIdentifiers as! [String: String], expectedIdentifiers)
+    }
+
+    func testIDFAIsPreserved() async throws {
+        let expectedIDFA = "11111111-1111-1111-1111-111111111111"
+        let expectedIdentifiers: [String: String] = [
+            Constants.defaultAnonymousIdentityKey: Mock.uuidString,
+            Constants.idfaKey: expectedIDFA
+        ]
+
+        let idfaProvider: () -> String? = {
+            expectedIDFA
+        }
+
+        var storedIdentifiers: [String: Any]! = [Constants.defaultAnonymousIdentityKey: Mock.uuidString]
+        let storage = UserStorage.mock(
+            identifiers: { storedIdentifiers },
+            storeIdentifiers: { storedIdentifiers = $0 }
+        )
+
+        let sut = UserManager(
+            configuration: .init(),
+            encoder: .init(),
+            idfaProvider: idfaProvider,
+            idProvider: { Mock.uuidString },
+            storage: storage
+        )
+
+        let userUpdate: [String: AnyCodable] = [Constants.idfaKey: "mutated"]
+        try await sut.updateIdentifiers(with: userUpdate)
+
+        let actualIdentifiers = await sut.identifiers
+        XCTAssertEqual(actualIdentifiers as! [String: String], expectedIdentifiers)
+    }
+
     func testRemoveIdentifier() async {
         let expectedIdentifiers: [String: Any] = [
             "email": "someemail@lytics.com",
