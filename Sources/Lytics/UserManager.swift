@@ -21,7 +21,7 @@ actor UserManager: UserManaging {
     }
 
     private let configuration: Configuration
-    private var idfaProvider: () -> String?
+    private let idfaProvider: () -> String?
     private let idProvider: () -> String
     private let encoder: JSONEncoder
     private let storage: UserStorage
