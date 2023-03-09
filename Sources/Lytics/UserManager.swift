@@ -21,6 +21,7 @@ actor UserManager: UserManaging {
     }
 
     private let configuration: Configuration
+    private var idfaProvider: () -> String?
     private let idProvider: () -> String
     private let encoder: JSONEncoder
     private let storage: UserStorage
@@ -28,13 +29,21 @@ actor UserManager: UserManaging {
     /// The user identifiers.
     private(set) var identifiers: [String: Any] {
         get {
-            if let identifiers = storage.identifiers() {
-                return identifiers
+            var identifiers: [String: Any]
+            if let currentIdentifiers = storage.identifiers() {
+                identifiers = currentIdentifiers
             } else {
                 let newIdentifiers = makeAnonymousIdentifiers()
                 storage.storeIdentifiers(newIdentifiers)
-                return newIdentifiers
+                identifiers = newIdentifiers
             }
+
+            // Add additional values
+            if let idfa = idfaProvider() {
+                identifiers[Constants.idfaKey] = idfa
+            }
+
+            return identifiers
         }
         set {
             storage.storeIdentifiers(newValue)
@@ -62,6 +71,7 @@ actor UserManager: UserManaging {
     init(
         configuration: Configuration = .init(),
         encoder: JSONEncoder,
+        idfaProvider: @escaping () -> String?,
         idProvider: @escaping () -> String = { UUID().uuidString },
         storage: UserStorage
     ) {
@@ -73,6 +83,7 @@ actor UserManager: UserManaging {
 
         self.configuration = configuration
         self.encoder = encoder
+        self.idfaProvider = idfaProvider
         self.idProvider = idProvider
         self.storage = storage
     }
@@ -139,14 +150,12 @@ actor UserManager: UserManaging {
 
     /// Removes the identifier at the specified dictionary path.
     /// - Parameter path: A dictionary path to the identifier to remove.
-    @usableFromInline
     func removeIdentifier(_ path: DictionaryPath) {
         identifiers[path: path] = nil
     }
 
     /// Removes the attribute at the specified dictionary path.
     /// - Parameter path: A dictionary path to the attribute to remove.
-    @usableFromInline
     func removeAttribute(_ path: DictionaryPath) {
         attributes?[path: path] = nil
     }
@@ -201,13 +210,17 @@ private extension UserManager {
 }
 
 extension UserManager {
-    static func live(configuration: LyticsConfiguration) -> UserManager {
+    static func live(
+        configuration: LyticsConfiguration,
+        idfaProvider: @escaping () -> String?
+    ) -> UserManager {
         .init(
             configuration: Configuration(
                 primaryIdentityKey: configuration.primaryIdentityKey,
                 anonymousIdentityKey: configuration.anonymousIdentityKey
             ),
             encoder: JSONEncoder(),
+            idfaProvider: idfaProvider,
             idProvider: { UUID().uuidString },
             storage: .live()
         )
@@ -217,6 +230,7 @@ extension UserManager {
         static let mock = UserManager(
             configuration: .init(),
             encoder: JSONEncoder(),
+            idfaProvider: { nil },
             storage: .mock()
         )
     #endif

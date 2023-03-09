@@ -37,7 +37,12 @@ extension DependencyContainer {
             requestBuilder: requestBuilder
         )
 
-        let userManager = UserManager.live(configuration: configuration)
+        let appTrackingTransparency = AppTrackingTransparency.live
+
+        let userManager = UserManager.live(
+            configuration: configuration,
+            idfaProvider: appTrackingTransparency.idfa
+        )
 
         return .init(
             apiToken: apiToken,
@@ -48,7 +53,7 @@ extension DependencyContainer {
                 eventPipeline: eventPipeline,
                 onEvent: appEventHandler
             ),
-            appTrackingTransparency: .live,
+            appTrackingTransparency: appTrackingTransparency,
             configuration: configuration,
             eventPipeline: eventPipeline,
             loader: .live(
