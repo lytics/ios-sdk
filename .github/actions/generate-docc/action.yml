@@ -1,0 +1,32 @@
+name: Generate DocC
+
+description: Generates documentation using the SwiftDocC Plugin.
+
+inputs:
+  hosting-base-path:
+    description: The base path where the documentation will be published; this is probably the repo name.
+    required: true
+  output-path:
+    description: The path for the documentation output.
+    required: true
+  target:
+    description: The name of the target.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Generate
+      shell: bash
+      run: |
+        export BUILDING_FOR_DOCUMENTATION_GENERATION=YES
+        export DOCC_JSON_PRETTYPRINT=YES
+
+        swift package \
+          --allow-writing-to-directory ${{ inputs.output-path }}/docs \
+          generate-documentation \
+          --target ${{ inputs.target }} \
+          --disable-indexing \
+          --transform-for-static-hosting \
+          --hosting-base-path ${{ inputs.hosting-base-path }} \
+          --output-path ${{ inputs.output-path }}/docs
