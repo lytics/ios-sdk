@@ -3,6 +3,10 @@
 
 import PackageDescription
 
+enum EnvironmentKey {
+    static let buildingDocs = "BUILDING_FOR_DOCUMENTATION_GENERATION"
+}
+
 let package = Package(
     name: "lytics",
     platforms: [
@@ -43,3 +47,19 @@ let package = Package(
             dependencies: ["Lytics"])
     ]
 )
+
+
+#if canImport(Darwin)
+import Darwin
+let buildingDocs = getenv(EnvironmentKey.buildingDocs) != nil
+#elseif canImport(Glibc)
+import Glibc
+let buildingDocs = getenv(EnvironmentKey.buildingDocs) != nil
+#else
+let buildingDocs = false
+#endif
+
+// Only require the docc plugin when building documentation
+package.dependencies += buildingDocs ? [
+  .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
+] : []
