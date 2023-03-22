@@ -1,8 +1,6 @@
 name: Generate DocC
 on:
   workflow_dispatch:
-  push:
-    branches: [ main ]
 
 env:
   GH-PAGES-BRANCH: 'gh-pages'
