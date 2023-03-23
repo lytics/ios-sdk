@@ -11,9 +11,6 @@ on:
           - minor
           - major
 
-env:
-  VERSION-FILE-PATH: 'Sources/Lytics/Version.swift'
-
 jobs:
   release:
     runs-on: ubuntu-latest
