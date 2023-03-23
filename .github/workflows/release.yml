@@ -21,7 +21,8 @@ jobs:
       - name: Bump Version file
         id: bump
         run: |
-         echo "::set-output name=version::$(swift package --allow-writing-to-package-directory version-file --target Lytics --bump ${{ inputs.release_type }})"
+          export LYTICS_SWIFT_CI=BUILDING_FOR_RELEASE
+          echo "::set-output name=version::$(swift package --allow-writing-to-package-directory version-file --target Lytics --bump ${{ inputs.release_type }})"
 
       - name: Create pull request
         id: cpr
