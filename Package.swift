@@ -43,7 +43,9 @@ let package = Package(
 
 // MARK: - Additional Dependencies for CI
 
-enum CI: String {
+/// A representation of CI workflows that require additional Swift Package Manager plugins.
+enum CIWorkflow: String {
+    /// The environment variable used to indicate that a particular workflow is active.
     static let environmentVariable = "LYTICS_SWIFT_CI"
 
     case release = "BUILDING_FOR_RELEASE"
@@ -56,13 +58,13 @@ enum CI: String {
     }
 }
 
-let workflow: CI?
+let workflow: CIWorkflow?
 #if canImport(Darwin)
 import Darwin
-workflow = CI(cString: getenv(CI.environmentVariable))
+workflow = CIWorkflow(cString: getenv(CIWorkflow.environmentVariable))
 #elseif canImport(Glibc)
 import Glibc
-workflow = CI(cString: getenv(CI.environmentVariable))
+workflow = CIWorkflow(cString: getenv(CIWorkflow.environmentVariable))
 #else
 workflow = nil
 #endif
