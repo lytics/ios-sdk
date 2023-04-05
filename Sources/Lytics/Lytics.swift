@@ -217,7 +217,7 @@ public extension Lytics {
 
     /// Tracks a custom event.
     ///
-    /// See ``Lytics/Lytics/track(stream:name:timestamp:identifiers:properties:)`` for a full code sample.
+    /// See ``consent(stream:name:timestamp:attributes:consent:shouldSend:)`` for a full code sample.
     ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
@@ -236,7 +236,7 @@ public extension Lytics {
 
     /// Tracks a custom event.
     ///
-    /// See ``Lytics/Lytics/track(stream:name:timestamp:identifiers:properties:)`` for a full code sample.
+    /// See ``track(stream:name:timestamp:identifiers:properties:)`` for a full code sample.
     ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
@@ -313,7 +313,7 @@ public extension Lytics {
 
     /// Updates the user properties and optionally emit an identity event.
     ///
-    /// See ``Lytics/Lytics/identify(stream:name:timestamp:identifiers:attributes:shouldSend:)`` for a full code sample.
+    /// See ``identify(stream:name:timestamp:identifiers:attributes:shouldSend:)`` for a full code sample.
     ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
