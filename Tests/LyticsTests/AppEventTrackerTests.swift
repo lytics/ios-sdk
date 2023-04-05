@@ -72,7 +72,7 @@ final class AppEventTrackerTests: XCTestCase {
 
         handlerExpectation = expectation(description: "Event handled")
         await center.post(name: UIApplication.didBecomeActiveNotification, object: nil)
-        await waitForExpectations(timeout: 1.0)
+        await fulfillment(of: [handlerExpectation], timeout: 1.0)
 
         sut = nil
 
@@ -80,7 +80,7 @@ final class AppEventTrackerTests: XCTestCase {
         handlerExpectation = expectation(description: "Event not handled")
         handlerExpectation.isInverted = true
         await center.post(name: UIApplication.didBecomeActiveNotification, object: nil)
-        await waitForExpectations(timeout: 1.0)
+        await fulfillment(of: [handlerExpectation], timeout: 1.0)
     }
 
     func testAppLifecycleEventsSent() async throws {
@@ -113,14 +113,14 @@ final class AppEventTrackerTests: XCTestCase {
         // didBecomeActive
         eventExpectation = expectation(description: "didBecomeActive sent")
         await center.post(name: UIApplication.didBecomeActiveNotification, object: nil)
-        await waitForExpectations(timeout: 1.0)
+        await fulfillment(of: [eventExpectation], timeout: 1.0)
         XCTAssertEqual(eventName, EventNames.appOpen)
         XCTAssertEqual(streamName, expectedStream)
 
         // didEnterBackground
         eventExpectation = expectation(description: "didEnterBackground sent")
         await center.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
-        await waitForExpectations(timeout: 1.0)
+        await fulfillment(of: [eventExpectation], timeout: 1.0)
         XCTAssertEqual(eventName, EventNames.appBackground)
         XCTAssertEqual(streamName, expectedStream)
     }
@@ -151,7 +151,7 @@ final class AppEventTrackerTests: XCTestCase {
         await center.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
         await center.post(name: UIApplication.willTerminateNotification, object: nil)
 
-        await waitForExpectations(timeout: 1.0)
+        await fulfillment(of: [eventExpectation], timeout: 1.0)
     }
 
     func testAppVersionEventsSent() async throws {
@@ -179,7 +179,7 @@ final class AppEventTrackerTests: XCTestCase {
             lifecycleEvents: center.lifecycleEvents(),
             versionTracker: .mock(.install("1.0"))
         )
-        await waitForExpectations(timeout: 1.0)
+        await fulfillment(of: [eventExpectation], timeout: 1.0)
         XCTAssertEqual(eventName, EventNames.appInstall)
         sut.stopTracking()
 
@@ -189,7 +189,7 @@ final class AppEventTrackerTests: XCTestCase {
             lifecycleEvents: center.lifecycleEvents(),
             versionTracker: .mock(.update("1.1"))
         )
-        await waitForExpectations(timeout: 1.0)
+        await fulfillment(of: [eventExpectation], timeout: 1.0)
         XCTAssertEqual(eventName, EventNames.appUpdate)
         sut.stopTracking()
     }
@@ -223,7 +223,7 @@ final class AppEventTrackerTests: XCTestCase {
         eventExpectation = expectation(description: "didBecomeActive sent")
         handlerExpectation = expectation(description: "Event handled")
         await center.post(name: UIApplication.didBecomeActiveNotification, object: nil)
-        await waitForExpectations(timeout: 1.0)
+        await fulfillment(of: [eventExpectation, handlerExpectation], timeout: 1.0)
 
         eventExpectation = expectation(description: "Event not sent")
         eventExpectation.isInverted = true
@@ -232,6 +232,6 @@ final class AppEventTrackerTests: XCTestCase {
 
         sut.stopTracking()
         await center.post(name: UIApplication.didBecomeActiveNotification, object: nil)
-        await waitForExpectations(timeout: 1.0)
+        await fulfillment(of: [eventExpectation, handlerExpectation], timeout: 1.0)
     }
 }
