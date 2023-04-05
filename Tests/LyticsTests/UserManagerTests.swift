@@ -79,7 +79,7 @@ final class UserManagerTests: XCTestCase {
                     "nested": [
                         "a": a,
                         "b": b
-                    ]
+                    ] as [String: Any]
                 ],
                 attributes: [
                     "firstName": User1.firstName
@@ -103,7 +103,7 @@ final class UserManagerTests: XCTestCase {
                     "nested": [
                         "a": a,
                         "b": b
-                    ]
+                    ] as [String: Any]
                 ],
                 attributes: [
                     "firstName": User1.firstName,
@@ -192,7 +192,7 @@ final class UserManagerTests: XCTestCase {
                 "nested": [
                     "a": a,
                     "b": b
-                ]
+                ] as [String: Any]
             ]
         )
 
