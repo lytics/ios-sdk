@@ -34,19 +34,19 @@ final class AppEventTrackerTests: XCTestCase {
         // didBecomeActive
         handlerExpectation = expectation(description: "didBecomeActive handled")
         await center.post(name: UIApplication.didBecomeActiveNotification, object: nil)
-        await waitForExpectations(timeout: 1.0)
+        await fulfillment(of: [handlerExpectation], timeout: 1.0)
         XCTAssertEqual(handledEvent, .didBecomeActive)
 
         // didEnterBackground
         handlerExpectation = expectation(description: "didEnterBackground handled")
         await center.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
-        await waitForExpectations(timeout: 1.0)
+        await fulfillment(of: [handlerExpectation], timeout: 1.0)
         XCTAssertEqual(handledEvent, .didEnterBackground)
 
         // willTerminate
         handlerExpectation = expectation(description: "willTerminate handled")
         await center.post(name: UIApplication.willTerminateNotification, object: nil)
-        await waitForExpectations(timeout: 1.0)
+        await fulfillment(of: [handlerExpectation], timeout: 1.0)
         XCTAssertEqual(handledEvent, .willTerminate)
     }
 
