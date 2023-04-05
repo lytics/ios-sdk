@@ -252,6 +252,31 @@ public extension Lytics {
     }
 
     /// Updates the user properties and optionally emit an identity event.
+    ///
+    /// Start by defining types to represent identifiers and attributes you wish to track:
+    ///
+    /// ```swift
+    /// struct MyIdentifiers: Codable {
+    ///     var email: String
+    /// }
+    ///
+    /// struct MyAttributes: Codable {
+    ///     var firstName: String
+    ///     var lastName: String
+    /// }
+    /// ```
+    ///
+    /// Then, call the identify method with instances of these types:
+    ///
+    /// ```swift
+    /// Lytics.shared.identify(
+    ///     stream: "sample-custom-stream", // Optional
+    ///     name: "sample-custom-name",     // Optional
+    ///     identifiers: MyIdentifiers(email: "kevin@homealone.com"),
+    ///     attributes: MyAttributes(firstName: "Kevin", lastName: "McCallister")
+    /// )
+    /// ```
+    ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
@@ -287,6 +312,9 @@ public extension Lytics {
     }
 
     /// Updates the user properties and optionally emit an identity event.
+    ///
+    /// See ``Lytics/Lytics/identify(stream:name:timestamp:identifiers:attributes:shouldSend:)`` for a full code sample.
+    ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
