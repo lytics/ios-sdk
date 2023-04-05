@@ -162,12 +162,37 @@ public final class Lytics {
 public extension Lytics {
 
     /// Tracks a custom event.
+    ///
+    /// Start by defining types to represent the identifiers and properties you wish to track:
+    ///
+    /// ```swift
+    /// struct MyIdentifiers: Codable {
+    ///     var email: String
+    /// }
+    ///
+    /// struct MyPurchaseEvent: Codeable {
+    ///     var total: Double
+    ///     var item: String
+    /// }
+    /// ```
+    ///
+    /// Then, call the track method with instances of these types:
+    ///
+    /// ```swift
+    /// Lytics.shared.track(
+    ///     stream: "sample-custom-stream", // Optional
+    ///     name: "purchase",               // Optional
+    ///     identifiers: MyIdentifiers(email: "kevin@homealone.com"),
+    ///     properties: MyPurchaseEvent(total: 19.99, item: "Slingshot")
+    /// )
+    /// ```
+    ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
     ///   - timestamp: A custom timestamp for the event.
     ///   - identifiers: A value representing additional identifiers to associate with this event.
-    ///   - properties: A value  representing the event properties.
+    ///   - properties: A value representing the event properties.
     @inlinable
     func track<I: Codable, P: Codable>(
         stream: String? = nil,
@@ -191,6 +216,9 @@ public extension Lytics {
     }
 
     /// Tracks a custom event.
+    ///
+    /// See ``Lytics/Lytics/track(stream:name:timestamp:identifiers:properties:)`` for a full code sample.
+    ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
@@ -207,6 +235,9 @@ public extension Lytics {
     }
 
     /// Tracks a custom event.
+    ///
+    /// See ``Lytics/Lytics/track(stream:name:timestamp:identifiers:properties:)`` for a full code sample.
+    ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
