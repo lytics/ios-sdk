@@ -80,6 +80,23 @@ public final class Lytics {
     }
 
     /// Configures this Lytics SDK instance.
+    ///
+    /// You must configure the SDK with an [API token](https://learn.lytics.com/documentation/product/features/account-management/managing-api-tokens)
+    /// before using it:
+    ///
+    /// ```swift
+    /// Lytics.shared.start(apiToken: "YOUR-VALID-LYTICS-API-TOKEN")
+    /// ```
+    ///
+    /// Use the optional trailing closure for additional configuration:
+    ///
+    /// ```swift
+    /// Lytics.shared.start(apiToken: "YOUR-VALID-LYTICS-API-TOKEN") {
+    ///     $0.logLevel = .debug
+    ///     $0.defaultStream = "my_custom_ios_stream"
+    /// }
+    /// ```
+    ///
     /// - Parameters:
     ///   - apiToken: A Lytics account API token.
     ///   - configure: A closure enabling mutation of the configuration.
