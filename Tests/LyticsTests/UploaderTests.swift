@@ -42,7 +42,7 @@ final class UploaderTests: XCTestCase {
         let requestCount = await sut.pendingRequestCount
         XCTAssertEqual(requestCount, requests.count)
 
-        await fulfillment(of: [requestExpectation, ], timeout: 0.5)
+        await fulfillment(of: [requestExpectation], timeout: 0.5)
         XCTAssertEqual(performedRequest, requests.first!)
 
         // Delay to give uploader time to remove request
