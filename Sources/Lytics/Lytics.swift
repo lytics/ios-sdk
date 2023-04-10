@@ -348,6 +348,42 @@ public extension Lytics {
     }
 
     /// Updates a user consent properties and optionally emit a special event that represents an app user's explicit consent.
+    ///
+    /// Start by defining types to represent identifiers, attributes, and consent-specific information you wish to track:
+    ///
+    /// ```swift
+    /// struct MyIdentifiers: Codable {
+    ///     var userID: String
+    /// }
+    ///
+    /// struct MyAttributes: Codable {
+    ///     var firstName: String
+    ///     var lastName: String
+    /// }
+    ///
+    /// struct MyConsent: Codable {
+    ///     var documents: [String]
+    ///     var location: String
+    ///     var consented: Bool
+    /// }
+    /// ```
+    ///
+    /// Then, call the identify method with instances of these types:
+    ///
+    /// ```swift
+    /// Lytics.shared.consent(
+    ///     stream: "sample-custom-stream", // Optional
+    ///     name: "sample-custom-name",     // Optional
+    ///     identifiers: MyIdentifiers(userID: "my-fake-userid-1234"),
+    ///     attributes: MyAttributes("firstName": "Kevin", "lastName": "McCalister"),
+    ///     consent: MyConsent(
+    ///         documents: ["terms_jan_2023", "sharing_policy_jan_2023"],
+    ///         location: "Chicago, IL",
+    ///         consented: true
+    ///     )
+    /// )
+    /// ```
+    ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
@@ -390,6 +426,9 @@ public extension Lytics {
     }
 
     /// Updates a user consent properties and optionally emit a special event that represents an app user's explicit consent.
+    ///
+    /// See ``consent(stream:name:timestamp:attributes:consent:shouldSend:)`` for a full code sample.
+    ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
@@ -430,6 +469,9 @@ public extension Lytics {
     }
 
     /// Updates a user consent properties and optionally emit a special event that represents an app user's explicit consent.
+    ///
+    /// See ``consent(stream:name:timestamp:attributes:consent:shouldSend:)`` for a full code sample.
+    ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
@@ -468,6 +510,31 @@ public extension Lytics {
     }
 
     /// Emits an event representing a screen or page view. Device properties are injected into the payload before emitting.
+    ///
+    /// Start by defining types to represent the identifiers and properties you wish to track:
+    ///
+    /// ```swift
+    /// struct MyIdentifiers: Codable {
+    ///     var email: String
+    /// }
+    ///
+    /// struct MyPurchaseEvent: Codeable {
+    ///     var total: Double
+    ///     var item: String
+    /// }
+    /// ```
+    ///
+    /// Then, call the screen method with instances of these types:
+    ///
+    /// ```swift
+    /// Lytics.shared.screen(
+    ///     stream: "sample-custom-stream", // Optional
+    ///     name: "purchase",               // Optional
+    ///     identifiers: MyIdentifiers(email: "kevin@homealone.com"),
+    ///     properties: MyPurchaseEvent(total: 19.99, item: "Slingshot")
+    /// )
+    /// ```
+    ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
@@ -504,6 +571,9 @@ public extension Lytics {
     }
 
     /// Emits an event representing a screen or page view. Device properties are injected into the payload before emitting.
+    ///
+    /// See ``screen(stream:name:timestamp:identifiers:properties:)`` for a full code sample.
+    ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
