@@ -741,11 +741,10 @@ public extension Lytics {
 
     /// Returns the current user with a user profile from the Entity API.
     ///
-    /// This method fetches a user profile from the table specified by the ``Lytics/LyticsConfiguration/defaultTable``
-    /// of the `LyticsConfiguration` instance passed to ``start(apiToken:configure:)``. By default,
-    /// it will use the value of current user's primary identity key as defined by
-    /// ``Lytics/LyticsConfiguration/primaryIdentityKey`` of that configuration instance. If an
-    /// entity identifier is specified it will instead use that.
+    /// This method fetches a user profile from the table specified by the ``LyticsConfiguration/defaultTable`` member
+    /// of the `LyticsConfiguration` instance passed to ``start(apiToken:configure:)``. By default, it will use the
+    /// value of the current user's primary identity key as defined by ``LyticsConfiguration/primaryIdentityKey`` of
+    /// that configuration instance. If an entity identifier is specified it will instead use that.
     ///
     /// - Parameter identifier: An optional field name and value used to fetch an entity.
     /// - Returns: The current user.
