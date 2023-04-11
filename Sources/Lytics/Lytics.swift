@@ -783,6 +783,36 @@ public extension Lytics {
 public extension Lytics {
 
     /// Tracks a request to continue an activity.
+    ///
+    /// Use this method to track universal links. For example, if you are using a `SceneDelegate`, call this method
+    /// when handling universal links in the `scene(_:willConnectTo:options:)` and ` scene(_:continue:)` delegate
+    /// methods:
+    ///
+    /// ```swift
+    /// class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+    ///     var window: UIWindow?
+    ///
+    ///     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+    ///         if let userActivity = connectionOptions.userActivities.first {
+    ///             Lytics.shared.continueUserActivity(
+    ///                 userActivity,
+    ///                 stream: "sample-custom-stream" // Optional
+    ///             )
+    ///             // Handle user activity ...
+    ///         }
+    ///         // ...
+    ///     }
+    ///
+    ///     func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+    ///         Lytics.shared.continueUserActivity(userActivity)
+    ///         // Handle user activity ...
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// If using SwiftUI, consider calling `View.trackContinueUserActivity(_:with:stream:perform:)` from the `LyticsUI`
+    /// library in place of `View.onContinueUserActivity(_:perform:)`.
+    ///
     /// - Parameters:
     ///   - userActivity: The activity object containing the data associated with the task the user was performing.
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
@@ -799,6 +829,31 @@ public extension Lytics {
     }
 
     /// Tracks a request to open a resource specified by a URL.
+    ///
+    /// Use this method to track deep links. For example, if using an `AppDelegate`, call this method when handling
+    /// deep links in `application(_:open:options:)`:
+    ///
+    /// ```swift
+    /// class AppDelegate: NSObject, UIApplicationDelegate {
+    ///
+    ///     func application(
+    ///         _ app: UIApplication,
+    ///         open url: URL,
+    ///         options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+    ///     ) -> Bool {
+    ///         Lytics.shared.openURL(
+    ///             url,
+    ///             options: options,
+    ///             stream: "sample-custom-stream" // Optional
+    ///         )
+    ///         // Handle link ...
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// If using SwiftUI, consider using the `View.trackOpenURL(with:stream:perform:)` method from the `LyticsUI`
+    /// library in place of `View.onOpenURL(perform:)`.
+    ///
     /// - Parameters:
     ///   - url: The URL resource to open.
     ///   - options: A dictionary of URL handling options.
@@ -814,6 +869,27 @@ public extension Lytics {
     }
 
     /// Tracks the selection of a Home screen quick action.
+    ///
+    /// Use this method to track quick actions. For example, call it when handling actions in
+    /// `AppDelegate.application(_:performActionFor:completionHandler:)`:
+    ///
+    /// ```swift
+    /// class AppDelegate: NSObject, UIApplicationDelegate {
+    ///
+    ///     func application(
+    ///         _ application: UIApplication,
+    ///         performActionFor shortcutItem: UIApplicationShortcutItem,
+    ///         completionHandler: @escaping (Bool) -> Void
+    ///     ) {
+    ///         Lytics.shared.shortcutItem(
+    ///             shortcutItem,
+    ///             stream: "sample-custom-stream" // Optional
+    ///         )
+    ///         // Handle shortcut item ...
+    ///     }
+    /// }
+    /// ```
+    /// 
     /// - Parameters:
     ///   - shortcutItem: The selected quick action.
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
