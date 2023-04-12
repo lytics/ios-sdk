@@ -30,7 +30,7 @@ extension AppTrackingTransparency {
                 userDefaults.set(true, for: .idfaIsEnabled)
             },
             idfa: {
-                guard ATTrackingManager.trackingAuthorizationStatus == .authorized else {
+                guard userDefaults.bool(for: .idfaIsEnabled), ATTrackingManager.trackingAuthorizationStatus == .authorized else {
                     return nil
                 }
 
