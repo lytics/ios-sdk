@@ -368,7 +368,7 @@ public extension Lytics {
     /// }
     /// ```
     ///
-    /// Then, call the identify method with instances of these types:
+    /// Then, call the consent method with instances of these types:
     ///
     /// ```swift
     /// Lytics.shared.consent(
@@ -427,7 +427,7 @@ public extension Lytics {
 
     /// Updates a user consent properties and optionally emit a special event that represents an app user's explicit consent.
     ///
-    /// See ``consent(stream:name:timestamp:attributes:consent:shouldSend:)`` for a full discussion.
+    /// See ``consent(stream:name:timestamp:identifiers:attributes:consent:shouldSend:)`` for a full discussion.
     ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
@@ -470,7 +470,7 @@ public extension Lytics {
 
     /// Updates a user consent properties and optionally emit a special event that represents an app user's explicit consent.
     ///
-    /// See ``consent(stream:name:timestamp:attributes:consent:shouldSend:)`` for a full discussion.
+    /// See ``consent(stream:name:timestamp:identifiers:attributes:consent:shouldSend:)`` for a full discussion.
     ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
@@ -743,8 +743,8 @@ public extension Lytics {
     ///
     /// This method fetches a user profile from the table specified by the ``LyticsConfiguration/defaultTable`` member
     /// of the `LyticsConfiguration` instance passed to ``start(apiToken:configure:)``. By default, it will use the
-    /// value of the current user's primary identity key as defined by ``LyticsConfiguration/primaryIdentityKey`` of
-    /// that configuration instance. If an entity identifier is specified it will instead use that.
+    /// value of the current user's primary identity key as defined by the ``LyticsConfiguration/primaryIdentityKey``
+    /// of that configuration instance. If an entity identifier is specified it will instead use that.
     ///
     /// - Parameter identifier: An optional field name and value used to fetch an entity.
     /// - Returns: The current user.
