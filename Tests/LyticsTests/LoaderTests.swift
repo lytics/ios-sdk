@@ -57,7 +57,7 @@ final class LoaderTests: XCTestCase {
 
         let actualEntity = try await sut.entity(table, identifier)
 
-        await waitForExpectations(timeout: 0.1)
+        await fulfillment(of: [requestExpectation], timeout: 0.1)
 
         XCTAssertEqual(actualEntity, expectedEntity)
         XCTAssertEqual(
@@ -100,7 +100,7 @@ final class LoaderTests: XCTestCase {
             errorExpectation.fulfill()
         }
 
-        await waitForExpectations(timeout: 0.1)
+        await fulfillment(of: [errorExpectation], timeout: 0.1)
         let requestCount = await counter.count
         XCTAssertEqual(requestCount, maxRetryCount + 1)
     }

@@ -42,7 +42,7 @@ final class UploaderTests: XCTestCase {
         let requestCount = await sut.pendingRequestCount
         XCTAssertEqual(requestCount, requests.count)
 
-        await waitForExpectations(timeout: 0.5)
+        await fulfillment(of: [requestExpectation], timeout: 0.5)
         XCTAssertEqual(performedRequest, requests.first!)
 
         // Delay to give uploader time to remove request
@@ -73,7 +73,7 @@ final class UploaderTests: XCTestCase {
 
         let request = Mock.request
         await sut.upload([request])
-        await waitForExpectations(timeout: 0.5)
+        await fulfillment(of: [cacheExpectation], timeout: 0.5)
 
         let cachedRequest = cachedRequests.first! as! PendingRequest<DataUploadResponse>
         XCTAssertEqual(cachedRequest.request, request)
@@ -98,7 +98,7 @@ final class UploaderTests: XCTestCase {
         // Upload attempt
         let request = Mock.request
         await sut.upload([request])
-        await waitForExpectations(timeout: 0.1)
+        await fulfillment(of: [], timeout: 0.1)
 
         let cacheExpectation = expectation(description: "Request cached")
         var cachedRequests: [any RequestWrapping]!
@@ -108,7 +108,7 @@ final class UploaderTests: XCTestCase {
         }
 
         await sut.storeRequests()
-        await waitForExpectations(timeout: 0.1)
+        await fulfillment(of: [requestExpectation, cacheExpectation], timeout: 0.1)
 
         let cachedRequest = cachedRequests.first! as! PendingRequest<DataUploadResponse>
         XCTAssertEqual(cachedRequest.request, request)
@@ -160,7 +160,7 @@ final class UploaderTests: XCTestCase {
 
         try await sut.loadRequests()
 
-        await waitForExpectations(timeout: 0.5)
+        await fulfillment(of: [requestExpectation, loadExpectation, clearExpectation], timeout: 0.5)
         XCTAssertEqual(performedRequest, Mock.request)
     }
 
@@ -198,7 +198,7 @@ final class UploaderTests: XCTestCase {
         await sut.upload([request])
 
         // Wait for initial attempt
-        await waitForExpectations(timeout: 0.1)
+        await fulfillment(of: [requestExpectation, failureStrategyExpectation], timeout: 0.1)
 
         // Retried request - store on failure
         requestExpectation = expectation(description: "Request was retried")
@@ -213,7 +213,7 @@ final class UploaderTests: XCTestCase {
         }
 
         // Wait for retried attempt and storage
-        await waitForExpectations(timeout: retryDelay * 2)
+        await fulfillment(of: [requestExpectation, failureStrategyExpectation, cacheExpectation], timeout: retryDelay * 2)
         let cachedRequest = cachedRequests.first! as! PendingRequest<DataUploadResponse>
         XCTAssertEqual(cachedRequest.request, request)
 
@@ -226,7 +226,7 @@ final class UploaderTests: XCTestCase {
         cacheExpectation.isInverted = true
 
         await sut.upload([Mock.request])
-        await waitForExpectations(timeout: 0.5)
+        await fulfillment(of: [requestExpectation, failureStrategyExpectation, cacheExpectation], timeout: 0.5)
     }
 
     func testRequestsLoadedAfterSuccess() async throws {
@@ -256,6 +256,6 @@ final class UploaderTests: XCTestCase {
         )
 
         await sut.upload([Mock.request])
-        await waitForExpectations(timeout: 0.1)
+        await fulfillment(of: [requestExpectation, loadExpectation], timeout: 0.1)
     }
 }
