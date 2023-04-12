@@ -80,7 +80,7 @@ final class UserManagerTests: XCTestCase {
                     "nested": [
                         "a": a,
                         "b": b
-                    ]
+                    ] as [String: Any]
                 ],
                 attributes: [
                     "firstName": User1.firstName
@@ -104,7 +104,7 @@ final class UserManagerTests: XCTestCase {
                     "nested": [
                         "a": a,
                         "b": b
-                    ]
+                    ] as [String: Any]
                 ],
                 attributes: [
                     "firstName": User1.firstName,
@@ -149,7 +149,7 @@ final class UserManagerTests: XCTestCase {
             XCTFail("Unexpected error type: \(error)")
         }
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [errorExpectation], timeout: expectationTimeout)
         XCTAssertEqual(caughtError!.userDescription, "Unable to create a dictionary from 1.")
     }
 
@@ -195,7 +195,7 @@ final class UserManagerTests: XCTestCase {
                 "nested": [
                     "a": a,
                     "b": b
-                ]
+                ] as [String: Any]
             ]
         )
 
@@ -237,7 +237,7 @@ final class UserManagerTests: XCTestCase {
 
         try await sut.updateIdentifiers(with: User1.identifiers)
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [storeExpectation], timeout: expectationTimeout)
         Assert.identifierEquality(storedIdentifiers, expected: User1.anyIdentifiers)
     }
 
@@ -259,7 +259,7 @@ final class UserManagerTests: XCTestCase {
 
         try await sut.updateAttributes(with: User1.attributes)
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [storeExpectation], timeout: expectationTimeout)
         Assert.attributeEquality(storedAttributes, expected: User1.anyAttributes)
     }
 
@@ -508,7 +508,7 @@ final class UserManagerTests: XCTestCase {
         )
 
         await sut.clear()
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [attributeExpectation, identifierExpectation], timeout: expectationTimeout)
 
         XCTAssertNil(storedAttributes)
         XCTAssertEqual(storedIdentifiers.count, 1)
@@ -540,7 +540,7 @@ final class UserManagerTests: XCTestCase {
         )
 
         let actualUser = await sut.user
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [attributeExpectation], timeout: expectationTimeout)
 
         XCTAssertEqual(
             actualUser,
