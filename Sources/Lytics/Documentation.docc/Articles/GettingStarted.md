@@ -16,7 +16,7 @@ You must initialize the Lytics SDK with your [API token](https://learn.lytics.co
 
 ### App Delegate
 
-If using an `AppDelegate`, it is recommended to do initialize the SDK in `AppDelegate.application(_:didFinishLaunchingWithOptions:)`:
+If using an `AppDelegate`, it is recommended to initialize the SDK in `AppDelegate.application(_:didFinishLaunchingWithOptions:)`:
 
 ```swift
 import Lytics
@@ -27,7 +27,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        Lytics.shared.start(apiToken: "at.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx") { configuration in
+        Lytics.shared.start(apiToken: "YOUR-VALID-LYTICS-API-TOKEN") { configuration in
             ...
         }
 
@@ -47,7 +47,7 @@ import SwiftUI
 @main
 struct MyApp: App {
     init() {
-        Lytics.shared.start(apiToken: "at.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx") { configuration in
+        Lytics.shared.start(apiToken: "YOUR-VALID-LYTICS-API-TOKEN") { configuration in
             ...
         }
     }
