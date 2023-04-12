@@ -217,7 +217,7 @@ public extension Lytics {
 
     /// Tracks a custom event.
     ///
-    /// See ``consent(stream:name:timestamp:attributes:consent:shouldSend:)`` for a full code sample.
+    /// See ``track(stream:name:timestamp:identifiers:properties:)`` for a full discussion.
     ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
@@ -236,7 +236,7 @@ public extension Lytics {
 
     /// Tracks a custom event.
     ///
-    /// See ``track(stream:name:timestamp:identifiers:properties:)`` for a full code sample.
+    /// See ``track(stream:name:timestamp:identifiers:properties:)`` for a full discussion.
     ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
@@ -313,7 +313,7 @@ public extension Lytics {
 
     /// Updates the user properties and optionally emit an identity event.
     ///
-    /// See ``identify(stream:name:timestamp:identifiers:attributes:shouldSend:)`` for a full code sample.
+    /// See ``identify(stream:name:timestamp:identifiers:attributes:shouldSend:)`` for a full discussion.
     ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
@@ -427,7 +427,7 @@ public extension Lytics {
 
     /// Updates a user consent properties and optionally emit a special event that represents an app user's explicit consent.
     ///
-    /// See ``consent(stream:name:timestamp:attributes:consent:shouldSend:)`` for a full code sample.
+    /// See ``consent(stream:name:timestamp:attributes:consent:shouldSend:)`` for a full discussion.
     ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
@@ -470,7 +470,7 @@ public extension Lytics {
 
     /// Updates a user consent properties and optionally emit a special event that represents an app user's explicit consent.
     ///
-    /// See ``consent(stream:name:timestamp:attributes:consent:shouldSend:)`` for a full code sample.
+    /// See ``consent(stream:name:timestamp:attributes:consent:shouldSend:)`` for a full discussion.
     ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
@@ -572,7 +572,7 @@ public extension Lytics {
 
     /// Emits an event representing a screen or page view. Device properties are injected into the payload before emitting.
     ///
-    /// See ``screen(stream:name:timestamp:identifiers:properties:)`` for a full code sample.
+    /// See ``screen(stream:name:timestamp:identifiers:properties:)`` for a full discussion.
     ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
