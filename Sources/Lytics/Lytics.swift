@@ -600,6 +600,7 @@ public extension Lytics {
 internal extension Lytics {
 
     /// Updates the current user with the given update.
+    ///
     /// - Parameters:
     ///   - userUpdate: An update to apply to the current user.
     @usableFromInline
@@ -625,6 +626,7 @@ internal extension Lytics {
     }
 
     /// Uploads an event.
+    ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
@@ -656,6 +658,7 @@ internal extension Lytics {
     }
 
     /// Updates the current user identifiers and uploads an event.
+    ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
@@ -697,6 +700,7 @@ internal extension Lytics {
     }
 
     /// Updates the current user with the given update and uploads an event.
+    ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
@@ -1001,6 +1005,7 @@ public extension Lytics {
     }
 
     /// Removes the identifier at the specified dictionary path.
+    ///
     /// - Parameter path: A dictionary path to the identifier to remove.
     func removeIdentifier(_ path: DictionaryPath) {
         Task {
@@ -1009,6 +1014,7 @@ public extension Lytics {
     }
 
     /// Removes the attribute at the specified dictionary path.
+    /// 
     /// - Parameter path: A dictionary path to the attribute to remove.
     func removeAttribute(_ path: DictionaryPath) {
         Task {
