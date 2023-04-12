@@ -80,6 +80,23 @@ public final class Lytics {
     }
 
     /// Configures this Lytics SDK instance.
+    ///
+    /// You must configure the SDK with an [API token](https://learn.lytics.com/documentation/product/features/account-management/managing-api-tokens)
+    /// before using it:
+    ///
+    /// ```swift
+    /// Lytics.shared.start(apiToken: "YOUR-VALID-LYTICS-API-TOKEN")
+    /// ```
+    ///
+    /// Use the optional trailing closure for additional configuration:
+    ///
+    /// ```swift
+    /// Lytics.shared.start(apiToken: "YOUR-VALID-LYTICS-API-TOKEN") {
+    ///     $0.logLevel = .debug
+    ///     $0.defaultStream = "my_custom_ios_stream"
+    /// }
+    /// ```
+    ///
     /// - Parameters:
     ///   - apiToken: A Lytics account API token.
     ///   - configure: A closure enabling mutation of the configuration.
@@ -145,12 +162,37 @@ public final class Lytics {
 public extension Lytics {
 
     /// Tracks a custom event.
+    ///
+    /// Start by defining types to represent the identifiers and properties you wish to track:
+    ///
+    /// ```swift
+    /// struct MyIdentifiers: Codable {
+    ///     var email: String
+    /// }
+    ///
+    /// struct MyPurchaseEvent: Codeable {
+    ///     var total: Double
+    ///     var item: String
+    /// }
+    /// ```
+    ///
+    /// Then, call the track method with instances of these types:
+    ///
+    /// ```swift
+    /// Lytics.shared.track(
+    ///     stream: "sample-custom-stream", // Optional
+    ///     name: "purchase",               // Optional
+    ///     identifiers: MyIdentifiers(email: "kevin@homealone.com"),
+    ///     properties: MyPurchaseEvent(total: 19.99, item: "Slingshot")
+    /// )
+    /// ```
+    ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
     ///   - timestamp: A custom timestamp for the event.
     ///   - identifiers: A value representing additional identifiers to associate with this event.
-    ///   - properties: A value  representing the event properties.
+    ///   - properties: A value representing the event properties.
     @inlinable
     func track<I: Codable, P: Codable>(
         stream: String? = nil,
@@ -174,6 +216,9 @@ public extension Lytics {
     }
 
     /// Tracks a custom event.
+    ///
+    /// See ``track(stream:name:timestamp:identifiers:properties:)`` for a full discussion.
+    ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
@@ -190,6 +235,9 @@ public extension Lytics {
     }
 
     /// Tracks a custom event.
+    ///
+    /// See ``track(stream:name:timestamp:identifiers:properties:)`` for a full discussion.
+    ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
@@ -204,6 +252,31 @@ public extension Lytics {
     }
 
     /// Updates the user properties and optionally emit an identity event.
+    ///
+    /// Start by defining types to represent identifiers and attributes you wish to track:
+    ///
+    /// ```swift
+    /// struct MyIdentifiers: Codable {
+    ///     var email: String
+    /// }
+    ///
+    /// struct MyAttributes: Codable {
+    ///     var firstName: String
+    ///     var lastName: String
+    /// }
+    /// ```
+    ///
+    /// Then, call the identify method with instances of these types:
+    ///
+    /// ```swift
+    /// Lytics.shared.identify(
+    ///     stream: "sample-custom-stream", // Optional
+    ///     name: "sample-custom-name",     // Optional
+    ///     identifiers: MyIdentifiers(email: "kevin@homealone.com"),
+    ///     attributes: MyAttributes(firstName: "Kevin", lastName: "McCallister")
+    /// )
+    /// ```
+    ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
@@ -239,6 +312,9 @@ public extension Lytics {
     }
 
     /// Updates the user properties and optionally emit an identity event.
+    ///
+    /// See ``identify(stream:name:timestamp:identifiers:attributes:shouldSend:)`` for a full discussion.
+    ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
@@ -272,6 +348,42 @@ public extension Lytics {
     }
 
     /// Updates a user consent properties and optionally emit a special event that represents an app user's explicit consent.
+    ///
+    /// Start by defining types to represent identifiers, attributes, and consent-specific information you wish to track:
+    ///
+    /// ```swift
+    /// struct MyIdentifiers: Codable {
+    ///     var userID: String
+    /// }
+    ///
+    /// struct MyAttributes: Codable {
+    ///     var firstName: String
+    ///     var lastName: String
+    /// }
+    ///
+    /// struct MyConsent: Codable {
+    ///     var documents: [String]
+    ///     var location: String
+    ///     var consented: Bool
+    /// }
+    /// ```
+    ///
+    /// Then, call the consent method with instances of these types:
+    ///
+    /// ```swift
+    /// Lytics.shared.consent(
+    ///     stream: "sample-custom-stream", // Optional
+    ///     name: "sample-custom-name",     // Optional
+    ///     identifiers: MyIdentifiers(userID: "my-fake-userid-1234"),
+    ///     attributes: MyAttributes("firstName": "Kevin", "lastName": "McCalister"),
+    ///     consent: MyConsent(
+    ///         documents: ["terms_jan_2023", "sharing_policy_jan_2023"],
+    ///         location: "Chicago, IL",
+    ///         consented: true
+    ///     )
+    /// )
+    /// ```
+    ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
@@ -314,6 +426,9 @@ public extension Lytics {
     }
 
     /// Updates a user consent properties and optionally emit a special event that represents an app user's explicit consent.
+    ///
+    /// See ``consent(stream:name:timestamp:identifiers:attributes:consent:shouldSend:)`` for a full discussion.
+    ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
@@ -354,6 +469,9 @@ public extension Lytics {
     }
 
     /// Updates a user consent properties and optionally emit a special event that represents an app user's explicit consent.
+    ///
+    /// See ``consent(stream:name:timestamp:identifiers:attributes:consent:shouldSend:)`` for a full discussion.
+    ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
@@ -392,6 +510,31 @@ public extension Lytics {
     }
 
     /// Emits an event representing a screen or page view. Device properties are injected into the payload before emitting.
+    ///
+    /// Start by defining types to represent the identifiers and properties you wish to track:
+    ///
+    /// ```swift
+    /// struct MyIdentifiers: Codable {
+    ///     var email: String
+    /// }
+    ///
+    /// struct MyPurchaseEvent: Codeable {
+    ///     var total: Double
+    ///     var item: String
+    /// }
+    /// ```
+    ///
+    /// Then, call the screen method with instances of these types:
+    ///
+    /// ```swift
+    /// Lytics.shared.screen(
+    ///     stream: "sample-custom-stream", // Optional
+    ///     name: "purchase",               // Optional
+    ///     identifiers: MyIdentifiers(email: "kevin@homealone.com"),
+    ///     properties: MyPurchaseEvent(total: 19.99, item: "Slingshot")
+    /// )
+    /// ```
+    ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
@@ -428,6 +571,9 @@ public extension Lytics {
     }
 
     /// Emits an event representing a screen or page view. Device properties are injected into the payload before emitting.
+    ///
+    /// See ``screen(stream:name:timestamp:identifiers:properties:)`` for a full discussion.
+    ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
@@ -454,6 +600,7 @@ public extension Lytics {
 internal extension Lytics {
 
     /// Updates the current user with the given update.
+    ///
     /// - Parameters:
     ///   - userUpdate: An update to apply to the current user.
     @usableFromInline
@@ -479,6 +626,7 @@ internal extension Lytics {
     }
 
     /// Uploads an event.
+    ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
@@ -510,6 +658,7 @@ internal extension Lytics {
     }
 
     /// Updates the current user identifiers and uploads an event.
+    ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
@@ -551,6 +700,7 @@ internal extension Lytics {
     }
 
     /// Updates the current user with the given update and uploads an event.
+    ///
     /// - Parameters:
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
     ///   - name: The event name.
@@ -595,11 +745,10 @@ public extension Lytics {
 
     /// Returns the current user with a user profile from the Entity API.
     ///
-    /// This method fetches a user profile from the table specified by the ``Lytics/LyticsConfiguration/defaultTable``
-    /// of the `LyticsConfiguration` instance passed to ``start(apiToken:configure:)``. By default,
-    /// it will use the value of current user's primary identity key as defined by
-    /// ``Lytics/LyticsConfiguration/primaryIdentityKey`` of that configuration instance. If an
-    /// entity identifier is specified it will instead use that.
+    /// This method fetches a user profile from the table specified by the ``LyticsConfiguration/defaultTable`` member
+    /// of the `LyticsConfiguration` instance passed to ``start(apiToken:configure:)``. By default, it will use the
+    /// value of the current user's primary identity key as defined by the ``LyticsConfiguration/primaryIdentityKey``
+    /// of that configuration instance. If an entity identifier is specified it will instead use that.
     ///
     /// - Parameter identifier: An optional field name and value used to fetch an entity.
     /// - Returns: The current user.
@@ -637,6 +786,36 @@ public extension Lytics {
 public extension Lytics {
 
     /// Tracks a request to continue an activity.
+    ///
+    /// Use this method to track universal links. For example, if you are using a `SceneDelegate`, call this method
+    /// when handling universal links in the `scene(_:willConnectTo:options:)` and ` scene(_:continue:)` delegate
+    /// methods:
+    ///
+    /// ```swift
+    /// class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+    ///     var window: UIWindow?
+    ///
+    ///     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+    ///         if let userActivity = connectionOptions.userActivities.first {
+    ///             Lytics.shared.continueUserActivity(
+    ///                 userActivity,
+    ///                 stream: "sample-custom-stream" // Optional
+    ///             )
+    ///             // Handle user activity ...
+    ///         }
+    ///         // ...
+    ///     }
+    ///
+    ///     func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+    ///         Lytics.shared.continueUserActivity(userActivity)
+    ///         // Handle user activity ...
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// If using SwiftUI, consider calling `View.trackContinueUserActivity(_:with:stream:perform:)` from the `LyticsUI`
+    /// library in place of `View.onContinueUserActivity(_:perform:)`.
+    ///
     /// - Parameters:
     ///   - userActivity: The activity object containing the data associated with the task the user was performing.
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
@@ -653,6 +832,31 @@ public extension Lytics {
     }
 
     /// Tracks a request to open a resource specified by a URL.
+    ///
+    /// Use this method to track deep links. For example, if using an `AppDelegate`, call this method when handling
+    /// deep links in `application(_:open:options:)`:
+    ///
+    /// ```swift
+    /// class AppDelegate: NSObject, UIApplicationDelegate {
+    ///
+    ///     func application(
+    ///         _ app: UIApplication,
+    ///         open url: URL,
+    ///         options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+    ///     ) -> Bool {
+    ///         Lytics.shared.openURL(
+    ///             url,
+    ///             options: options,
+    ///             stream: "sample-custom-stream" // Optional
+    ///         )
+    ///         // Handle link ...
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// If using SwiftUI, consider using the `View.trackOpenURL(with:stream:perform:)` method from the `LyticsUI`
+    /// library in place of `View.onOpenURL(perform:)`.
+    ///
     /// - Parameters:
     ///   - url: The URL resource to open.
     ///   - options: A dictionary of URL handling options.
@@ -668,6 +872,27 @@ public extension Lytics {
     }
 
     /// Tracks the selection of a Home screen quick action.
+    ///
+    /// Use this method to track quick actions. For example, call it when handling actions in
+    /// `AppDelegate.application(_:performActionFor:completionHandler:)`:
+    ///
+    /// ```swift
+    /// class AppDelegate: NSObject, UIApplicationDelegate {
+    ///
+    ///     func application(
+    ///         _ application: UIApplication,
+    ///         performActionFor shortcutItem: UIApplicationShortcutItem,
+    ///         completionHandler: @escaping (Bool) -> Void
+    ///     ) {
+    ///         Lytics.shared.shortcutItem(
+    ///             shortcutItem,
+    ///             stream: "sample-custom-stream" // Optional
+    ///         )
+    ///         // Handle shortcut item ...
+    ///     }
+    /// }
+    /// ```
+    /// 
     /// - Parameters:
     ///   - shortcutItem: The selected quick action.
     ///   - stream: The DataType, or "Table" of type of data being uploaded.
@@ -780,6 +1005,7 @@ public extension Lytics {
     }
 
     /// Removes the identifier at the specified dictionary path.
+    ///
     /// - Parameter path: A dictionary path to the identifier to remove.
     func removeIdentifier(_ path: DictionaryPath) {
         Task {
@@ -788,6 +1014,7 @@ public extension Lytics {
     }
 
     /// Removes the attribute at the specified dictionary path.
+    /// 
     /// - Parameter path: A dictionary path to the attribute to remove.
     func removeAttribute(_ path: DictionaryPath) {
         Task {
