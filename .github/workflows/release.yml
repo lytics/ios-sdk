@@ -22,7 +22,7 @@ jobs:
         id: bump
         run: |
           export LYTICS_SWIFT_CI=BUILDING_FOR_RELEASE
-          echo "::set-output name=version::$(swift package --allow-writing-to-package-directory version-file --target Lytics --bump ${{ inputs.release_type }})"
+          echo "version=$(swift package --allow-writing-to-package-directory version-file --target Lytics --bump ${{ inputs.release_type }})" >> $GITHUB_OUTPUT
 
       - name: Restore Package.resolved
         run: |
