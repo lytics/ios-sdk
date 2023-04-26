@@ -28,6 +28,7 @@ final class UserManagerTests: XCTestCase {
 
         let sut = UserManager(
             encoder: .init(),
+            idfaProvider: { nil },
             idProvider: { Mock.uuidString },
             storage: storage
         )
@@ -79,7 +80,7 @@ final class UserManagerTests: XCTestCase {
                     "nested": [
                         "a": a,
                         "b": b
-                    ]
+                    ] as [String: Any]
                 ],
                 attributes: [
                     "firstName": User1.firstName
@@ -103,7 +104,7 @@ final class UserManagerTests: XCTestCase {
                     "nested": [
                         "a": a,
                         "b": b
-                    ]
+                    ] as [String: Any]
                 ],
                 attributes: [
                     "firstName": User1.firstName,
@@ -128,6 +129,7 @@ final class UserManagerTests: XCTestCase {
         let sut = UserManager(
             configuration: .init(anonymousIdentityKey: anonymousIdentityKey),
             encoder: .init(),
+            idfaProvider: { nil },
             idProvider: { Mock.uuidString },
             storage: storage
         )
@@ -147,7 +149,7 @@ final class UserManagerTests: XCTestCase {
             XCTFail("Unexpected error type: \(error)")
         }
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [errorExpectation], timeout: expectationTimeout)
         XCTAssertEqual(caughtError!.userDescription, "Unable to create a dictionary from 1.")
     }
 
@@ -168,6 +170,7 @@ final class UserManagerTests: XCTestCase {
         let sut = UserManager(
             configuration: .init(anonymousIdentityKey: anonymousIdentityKey),
             encoder: .init(),
+            idfaProvider: { nil },
             idProvider: { Mock.uuidString },
             storage: storage
         )
@@ -192,7 +195,7 @@ final class UserManagerTests: XCTestCase {
                 "nested": [
                     "a": a,
                     "b": b
-                ]
+                ] as [String: Any]
             ]
         )
 
@@ -226,11 +229,15 @@ final class UserManagerTests: XCTestCase {
             }
         )
 
-        let sut = UserManager(encoder: .init(), storage: storage)
+        let sut = UserManager(
+            encoder: .init(),
+            idfaProvider: { nil },
+            storage: storage
+        )
 
         try await sut.updateIdentifiers(with: User1.identifiers)
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [storeExpectation], timeout: expectationTimeout)
         Assert.identifierEquality(storedIdentifiers, expected: User1.anyIdentifiers)
     }
 
@@ -244,11 +251,15 @@ final class UserManagerTests: XCTestCase {
             }
         )
 
-        let sut = UserManager(encoder: .init(), storage: storage)
+        let sut = UserManager(
+            encoder: .init(),
+            idfaProvider: { nil },
+            storage: storage
+        )
 
         try await sut.updateAttributes(with: User1.attributes)
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [storeExpectation], timeout: expectationTimeout)
         Assert.attributeEquality(storedAttributes, expected: User1.anyAttributes)
     }
 
@@ -260,7 +271,11 @@ final class UserManagerTests: XCTestCase {
             identifiers: { expectedIdentifiers }
         )
 
-        let sut = UserManager(encoder: .init(), storage: storage)
+        let sut = UserManager(
+            encoder: .init(),
+            idfaProvider: { nil },
+            storage: storage
+        )
 
         let attributes = await sut.attributes
         let identifiers = await sut.identifiers
@@ -281,6 +296,7 @@ final class UserManagerTests: XCTestCase {
         let sut = UserManager(
             configuration: .init(anonymousIdentityKey: anonymousIdentityKey),
             encoder: .init(),
+            idfaProvider: { nil },
             idProvider: { Mock.uuidString },
             storage: storage
         )
@@ -303,6 +319,7 @@ final class UserManagerTests: XCTestCase {
         let sut = UserManager(
             configuration: .init(anonymousIdentityKey: anonymousIdentityKey),
             encoder: .init(),
+            idfaProvider: { nil },
             idProvider: { Mock.uuidString },
             storage: storage
         )
@@ -327,6 +344,7 @@ final class UserManagerTests: XCTestCase {
         _ = UserManager(
             configuration: .init(anonymousIdentityKey: initialIdentityKey),
             encoder: .init(),
+            idfaProvider: { nil },
             idProvider: { initialIdentityValue },
             storage: storage
         )
@@ -334,6 +352,7 @@ final class UserManagerTests: XCTestCase {
         _ = UserManager(
             configuration: .init(anonymousIdentityKey: updatedIdentityKey),
             encoder: .init(),
+            idfaProvider: { nil },
             idProvider: { updatedIdentityValue },
             storage: storage
         )
@@ -346,6 +365,67 @@ final class UserManagerTests: XCTestCase {
                 updatedIdentityKey: updatedIdentityValue
             ]
         )
+    }
+
+    func testIDFAIsAdded() async {
+        let expectedIDFA = "11111111-1111-1111-1111-111111111111"
+        let expectedIdentifiers: [String: String] = [
+            Constants.defaultAnonymousIdentityKey: Mock.uuidString,
+            Constants.idfaKey: expectedIDFA
+        ]
+
+        let idfaProvider: () -> String? = {
+            expectedIDFA
+        }
+
+        var storedIdentifiers: [String: Any]! = [Constants.defaultAnonymousIdentityKey: Mock.uuidString]
+        let storage = UserStorage.mock(
+            identifiers: { storedIdentifiers },
+            storeIdentifiers: { storedIdentifiers = $0 }
+        )
+
+        let sut = UserManager(
+            configuration: .init(),
+            encoder: .init(),
+            idfaProvider: idfaProvider,
+            idProvider: { Mock.uuidString },
+            storage: storage
+        )
+
+        let actualIdentifiers = await sut.identifiers
+        XCTAssertEqual(actualIdentifiers as! [String: String], expectedIdentifiers)
+    }
+
+    func testIDFAIsPreserved() async throws {
+        let expectedIDFA = "11111111-1111-1111-1111-111111111111"
+        let expectedIdentifiers: [String: String] = [
+            Constants.defaultAnonymousIdentityKey: Mock.uuidString,
+            Constants.idfaKey: expectedIDFA
+        ]
+
+        let idfaProvider: () -> String? = {
+            expectedIDFA
+        }
+
+        var storedIdentifiers: [String: Any]! = [Constants.defaultAnonymousIdentityKey: Mock.uuidString]
+        let storage = UserStorage.mock(
+            identifiers: { storedIdentifiers },
+            storeIdentifiers: { storedIdentifiers = $0 }
+        )
+
+        let sut = UserManager(
+            configuration: .init(),
+            encoder: .init(),
+            idfaProvider: idfaProvider,
+            idProvider: { Mock.uuidString },
+            storage: storage
+        )
+
+        let userUpdate: [String: AnyCodable] = [Constants.idfaKey: "mutated"]
+        try await sut.updateIdentifiers(with: userUpdate)
+
+        let actualIdentifiers = await sut.identifiers
+        XCTAssertEqual(actualIdentifiers as! [String: String], expectedIdentifiers)
     }
 
     func testRemoveIdentifier() async {
@@ -366,6 +446,7 @@ final class UserManagerTests: XCTestCase {
         let sut = UserManager(
             configuration: .init(),
             encoder: .init(),
+            idfaProvider: { nil },
             idProvider: { Mock.uuidString },
             storage: storage
         )
@@ -389,6 +470,7 @@ final class UserManagerTests: XCTestCase {
         let sut = UserManager(
             configuration: .init(),
             encoder: .init(),
+            idfaProvider: { nil },
             idProvider: { Mock.uuidString },
             storage: storage
         )
@@ -420,12 +502,13 @@ final class UserManagerTests: XCTestCase {
         let sut = UserManager(
             configuration: .init(anonymousIdentityKey: anonymousIdentityKey),
             encoder: .init(),
+            idfaProvider: { nil },
             idProvider: { Mock.uuidString },
             storage: storage
         )
 
         await sut.clear()
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [attributeExpectation, identifierExpectation], timeout: expectationTimeout)
 
         XCTAssertNil(storedAttributes)
         XCTAssertEqual(storedIdentifiers.count, 1)
@@ -452,11 +535,12 @@ final class UserManagerTests: XCTestCase {
         let sut = UserManager(
             configuration: .init(anonymousIdentityKey: anonymousIdentityKey),
             encoder: .init(),
+            idfaProvider: { nil },
             storage: storage
         )
 
         let actualUser = await sut.user
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [attributeExpectation], timeout: expectationTimeout)
 
         XCTAssertEqual(
             actualUser,
