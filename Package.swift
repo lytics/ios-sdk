@@ -48,6 +48,7 @@ enum CIWorkflow: String {
     /// The environment variable used to indicate that a particular workflow is active.
     static let environmentVariable = "LYTICS_SWIFT_CI"
 
+    case documentation = "BUILDING_FOR_DOCUMENTATION_GENERATION"
     case release = "BUILDING_FOR_RELEASE"
 
     init?(cString: UnsafeMutablePointer<CChar>?) {
@@ -71,6 +72,10 @@ workflow = nil
 
 // Only require additional dependencies when needed for CI
 switch workflow {
+case .documentation:
+    package.dependencies += [
+        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0")
+    ]
 case .release:
     package.dependencies += [
         .package(url: "https://github.com/mobelux/swift-version-file-plugin", from: "0.1.0")
