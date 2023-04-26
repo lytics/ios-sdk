@@ -10,15 +10,6 @@
       }
     },
     {
-      "identity" : "swift-version-file-plugin",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mobelux/swift-version-file-plugin",
-      "state" : {
-        "revision" : "b5bb65e2166ecf927ad20643e86501d5607f9cfc",
-        "version" : "0.1.0"
-      }
-    },
-    {
       "identity" : "swiftformat",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nicklockwood/SwiftFormat",
