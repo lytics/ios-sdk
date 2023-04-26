@@ -18,7 +18,7 @@ final class DictionaryPathTests: XCTestCase {
                     "lon": "139.6917"
                 ],
                 "language": "japanese"
-            ]
+            ] as [String: Any]
         ],
         "airports": [
             "germany": ["FRA", "MUC", "HAM", "TXL"]

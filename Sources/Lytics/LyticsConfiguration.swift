@@ -31,15 +31,6 @@ public struct LyticsConfiguration: Equatable {
     /// A Boolean value indicating whether application lifecycle events should be tracked automatically.
     public var trackApplicationLifecycleEvents: Bool = false
 
-    /// A Boolean value indicating whether screen views should be tracked automatically.
-    public var trackScreenViews: Bool = false
-
-    /// A Boolean value indicating whether push notifications should be tracked.
-    public var trackPushNotifications: Bool = false
-
-    /// A Boolean value indicating whether deep links should be tracked.
-    public var trackDeepLinks: Bool = false
-
     /// The interval in seconds at which the event queue is uploaded to the Lytics API.
     public var uploadInterval: Double = 10
 

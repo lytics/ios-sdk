@@ -23,7 +23,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        Lytics.shared.start(apiToken: "at.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx") { configuration in
+        Lytics.shared.start(apiToken: "YOUR-VALID-LYTICS-API-TOKEN") { configuration in
             ...
         }
 
@@ -41,7 +41,7 @@ import SwiftUI
 @main
 struct MyApp: App {
     init() {
-        Lytics.shared.start(apiToken: "at.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx") { configuration in
+        Lytics.shared.start(apiToken: "YOUR-VALID-LYTICS-API-TOKEN") { configuration in
             ...
         }
     }

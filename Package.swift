@@ -3,10 +3,6 @@
 
 import PackageDescription
 
-enum EnvironmentKey {
-    static let buildingDocs = "BUILDING_FOR_DOCUMENTATION_GENERATION"
-}
-
 let package = Package(
     name: "lytics",
     platforms: [
@@ -24,9 +20,6 @@ let package = Package(
         .package(
             url: "https://github.com/Flight-School/AnyCodable",
             from: "0.6.7"),
-        .package(
-            url: "https://github.com/mobelux/swift-version-file-plugin",
-            from: "0.1.0"),
         .package(
             url: "https://github.com/nicklockwood/SwiftFormat",
             from: "0.50.6")
@@ -48,18 +41,40 @@ let package = Package(
     ]
 )
 
+// MARK: - Additional Dependencies for CI
 
+/// A representation of CI workflows that require additional Swift Package Manager plugins.
+enum CIWorkflow: String {
+    /// The environment variable used to indicate that a particular workflow is active.
+    static let environmentVariable = "LYTICS_SWIFT_CI"
+
+    case release = "BUILDING_FOR_RELEASE"
+
+    init?(cString: UnsafeMutablePointer<CChar>?) {
+        guard let cString else {
+            return nil
+        }
+        self.init(rawValue: String(cString: cString))
+    }
+}
+
+let workflow: CIWorkflow?
 #if canImport(Darwin)
 import Darwin
-let buildingDocs = getenv(EnvironmentKey.buildingDocs) != nil
+workflow = CIWorkflow(cString: getenv(CIWorkflow.environmentVariable))
 #elseif canImport(Glibc)
 import Glibc
-let buildingDocs = getenv(EnvironmentKey.buildingDocs) != nil
+workflow = CIWorkflow(cString: getenv(CIWorkflow.environmentVariable))
 #else
-let buildingDocs = false
+workflow = nil
 #endif
 
-// Only require the docc plugin when building documentation
-package.dependencies += buildingDocs ? [
-  .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
-] : []
+// Only require additional dependencies when needed for CI
+switch workflow {
+case .release:
+    package.dependencies += [
+        .package(url: "https://github.com/mobelux/swift-version-file-plugin", from: "0.1.0")
+    ]
+case .none:
+    break
+}

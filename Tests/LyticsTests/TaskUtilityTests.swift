@@ -27,7 +27,7 @@ final class TaskUtilityTests: XCTestCase {
             operation: operation
         ).value
 
-        await waitForExpectations(timeout: 0.1)
+        await fulfillment(of: [completionExpectation], timeout: 0.1)
         XCTAssertEqual(result, expectedResult)
 
         let operationCount = await counter.count
@@ -65,7 +65,7 @@ final class TaskUtilityTests: XCTestCase {
             XCTFail("Unexpected error type: \(error)")
         }
 
-        await waitForExpectations(timeout: 0.1)
+        await fulfillment(of: [handlerExpectation, errorExpectation], timeout: 0.1)
 
         XCTAssertEqual(caughtError, TestError(message: errorMessage))
         let operationCount = await counter.count

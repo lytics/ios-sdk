@@ -84,7 +84,7 @@ extension LyticsTests {
 
         let actualEnabled = sut.isIDFAEnabled
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [idfaExpectation], timeout: expectationTimeout)
 
         XCTAssertEqual(actualEnabled, expectedEnabled)
     }
@@ -107,7 +107,7 @@ extension LyticsTests {
 
         let actualEnabled = sut.isIDFAEnabled
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [idfaExpectation], timeout: expectationTimeout)
 
         XCTAssertEqual(actualEnabled, expectedEnabled)
     }
@@ -143,7 +143,7 @@ extension LyticsTests {
         let sut = Lytics(assertionFailure: { _, _, _ in failureExpectation.fulfill() }, logger: .mock)
 
         await _ = sut.user
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [failureExpectation], timeout: expectationTimeout)
     }
 
     func testHasStartedAfterStarting() {
@@ -200,7 +200,7 @@ extension LyticsTests {
             properties: TestCart.user1
         )
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [eventExpectation, updateExpectation], timeout: expectationTimeout)
 
         XCTAssertEqual(actualStream, expectedStream)
         XCTAssertEqual(actualName, expectedName)
@@ -248,7 +248,7 @@ extension LyticsTests {
             properties: TestCart.user1
         )
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [eventExpectation], timeout: expectationTimeout)
 
         XCTAssertEqual(actualStream, expectedStream)
         XCTAssertEqual(actualName, expectedName)
@@ -294,7 +294,7 @@ extension LyticsTests {
             timestamp: expectedTimestamp
         )
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [eventExpectation], timeout: expectationTimeout)
 
         XCTAssertEqual(actualStream, expectedStream)
         XCTAssertEqual(actualName, expectedName)
@@ -353,7 +353,7 @@ extension LyticsTests {
             shouldSend: true
         )
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [eventExpectation, updateExpectation], timeout: expectationTimeout)
 
         XCTAssertEqual(actualStream, expectedStream)
         XCTAssertEqual(actualTimestamp, expectedTimestamp)
@@ -409,7 +409,7 @@ extension LyticsTests {
             shouldSend: true
         )
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [eventExpectation, updateExpectation], timeout: expectationTimeout)
 
         XCTAssertEqual(actualStream, expectedStream)
         XCTAssertEqual(actualTimestamp, expectedTimestamp)
@@ -471,7 +471,7 @@ extension LyticsTests {
             shouldSend: true
         )
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [eventExpectation, updateExpectation], timeout: expectationTimeout)
 
         XCTAssertEqual(actualStream, expectedStream)
         XCTAssertEqual(actualName, expectedName)
@@ -529,7 +529,7 @@ extension LyticsTests {
             shouldSend: true
         )
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [eventExpectation, updateExpectation], timeout: expectationTimeout)
 
         XCTAssertEqual(actualStream, expectedStream)
         XCTAssertEqual(actualName, expectedName)
@@ -579,7 +579,7 @@ extension LyticsTests {
             shouldSend: true
         )
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [eventExpectation], timeout: expectationTimeout)
 
         XCTAssertEqual(actualStream, expectedStream)
         XCTAssertEqual(actualName, expectedName)
@@ -636,7 +636,7 @@ extension LyticsTests {
             properties: TestCart.user1
         )
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [eventExpectation, updateExpectation], timeout: expectationTimeout)
 
         XCTAssertEqual(actualStream, expectedStream)
         XCTAssertEqual(actualName, expectedName)
@@ -685,7 +685,7 @@ extension LyticsTests {
             properties: TestCart.user1
         )
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [eventExpectation], timeout: expectationTimeout)
 
         XCTAssertEqual(actualStream, expectedStream)
         XCTAssertEqual(actualName, expectedName)
@@ -719,7 +719,7 @@ extension LyticsTests {
 
         sut.updateUser(with: UserUpdate(identifiers: TestIdentifiers.user1, attributes: TestAttributes.user1))
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [loggerExpectation], timeout: expectationTimeout)
         XCTAssertEqual(actualLogLevel, expectedLogLevel)
     }
 
@@ -776,7 +776,7 @@ extension LyticsTests {
             Event<TestCart>(identifiers: eventIdentifiers, properties: .user1)
         }
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [loggerExpectation, eventExpectation], timeout: expectationTimeout)
         XCTAssertEqual(actualLogLevel, expectedLogLevel)
         XCTAssertEqual(actualEvent, expectedEvent)
     }
@@ -830,7 +830,7 @@ extension LyticsTests {
             Event<TestCart>(identifiers: user.identifiers, properties: .user1)
         }
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [loggerExpectation], timeout: expectationTimeout)
         XCTAssertEqual(actualLogLevel, expectedLogLevel)
     }
 
@@ -897,7 +897,7 @@ extension LyticsTests {
 
         let actualUser = try await sut.getProfile()
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [loaderExpectation], timeout: expectationTimeout)
 
         XCTAssertEqual(actualUser, expectedUser)
         XCTAssertEqual(actualTable, expectedTable)
@@ -950,7 +950,7 @@ extension LyticsTests {
             )
         )
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [loaderExpectation], timeout: expectationTimeout)
 
         XCTAssertEqual(actualUser, expectedUser)
         XCTAssertEqual(actualTable, expectedTable)
@@ -978,7 +978,7 @@ extension LyticsTests {
             errorExpectation.fulfill()
         }
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [errorExpectation], timeout: expectationTimeout)
     }
 
     func testGetProfileBeforeStarting() async {
@@ -993,7 +993,7 @@ extension LyticsTests {
             errorExpectation.fulfill()
         }
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [failureExpectation, errorExpectation], timeout: expectationTimeout)
     }
 }
 
@@ -1058,7 +1058,7 @@ extension LyticsTests {
 
         sut.continueUserActivity(userActivity, stream: expectedStream)
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [eventExpectation], timeout: expectationTimeout)
 
         XCTAssertEqual(actualStream, expectedStream)
         XCTAssertEqual(actualName, "Deep Link")
@@ -1107,7 +1107,7 @@ extension LyticsTests {
 
         sut.openURL(expectedURL, options: options, stream: expectedStream)
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [eventExpectation], timeout: expectationTimeout)
 
         XCTAssertEqual(actualStream, expectedStream)
         XCTAssertEqual(actualName, "URL")
@@ -1164,7 +1164,7 @@ extension LyticsTests {
 
         sut.shortcutItem(shortcutItem, stream: expectedStream)
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [eventExpectation], timeout: expectationTimeout)
 
         XCTAssertEqual(actualStream, expectedStream)
         XCTAssertEqual(actualName, "Shortcut")
@@ -1185,7 +1185,7 @@ extension LyticsTests {
         )
 
         sut.optIn()
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [optInExpectation], timeout: expectationTimeout)
     }
 
     func testOptInBeforeStarting() {
@@ -1206,7 +1206,7 @@ extension LyticsTests {
         )
 
         sut.optOut()
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [optOutExpectation], timeout: expectationTimeout)
     }
 
     func testOptOutBeforeStarting() {
@@ -1253,7 +1253,7 @@ extension LyticsTests {
 
         let actualAuthorized = await sut.requestTrackingAuthorization()
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [idfaExpectation, requestExpectation, updateExpectation], timeout: expectationTimeout)
         XCTAssertEqual(actualAuthorized, expectedAuthorized)
         XCTAssertEqual(actualIdentifierDictionary, ["idfa": AnyCodable(expectedIDFA)])
     }
@@ -1263,7 +1263,7 @@ extension LyticsTests {
         let sut = Lytics(assertionFailure: { _, _, _ in failureExpectation.fulfill() }, logger: .mock)
 
         _ = await sut.requestTrackingAuthorization()
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [failureExpectation], timeout: expectationTimeout)
     }
 
     func testDisableTracking() async {
@@ -1278,7 +1278,7 @@ extension LyticsTests {
         )
 
         sut.disableTracking()
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [disableExpectation], timeout: expectationTimeout)
     }
 
     func testDisableTrackingBeforeStarting() {
@@ -1306,7 +1306,7 @@ extension LyticsTests {
         )
 
         sut.dispatch()
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [dispatchExpectation], timeout: expectationTimeout)
     }
 
     func testDispatchBeforeStarting() {
@@ -1338,7 +1338,7 @@ extension LyticsTests {
 
         sut.removeIdentifier(expectedPath)
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [removalExpectation], timeout: expectationTimeout)
         XCTAssertEqual(actualPath, expectedPath)
     }
 
@@ -1363,7 +1363,7 @@ extension LyticsTests {
 
         sut.removeAttribute(expectedPath)
 
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [removalExpectation], timeout: expectationTimeout)
         XCTAssertEqual(actualPath, expectedPath)
     }
 
@@ -1393,7 +1393,7 @@ extension LyticsTests {
         )
 
         sut.reset()
-        await waitForExpectations(timeout: expectationTimeout)
+        await fulfillment(of: [disableTrackingExpectation, optOutExpectation, clearUserExpectation], timeout: expectationTimeout)
     }
 
     func testResetBeforeStarting() {

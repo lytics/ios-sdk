@@ -23,7 +23,7 @@ enum User1 {
         "nested": [
             "a": a,
             "b": b
-        ]
+        ] as [String: Any]
     ]
 
     static var identifiers: [String: AnyCodable] {

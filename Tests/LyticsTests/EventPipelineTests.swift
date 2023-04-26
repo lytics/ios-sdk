@@ -229,6 +229,6 @@ final class EventPipelineTests: XCTestCase {
         )
 
         await sut.dispatch()
-        await waitForExpectations(timeout: 0.3)
+        await fulfillment(of: [flushExpectation], timeout: 0.3)
     }
 }
