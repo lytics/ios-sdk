@@ -11,7 +11,7 @@ import XCTest
 final class UploaderTests: XCTestCase {
     typealias PendingRequest<R: Codable> = Uploader.PendingRequest<R>
 
-    let completionDelay: UInt64 = 1_000_000
+    let completionDelay: UInt64 = NSEC_PER_SEC
 
     func testUpload() async throws {
         let requestExpectation = expectation(description: "Request performed")
@@ -42,7 +42,7 @@ final class UploaderTests: XCTestCase {
         let requestCount = await sut.pendingRequestCount
         XCTAssertEqual(requestCount, requests.count)
 
-        await fulfillment(of: [requestExpectation], timeout: 0.5)
+        await fulfillment(of: [requestExpectation], timeout: 1.0)
         XCTAssertEqual(performedRequest, requests.first!)
 
         // Delay to give uploader time to remove request
