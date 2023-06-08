@@ -47,6 +47,24 @@ actor UserManagerMock<Identifiers: Encodable, Attributes: Encodable>: UserManagi
     var attributes: [String: Any]?
     var user: LyticsUser
 
+    private func cast<I, A>(_ userUpdate: UserUpdate<I, A>) -> UserUpdate<Identifiers, Attributes> {
+        let updatedIdentifiers: Identifiers?
+        if let updated = userUpdate.identifiers {
+            updatedIdentifiers = (updated as! Identifiers)
+        } else {
+            updatedIdentifiers = nil
+        }
+
+        let updatedAttributes: Attributes?
+        if let updated = userUpdate.attributes {
+            updatedAttributes = (updated as! Attributes)
+        } else {
+            updatedAttributes = nil
+        }
+
+        return UserUpdate(identifiers: updatedIdentifiers, attributes: updatedAttributes)
+    }
+
     func updateIdentifiers<T: Encodable>(with other: T) throws -> [String: Any] {
         let identifiers = other as! Identifiers
         return try onUpdateIdentifiers(identifiers)
@@ -63,7 +81,7 @@ actor UserManagerMock<Identifiers: Encodable, Attributes: Encodable>: UserManagi
     }
 
     func update<I: Encodable, A: Encodable>(with userUpdate: UserUpdate<I, A>) throws -> LyticsUser {
-        let update = userUpdate as! UserUpdate<Identifiers, Attributes>
+        let update = cast(userUpdate)
         return try onUpdate(update)
     }
 
