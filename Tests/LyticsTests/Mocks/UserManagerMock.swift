@@ -47,6 +47,16 @@ actor UserManagerMock<Identifiers: Encodable, Attributes: Encodable>: UserManagi
     var attributes: [String: Any]?
     var user: LyticsUser
 
+    /// Workaround for a crash when using Xcode 15.0b1 to test on the iOS 17 simulator and force casting
+    /// `UserUpdate<Never, [String: AnyCodable]>` to `UserUpdate<Never, [String: AnyCodable]>` in the
+    /// following generic method:
+    ///
+    /// ```swift
+    /// func update<I: Encodable, A: Encodable>(with userUpdate: UserUpdate<I, A>) throws -> LyticsUser {
+    ///     let update = userUpdate as! UserUpdate<Identifiers, Attributes>
+    ///     ...
+    /// }
+    /// ```
     private func cast<I, A>(_ userUpdate: UserUpdate<I, A>) -> UserUpdate<Identifiers, Attributes> {
         let updatedIdentifiers: Identifiers?
         if let updated = userUpdate.identifiers {
