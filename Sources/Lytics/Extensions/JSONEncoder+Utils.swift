@@ -6,7 +6,9 @@
 
 import Foundation
 
-extension JSONEncoder {
+public extension JSONEncoder {
+
+    /// Returns a JSONEncoder that formats its output with sorted keys.
     static var sorted: JSONEncoder {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.sortedKeys]
