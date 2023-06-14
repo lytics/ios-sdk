@@ -7,29 +7,13 @@
 import Foundation
 
 struct Storage {
-    let encoder: JSONEncoder
-    let decoder: JSONDecoder
     var write: (Data) throws -> Void
     var read: () throws -> Data?
     var clear: () throws -> Void
-
-    init(
-        encoder: JSONEncoder = .init(),
-        decoder: JSONDecoder = .init(),
-        write: @escaping (Data) throws -> Void,
-        read: @escaping () throws -> Data?,
-        clear: @escaping () throws -> Void
-    ) {
-        self.encoder = encoder
-        self.decoder = decoder
-        self.write = write
-        self.read = read
-        self.clear = clear
-    }
 }
 
 extension Storage {
-    func save<T: Encodable>(_ object: T) throws {
+    func save<T: Encodable>(_ object: T, encodingWith encoder: JSONEncoder = .init()) throws {
         do {
             let data = try encoder.encode(object)
             try write(data)
@@ -38,7 +22,7 @@ extension Storage {
         }
     }
 
-    func decode<T: Decodable>() throws -> T? {
+    func read<T: Decodable>(decodingWith decoder: JSONDecoder = .init()) throws -> T? {
         guard let data = try read() else {
             return nil
         }
@@ -52,13 +36,11 @@ extension Storage {
 }
 
 extension Storage {
-    static func live(file: File, encoder: JSONEncoder = .init(), decoder: JSONDecoder = .init()) throws -> Self {
+    static func live(file: File) throws -> Self {
         let fileManager = FileManager.default
         try fileManager.createDirectory(for: file)
 
         return Storage(
-            encoder: encoder,
-            decoder: decoder,
             write: { data in
                 do {
                     try fileManager.createDirectory(at: file.directory, withIntermediateDirectories: true)

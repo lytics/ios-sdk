@@ -37,7 +37,7 @@ final class StorageTests: XCTestCase {
     }
 
     func testSave() throws {
-        let sut = try Storage.live(file: file, encoder: .sorted)
+        let sut = try Storage.live(file: file)
         try sut.save(TestIdentifiers.user1)
 
         let actual = try JSONDecoder().decode(TestIdentifiers.self, from: try Data(contentsOf: file.url))
@@ -60,13 +60,13 @@ final class StorageTests: XCTestCase {
         XCTAssertNil(actual)
     }
 
-    func testDecode() throws {
+    func testRead() throws {
         try FileManager.default.createDirectory(at: file.directory, withIntermediateDirectories: true)
         let data = try JSONEncoder.sorted.encode(TestConsent.user1)
         try data.write(to: file.url)
 
         let sut = try Storage.live(file: file)
-        let actual: TestConsent? = try sut.decode()
+        let actual: TestConsent? = try sut.read()
         XCTAssertEqual(actual, TestConsent.user1)
     }
 
