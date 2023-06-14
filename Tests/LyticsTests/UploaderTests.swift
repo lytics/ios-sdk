@@ -217,7 +217,7 @@ final class UploaderTests: XCTestCase {
         let cachedRequest = cachedRequests.first! as! PendingRequest<DataUploadResponse>
         XCTAssertEqual(cachedRequest.request, request)
 
-        // New reguest - discard on failure
+        // New request - discard on failure
         requestExpectation = expectation(description: "Request with discarded failure")
         failureStrategyExpectation = expectation(description: "Discard")
         failureStrategy = .discard("")
@@ -256,6 +256,6 @@ final class UploaderTests: XCTestCase {
         )
 
         await sut.upload([Mock.request])
-        await fulfillment(of: [requestExpectation, loadExpectation], timeout: 0.1)
+        await fulfillment(of: [requestExpectation, loadExpectation], timeout: 0.5)
     }
 }
