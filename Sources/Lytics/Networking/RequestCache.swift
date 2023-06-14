@@ -8,9 +8,13 @@ import Foundation
 
 /// Stores a collection of requests.
 struct RequestCache: RequestCaching {
+    let decoder: JSONDecoder
+    let encoder: JSONEncoder
     let storage: Storage
 
-    init(storage: Storage) throws {
+    init(decoder: JSONDecoder = .init(), encoder: JSONEncoder = .init(), storage: Storage) {
+        self.decoder = decoder
+        self.encoder = encoder
         self.storage = storage
     }
 
@@ -21,7 +25,7 @@ struct RequestCache: RequestCaching {
             return
         }
 
-        var requestData = try JSONEncoder()
+        var requestData = try encoder
             .encode(
                 CodableRequestContainer(requests: requests))
 
@@ -37,13 +41,8 @@ struct RequestCache: RequestCaching {
     /// Loads cached requuests.
     /// - Returns: The cached requests.
     func load() throws -> [any RequestWrapping]? {
-        guard let data = try storage.read() else {
-            return nil
-        }
-
-        let decoded = try JSONDecoder()
-            .decode(CodableRequestContainer.self, from: data)
-        return decoded.requests
+        let decoded: CodableRequestContainer? = try storage.read(decodingWith: decoder)
+        return decoded?.requests
     }
 
     /// Deletes all cached requests.
@@ -54,7 +53,7 @@ struct RequestCache: RequestCaching {
 
 extension RequestCache {
     static func live() throws -> Self {
-        try .init(
+        .init(
             storage: try .live(
                 file: try .requests()))
     }

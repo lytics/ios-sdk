@@ -62,7 +62,7 @@ final class StorageTests: XCTestCase {
 
     func testRead() throws {
         try FileManager.default.createDirectory(at: file.directory, withIntermediateDirectories: true)
-        let data = try JSONEncoder().encode(TestConsent.user1)
+        let data = try JSONEncoder.sorted.encode(TestConsent.user1)
         try data.write(to: file.url)
 
         let sut = try Storage.live(file: file)
