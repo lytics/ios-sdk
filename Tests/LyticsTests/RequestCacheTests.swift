@@ -68,7 +68,10 @@ final class RequestCacheTests: XCTestCase {
             response: DataUploadResponse.self,
             idStrings: [Mock.uuidString]
         )
-        XCTAssertEqual(writtenData, Data(expectedJSON.utf8))
+        XCTAssertEqual(
+            writtenData,
+            Data(expectedJSON.utf8),
+            "\(String(decoding: writtenData, as: UTF8.self)) is not equal to \(expectedJSON)")
     }
 
     func testCacheWithExistingData() throws {
@@ -114,7 +117,10 @@ final class RequestCacheTests: XCTestCase {
             response: DataUploadResponse.self,
             idStrings: [Mock.uuidString, uuidString]
         )
-        XCTAssertEqual(writtenData, Data(expectedJSON.utf8))
+        XCTAssertEqual(
+            writtenData,
+            Data(expectedJSON.utf8),
+            "\(String(decoding: writtenData, as: UTF8.self)) is not equal to \(expectedJSON)")
     }
 
     func testLoad() throws {
