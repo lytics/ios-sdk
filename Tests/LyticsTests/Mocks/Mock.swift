@@ -53,7 +53,7 @@ extension Mock {
     static func containerJSON<R: Codable>(response: R.Type, idStrings: [String]) -> String {
         func request(_ idString: String) -> String {
             """
-            "{\\"id\\":\\"\(idString)\\",\\"request\\":{\\"url\\":\\"https:\\\\\\/\\\\\\/api.lytics.io\\\\\\/collect\\\\\\/json\\\\\\/stream\\",\\"method\\":\\"POST\\"}}"
+            "{\\"id\\":\\"\(idString)\\",\\"request\\":{\\"method\\":\\"POST\\",\\"url\\":\\"https:\\\\\\/\\\\\\/api.lytics.io\\\\\\/collect\\\\\\/json\\\\\\/stream\\"}}"
             """
         }
 

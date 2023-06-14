@@ -25,7 +25,7 @@ final class RequestCacheTests: XCTestCase {
             }
         )
 
-        let sut = try RequestCache(storage: storage)
+        let sut = RequestCache(encoder: .sorted, storage: storage)
 
         let requests: [PendingRequest<DataUploadResponse>] = []
         try sut.cache(requests)
@@ -50,7 +50,7 @@ final class RequestCacheTests: XCTestCase {
             clear: {}
         )
 
-        let sut = try RequestCache(storage: storage)
+        let sut = RequestCache(encoder: .sorted, storage: storage)
 
         let requests: [PendingRequest<DataUploadResponse>] = [
             PendingRequest(
@@ -98,7 +98,7 @@ final class RequestCacheTests: XCTestCase {
             clear: {}
         )
 
-        let sut = try RequestCache(storage: storage)
+        let sut = RequestCache(encoder: .sorted, storage: storage)
 
         let uuidString = "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB"
         let requests: [PendingRequest<DataUploadResponse>] = [
@@ -137,7 +137,7 @@ final class RequestCacheTests: XCTestCase {
             clear: {}
         )
 
-        let sut = try RequestCache(storage: storage)
+        let sut = RequestCache(encoder: .sorted, storage: storage)
         let actual = try sut.load()!
         let actualRequest = actual.first! as! Uploader.PendingRequest<DataUploadResponse>
 
@@ -154,7 +154,7 @@ final class RequestCacheTests: XCTestCase {
             clear: {}
         )
 
-        let sut = try RequestCache(storage: storage)
+        let sut = RequestCache(encoder: .sorted, storage: storage)
         let actual = try sut.load()
         XCTAssertNil(actual)
     }
@@ -169,7 +169,7 @@ final class RequestCacheTests: XCTestCase {
             }
         )
 
-        let sut = try RequestCache(storage: storage)
+        let sut = RequestCache(encoder: .sorted, storage: storage)
         try sut.deleteAll()
 
         waitForExpectations(timeout: 0.1)
