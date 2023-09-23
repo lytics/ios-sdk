@@ -5,7 +5,7 @@ Pod::Spec.new do |s|
 
   s.homepage          = 'https://github.com/lytics/ios-sdk'
   s.license           = { :type => 'MIT', :file => 'LICENSE' }
-  s.author            = 'Lytics Team'  
+  s.author            = 'Lytics Team'
 
   s.module_name       = 'Lytics'
   s.swift_version     = '5.7'
@@ -16,4 +16,6 @@ Pod::Spec.new do |s|
   
   s.documentation_url = 'https://docs.lytics.com/docs/sdk-for-ios'
   s.social_media_url  = 'https://twitter.com/lytics'
+
+  s.dependency          'AnyCodable-FlightSchool', '~> 0.6.0'
 end
