@@ -55,5 +55,5 @@ jobs:
           COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
           LIB_VERSION: ${{ needs.tag.outputs.current-version }}
         run: |
-          pod lib lint --allow-warnings
-          pod trunk push ${{ vars.PODSPEC_PATH }} --allow-warnings
+          pod trunk push ${{ vars.SDK_PODSPEC_PATH }} --allow-warnings
+          pod trunk push ${{ vars.UI_PODSPEC_PATH }} --allow-warnings
