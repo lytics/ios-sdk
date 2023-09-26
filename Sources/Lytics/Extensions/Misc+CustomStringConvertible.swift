@@ -30,7 +30,7 @@ extension UIUserInterfaceIdiom: CustomStringConvertible {
         case .pad: return "pad"
         case .phone: return "phone"
         #if swift(>=5.9)
-        case .reality: return "reality"
+        case .vision: return "vision"
         #endif
         case .tv: return "tv"
         case .unspecified: return "unspecified"
