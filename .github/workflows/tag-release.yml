@@ -10,6 +10,8 @@ jobs:
   tag:
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true && github.head_ref == 'release'
+    outputs:
+      current-version: ${{ steps.get-version.outputs.current-version }}
     steps:
       - name: Git checkout
         uses: actions/checkout@v3
@@ -20,6 +22,7 @@ jobs:
         run: |
           VERSION=$(grep -Eo '([0-9]+\.*)+' ${{ vars.VERSION_FILE_PATH }})
           echo "current-version=$VERSION" >> $GITHUB_ENV
+          echo "current-version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Generate token
         uses: tibdex/github-app-token@v1
@@ -39,3 +42,28 @@ jobs:
               ref: 'refs/tags/${{ env.current-version }}',
               sha: '${{ github.sha }}'
             })
+
+  publish-cocoapods:
+    runs-on: macOS-latest
+    needs: tag
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Publish LyticsSDK Pod
+        id: publish-lytics-sdk
+        uses: ./.github/actions/publish-podspec
+        with:
+          podspec-path: Example.podspec
+          version: ${{ needs.tag.outputs.current-version }}
+        env:
+          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+
+      - name: Publish LyticsUI Pod
+        id: publish-lytics-ui
+        uses: ./.github/actions/publish-podspec
+        with:
+          podspec-path: ExampleUI.podspec
+          version: ${{ needs.tag.outputs.current-version }}
+        env:
+          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
