@@ -1,0 +1,20 @@
+name: Publish Podspec
+description: Publishes a CocoaPods podspec to the 'trunk' spec-repo.
+inputs:
+  podspec-path:
+    description: 'The path to the podspec file.'
+    required: true
+  version:
+    description: 'The version of the podspec to publish.'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Lint and Push Podspec
+      shell: bash
+      run: |
+        set -eo pipefail
+        export LIB_VERSION=${{ inputs.version }}
+        pod lib lint ${{ inputs.podspec-path }}
+        pod trunk push ${{ inputs.podspec-path }} --use-json
