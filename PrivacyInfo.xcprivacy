@@ -48,7 +48,7 @@
 			<string>NSPrivacyAccessedAPICategoryUserDefaults</string>
 			<key>NSPrivacyAccessedAPITypeReasons</key>
 			<array>
-				<string>Cache tracked data</string>
+				<string>CA92.1</string>
 			</array>
 		</dict>
 	</array>
