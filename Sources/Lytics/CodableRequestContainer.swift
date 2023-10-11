@@ -38,7 +38,7 @@ struct CodableRequestContainer: Codable {
         var container = encoder.unkeyedContainer()
         for event in requests.reversed() {
             func open<A: Encodable>(_: A.Type) throws -> Data {
-                try JSONEncoder().encode(event as! A)
+                try JSONEncoder.sorted.encode(event as! A)
             }
 
             try container.encode(_mangledTypeName(type(of: event)))

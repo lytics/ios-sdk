@@ -29,6 +29,9 @@ extension UIUserInterfaceIdiom: CustomStringConvertible {
         case .mac: return "mac"
         case .pad: return "pad"
         case .phone: return "phone"
+        #if swift(>=5.9)
+        case .vision: return "vision"
+        #endif
         case .tv: return "tv"
         case .unspecified: return "unspecified"
         @unknown default: return "unknown"
