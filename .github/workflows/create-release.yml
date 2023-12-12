@@ -7,7 +7,14 @@ on:
       - 'main'
 
 jobs:
-  tag:
+  test:
+    name: Test
+    if: github.event.pull_request.merged == true && github.head_ref == 'release'
+    uses: lytics/ios-sdk/.github/workflows/tests.yml@main
+
+  release:
+    name: Release
+    needs: test
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true && github.head_ref == 'release'
     steps:
