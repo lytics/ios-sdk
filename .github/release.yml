@@ -6,6 +6,7 @@ changelog:
       - ci
       - ignore-for-release
     authors:
+      - frontend-project-bot
       - github-actions
       - octocat
   categories:
