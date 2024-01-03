@@ -46,5 +46,6 @@ jobs:
           title: '[CI] Bump Version (${{ steps.bump.outputs.version }})'
           body: |
             Update `Version.swift` with bumped version number
+          labels: chore
           draft: false
           token: ${{ steps.generate-token.outputs.token }}
