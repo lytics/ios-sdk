@@ -56,6 +56,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag_name: '${{ env.current-version }}',
+              generate_release_notes: true,
               draft: false,
               prerelease: false
             })
