@@ -71,7 +71,6 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Publish LyticsSDK Pod
-        id: publish-lytics-sdk
         uses: ./.github/actions/publish-podspec
         with:
           podspec-path: LyticsSDK.podspec
@@ -80,7 +79,6 @@ jobs:
           COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
 
       - name: Publish LyticsUI Pod
-        id: publish-lytics-ui
         uses: ./.github/actions/publish-podspec
         with:
           podspec-path: LyticsUI.podspec
