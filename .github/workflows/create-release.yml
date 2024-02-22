@@ -74,7 +74,7 @@ jobs:
         id: publish-lytics-sdk
         uses: ./.github/actions/publish-podspec
         with:
-          podspec-path: Example.podspec
+          podspec-path: LyticsSDK.podspec
           version: ${{ needs.release.outputs.current-version }}
         env:
           COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
@@ -83,7 +83,7 @@ jobs:
         id: publish-lytics-ui
         uses: ./.github/actions/publish-podspec
         with:
-          podspec-path: ExampleUI.podspec
+          podspec-path: LyticsUI.podspec
           version: ${{ needs.release.outputs.current-version }}
         env:
           COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
