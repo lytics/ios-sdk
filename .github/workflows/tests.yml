@@ -1,6 +1,7 @@
 name: Tests
 
 on:
+  workflow_call:
   workflow_dispatch:
   push:
     branches: [ main ]
@@ -17,16 +18,27 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: .build
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+
       - name: Build and test
         uses: mxcl/xcodebuild@v1
         with:
           xcode: ^14
           platform: iOS
           code-coverage: true
+
       - name: Convert coverage
         uses: sersoft-gmbh/swift-coverage-action@v3
         id: coverage-files
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:

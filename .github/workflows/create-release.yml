@@ -1,4 +1,4 @@
-name: Tag Release
+name: Create Release
 on:
   pull_request:
     types:
@@ -7,14 +7,19 @@ on:
       - 'main'
 
 jobs:
-  tag:
+  test:
+    name: Test
+    if: github.event.pull_request.merged == true && github.head_ref == 'release'
+    uses: lytics/ios-sdk/.github/workflows/tests.yml@main
+
+  release:
+    name: Release
+    needs: test
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true && github.head_ref == 'release'
-    outputs:
-      current-version: ${{ steps.get-version.outputs.current-version }}
     steps:
       - name: Git checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Get version
         id: get-version
@@ -22,7 +27,6 @@ jobs:
         run: |
           VERSION=$(grep -Eo '([0-9]+\.*)+' ${{ vars.VERSION_FILE_PATH }})
           echo "current-version=$VERSION" >> $GITHUB_ENV
-          echo "current-version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Generate token
         uses: tibdex/github-app-token@v1
@@ -32,7 +36,7 @@ jobs:
           private_key: ${{ secrets.FRONTEND_PROJECT_BOT_TOKEN }}
 
       - name: Push tag
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           script: |
@@ -43,27 +47,16 @@ jobs:
               sha: '${{ github.sha }}'
             })
 
-  publish-cocoapods:
-    runs-on: macOS-latest
-    needs: tag
-    steps:
-      - name: Git checkout
-        uses: actions/checkout@v3
-
-      - name: Publish LyticsSDK Pod
-        id: publish-lytics-sdk
-        uses: ./.github/actions/publish-podspec
+      - name: Create release
+        uses: actions/github-script@v7
         with:
-          podspec-path: Example.podspec
-          version: ${{ needs.tag.outputs.current-version }}
-        env:
-          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
-
-      - name: Publish LyticsUI Pod
-        id: publish-lytics-ui
-        uses: ./.github/actions/publish-podspec
-        with:
-          podspec-path: ExampleUI.podspec
-          version: ${{ needs.tag.outputs.current-version }}
-        env:
-          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: '${{ env.current-version }}',
+              generate_release_notes: true,
+              draft: false,
+              prerelease: false
+            })
