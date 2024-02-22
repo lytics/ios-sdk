@@ -16,7 +16,8 @@ jobs:
     name: Release
     needs: test
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true && github.head_ref == 'release'
+    outputs:
+      current-version: ${{ steps.get-version.outputs.current-version }}
     steps:
       - name: Git checkout
         uses: actions/checkout@v4
@@ -60,3 +61,29 @@ jobs:
               draft: false,
               prerelease: false
             })
+
+  publish-cocoapods:
+    name: Publish CocoaPods
+    runs-on: macOS-latest
+    needs: release
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v4
+
+      - name: Publish LyticsSDK Pod
+        id: publish-lytics-sdk
+        uses: ./.github/actions/publish-podspec
+        with:
+          podspec-path: Example.podspec
+          version: ${{ needs.release.outputs.current-version }}
+        env:
+          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+
+      - name: Publish LyticsUI Pod
+        id: publish-lytics-ui
+        uses: ./.github/actions/publish-podspec
+        with:
+          podspec-path: ExampleUI.podspec
+          version: ${{ needs.release.outputs.current-version }}
+        env:
+          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
