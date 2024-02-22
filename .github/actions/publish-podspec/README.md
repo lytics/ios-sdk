@@ -7,10 +7,10 @@ A GitHub Action to publish a CocoaPods podspec.
 ```yaml
 inputs:
   podspec-path:
-    description: 'The path to the podspec file.'
+    description: The path to the podspec file.
     required: true
   version:
-    description: 'The version of the podspec to publish.'
+    description: The version of the podspec to publish.
     required: true
 ```
 
@@ -25,7 +25,7 @@ jobs:
     runs-on: macOS-latest
     steps:
       - name: Git checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Publish Pod
         id: publish-example

@@ -2,10 +2,10 @@ name: Publish Podspec
 description: Publishes a CocoaPods podspec to the 'trunk' spec-repo.
 inputs:
   podspec-path:
-    description: 'The path to the podspec file.'
+    description: The path to the podspec file.
     required: true
   version:
-    description: 'The version of the podspec to publish.'
+    description: The version of the podspec to publish.
     required: true
 
 runs:
