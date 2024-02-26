@@ -7,12 +7,12 @@
 import AdSupport
 import AppTrackingTransparency
 
-struct AppTrackingTransparency {
-    var authorizationStatus: () -> ATTrackingManager.AuthorizationStatus
-    var disableIDFA: () -> Void
-    var enableIDFA: () -> Void
+struct AppTrackingTransparency: Sendable {
+    var authorizationStatus: @Sendable () -> ATTrackingManager.AuthorizationStatus
+    var disableIDFA: @Sendable () -> Void
+    var enableIDFA: @Sendable () -> Void
     var idfa: @Sendable () -> String?
-    var requestAuthorization: () async -> Bool
+    var requestAuthorization: @Sendable () async -> Bool
 }
 
 extension AppTrackingTransparency {
