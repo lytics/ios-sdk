@@ -699,11 +699,10 @@ extension LyticsTests {
     func testUpdateUserHandlesError() async {
         let expectedLogLevel = OSLogType.error
 
-        var actualLogLevel: OSLogType!
         let loggerExpectation = expectation(description: "Error logged")
         let logger = LyticsLogger.test(
             log: { level, _, _, _, _ in
-                actualLogLevel = level
+                XCTAssertEqual(level, expectedLogLevel)
                 loggerExpectation.fulfill()
             }
         )
@@ -720,7 +719,6 @@ extension LyticsTests {
         sut.updateUser(with: UserUpdate(identifiers: TestIdentifiers.user1, attributes: TestAttributes.user1))
 
         await fulfillment(of: [loggerExpectation], timeout: expectationTimeout)
-        XCTAssertEqual(actualLogLevel, expectedLogLevel)
     }
 
     func testtestUpdateUserBeforeStarting() {
@@ -737,11 +735,10 @@ extension LyticsTests {
         let expectedLogLevel = OSLogType.error
         let expectedEvent = Event<TestCart>(identifiers: [:], properties: .user1)
 
-        var actualLogLevel: OSLogType!
         let loggerExpectation = expectation(description: "Error logged")
         let logger = LyticsLogger.test(
             log: { level, _, _, _, _ in
-                actualLogLevel = level
+                XCTAssertEqual(level, expectedLogLevel)
                 loggerExpectation.fulfill()
             }
         )
@@ -777,7 +774,6 @@ extension LyticsTests {
         }
 
         await fulfillment(of: [loggerExpectation, eventExpectation], timeout: expectationTimeout)
-        XCTAssertEqual(actualLogLevel, expectedLogLevel)
         XCTAssertEqual(actualEvent, expectedEvent)
     }
 
@@ -801,11 +797,10 @@ extension LyticsTests {
     func testUpdateUserAndUploadHandlesError() async {
         let expectedLogLevel = OSLogType.error
 
-        var actualLogLevel: OSLogType!
         let loggerExpectation = expectation(description: "Error logged")
         let logger = LyticsLogger.test(
             log: { level, _, _, _, _ in
-                actualLogLevel = level
+                XCTAssertEqual(level, expectedLogLevel)
                 loggerExpectation.fulfill()
             }
         )
@@ -831,7 +826,6 @@ extension LyticsTests {
         }
 
         await fulfillment(of: [loggerExpectation], timeout: expectationTimeout)
-        XCTAssertEqual(actualLogLevel, expectedLogLevel)
     }
 
     func testUpdateUserAndUploadBeforeStarting() {

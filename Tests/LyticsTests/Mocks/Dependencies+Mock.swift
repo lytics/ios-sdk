@@ -12,11 +12,11 @@ import XCTest
 
 extension AppTrackingTransparency {
     static func test(
-        authorizationStatus: @escaping () -> ATTrackingManager.AuthorizationStatus = { XCTFail("AppTrackingTransparency.authorizationStatus"); return .denied },
-        disableIDFA: @escaping () -> Void = { XCTFail("AppTrackingTransparency.disableIDFA") },
-        enableIDFA: @escaping () -> Void = { XCTFail("AppTrackingTransparency.enableIDFA") },
+        authorizationStatus: @escaping @Sendable () -> ATTrackingManager.AuthorizationStatus = { XCTFail("AppTrackingTransparency.authorizationStatus"); return .denied },
+        disableIDFA: @escaping @Sendable () -> Void = { XCTFail("AppTrackingTransparency.disableIDFA") },
+        enableIDFA: @escaping @Sendable () -> Void = { XCTFail("AppTrackingTransparency.enableIDFA") },
         idfa: @escaping @Sendable () -> String? = { XCTFail("AppTrackingTransparency.idfa"); return nil },
-        requestAuthorization: @escaping () async -> Bool = { XCTFail("AppTrackingTransparency.requestAuthorization"); return false }
+        requestAuthorization: @escaping @Sendable () async -> Bool = { XCTFail("AppTrackingTransparency.requestAuthorization"); return false }
     ) -> Self {
         .init(
             authorizationStatus: authorizationStatus,
@@ -102,7 +102,7 @@ extension LyticsLogger {
     )
 
     static func test(
-        log: @escaping (OSLogType, @escaping () -> String, StaticString, StaticString, UInt) -> Void = { _, _, _, _, _ in XCTFail("\(Self.self).log") }
+        log: @escaping @Sendable (OSLogType, @escaping () -> String, StaticString, StaticString, UInt) -> Void = { _, _, _, _, _ in XCTFail("\(Self.self).log") }
     ) -> Self {
         .init(log: log)
     }

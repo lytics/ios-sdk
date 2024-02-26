@@ -32,30 +32,48 @@ final class LyticsLoggerTests: XCTestCase {
         waitForExpectations(timeout: 0.1)
     }
 
-    func testLogLevelPassed() {
-        var logType: OSLogType?
+    func testErrorLevelPassed() {
+        let logExpectation = expectation(description: "Logger logged")
         let sut = LyticsLogger(logLevel: .debug) { type, _, _, _, _ in
-            logType = type
+            XCTAssertEqual(type, .error)
+            logExpectation.fulfill()
         }
 
         sut.error("Log error")
-        XCTAssertEqual(logType, .error)
+        waitForExpectations(timeout: 0.1)
+    }
+
+    func testInfoLevelPassed() {
+        let logExpectation = expectation(description: "Logger logged")
+        let sut = LyticsLogger(logLevel: .debug) { type, _, _, _, _ in
+            XCTAssertEqual(type, .info)
+            logExpectation.fulfill()
+        }
 
         sut.info("Log info")
-        XCTAssertEqual(logType, .info)
+        waitForExpectations(timeout: 0.1)
+    }
+
+    func testDebugLevelPassed() {
+        let logExpectation = expectation(description: "Logger logged")
+        let sut = LyticsLogger(logLevel: .debug) { type, _, _, _, _ in
+            XCTAssertEqual(type, .debug)
+            logExpectation.fulfill()
+        }
 
         sut.debug("Log debug")
-        XCTAssertEqual(logType, .debug)
+        waitForExpectations(timeout: 0.1)
     }
 
     func testMessagePassed() {
-        var loggedMessage: String?
+        let logExpectation = expectation(description: "Logger logged")
         let sut = LyticsLogger(logLevel: .debug) { _, message, _, _, _ in
-            loggedMessage = message()
+            XCTAssertEqual(message(), "Logged message: 5")
+            logExpectation.fulfill()
         }
 
         let value = 5
         sut.debug("Logged message: \(value)")
-        XCTAssertEqual(loggedMessage, "Logged message: 5")
+        waitForExpectations(timeout: 0.1)
     }
 }

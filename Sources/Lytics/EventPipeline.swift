@@ -7,7 +7,7 @@
 import Foundation
 
 /// An event pipeline.
-struct EventPipeline: EventPipelineProtocol {
+struct EventPipeline: EventPipelineProtocol, Sendable {
 
     /// Configurable `EventPipeline` properties.
     struct Configuration: Equatable {

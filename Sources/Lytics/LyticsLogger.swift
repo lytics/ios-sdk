@@ -8,7 +8,7 @@ import Foundation
 import os.log
 
 /// The various log levels that the Lytics SDK provides.
-public enum LogLevel: Comparable, Equatable {
+public enum LogLevel: Comparable, Equatable, Sendable {
     case debug
     case info
     case error
@@ -32,9 +32,9 @@ public enum LogLevel: Comparable, Equatable {
 
 /// An object for writing interpolated messages to the logging system.
 @usableFromInline
-struct LyticsLogger {
+struct LyticsLogger: Sendable {
     var logLevel: LogLevel? = .error
-    var log: (OSLogType, @escaping () -> String, StaticString, StaticString, UInt) -> Void
+    var log: @Sendable (OSLogType, @escaping () -> String, StaticString, StaticString, UInt) -> Void
 
     /// Log a debug message.
     /// - Parameter message: The message to log.
