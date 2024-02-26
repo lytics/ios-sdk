@@ -15,7 +15,7 @@ extension AppTrackingTransparency {
         authorizationStatus: @escaping () -> ATTrackingManager.AuthorizationStatus = { XCTFail("AppTrackingTransparency.authorizationStatus"); return .denied },
         disableIDFA: @escaping () -> Void = { XCTFail("AppTrackingTransparency.disableIDFA") },
         enableIDFA: @escaping () -> Void = { XCTFail("AppTrackingTransparency.enableIDFA") },
-        idfa: @escaping () -> String? = { XCTFail("AppTrackingTransparency.idfa"); return nil },
+        idfa: @escaping @Sendable () -> String? = { XCTFail("AppTrackingTransparency.idfa"); return nil },
         requestAuthorization: @escaping () async -> Bool = { XCTFail("AppTrackingTransparency.requestAuthorization"); return false }
     ) -> Self {
         .init(
@@ -36,7 +36,7 @@ extension AppVersionTracker {
     }
 
     static func test(
-        checkVersion: @escaping () -> AppVersionEvent? = { XCTFail("\(Self.self).checkVersion"); return nil }
+        checkVersion: @escaping @Sendable () -> AppVersionEvent? = { XCTFail("\(Self.self).checkVersion"); return nil }
     ) -> Self {
         .init(
             checkVersion: checkVersion
@@ -63,7 +63,7 @@ extension DependencyContainer {
         appTrackingTransparency: AppTrackingTransparency = .test(),
         configuration: LyticsConfiguration = .init(),
         eventPipeline: EventPipelineProtocol = EventPipelineMock(),
-        timestampProvider: @escaping () -> Millisecond = Millisecond.test(),
+        timestampProvider: @escaping @Sendable () -> Millisecond = Millisecond.test(),
         userManager: UserManaging = UserManagerMock<TestIdentifiers, TestAttributes>(),
         apiToken: String = Mock.apiToken,
         appEventTracker: AppEventTracking = AppEventTrackerMock(),
@@ -109,13 +109,13 @@ extension LyticsLogger {
 }
 
 extension Millisecond {
-    static let mock: () -> Self = {
+    static let mock: @Sendable () -> Self = {
         Mock.millisecond
     }
 
     static func test(
-        _ provider: @escaping () -> Millisecond = { XCTFail("timestampProvider"); return 0 }
-    ) -> () -> Self {
+        _ provider: @escaping @Sendable () -> Millisecond = { XCTFail("timestampProvider"); return 0 }
+    ) -> @Sendable () -> Self {
         provider
     }
 }

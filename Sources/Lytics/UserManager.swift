@@ -21,7 +21,7 @@ actor UserManager: UserManaging {
     }
 
     private let configuration: Configuration
-    private let idfaProvider: () -> String?
+    private let idfaProvider: @Sendable () -> String?
     private let idProvider: @Sendable () -> String
     private let encoder: JSONEncoder
     private let storage: UserStorage
@@ -71,7 +71,7 @@ actor UserManager: UserManaging {
     init(
         configuration: Configuration = .init(),
         encoder: JSONEncoder,
-        idfaProvider: @escaping () -> String?,
+        idfaProvider: @escaping @Sendable () -> String?,
         idProvider: @escaping @Sendable () -> String = { UUID().uuidString },
         storage: UserStorage
     ) {
@@ -212,7 +212,7 @@ private extension UserManager {
 extension UserManager {
     static func live(
         configuration: LyticsConfiguration,
-        idfaProvider: @escaping () -> String?
+        idfaProvider: @escaping @Sendable () -> String?
     ) -> UserManager {
         .init(
             configuration: Configuration(

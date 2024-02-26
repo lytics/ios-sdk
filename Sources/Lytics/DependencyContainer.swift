@@ -15,7 +15,7 @@ struct DependencyContainer {
     var configuration: LyticsConfiguration
     var eventPipeline: EventPipelineProtocol
     var loader: Loader
-    var timestampProvider: () -> Millisecond
+    var timestampProvider: @Sendable () -> Millisecond
     var userManager: UserManaging
 }
 

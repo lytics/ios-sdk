@@ -11,26 +11,24 @@ struct AppTrackingTransparency {
     var authorizationStatus: () -> ATTrackingManager.AuthorizationStatus
     var disableIDFA: () -> Void
     var enableIDFA: () -> Void
-    var idfa: () -> String?
+    var idfa: @Sendable () -> String?
     var requestAuthorization: () async -> Bool
 }
 
 extension AppTrackingTransparency {
     static var live: Self {
-        let userDefaults = UserDefaults.standard
-
-        return AppTrackingTransparency(
+        AppTrackingTransparency(
             authorizationStatus: {
                 ATTrackingManager.trackingAuthorizationStatus
             },
             disableIDFA: {
-                userDefaults.set(false, for: .idfaIsEnabled)
+                UserDefaults.standard.set(false, for: .idfaIsEnabled)
             },
             enableIDFA: {
-                userDefaults.set(true, for: .idfaIsEnabled)
+                UserDefaults.standard.set(true, for: .idfaIsEnabled)
             },
             idfa: {
-                guard userDefaults.bool(for: .idfaIsEnabled), ATTrackingManager.trackingAuthorizationStatus == .authorized else {
+                guard UserDefaults.standard.bool(for: .idfaIsEnabled), ATTrackingManager.trackingAuthorizationStatus == .authorized else {
                     return nil
                 }
 
@@ -42,10 +40,10 @@ extension AppTrackingTransparency {
                 let status = await ATTrackingManager.requestTrackingAuthorization()
                 switch status {
                 case .authorized:
-                    userDefaults.set(true, for: .idfaIsEnabled)
+                    UserDefaults.standard.set(true, for: .idfaIsEnabled)
                     return true
                 case .denied, .notDetermined, .restricted:
-                    userDefaults.set(false, for: .idfaIsEnabled)
+                    UserDefaults.standard.set(false, for: .idfaIsEnabled)
                     return false
                 @unknown default:
                     return false

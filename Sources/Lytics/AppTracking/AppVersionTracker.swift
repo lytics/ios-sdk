@@ -6,7 +6,7 @@
 
 import Foundation
 
-struct AppVersionTracker {
+struct AppVersionTracker: Sendable {
 
     /// Tracked application events.
     enum AppVersionEvent {
@@ -16,19 +16,17 @@ struct AppVersionTracker {
         case update(_ version: String)
     }
 
-    var checkVersion: () -> AppVersionEvent?
+    var checkVersion: @Sendable () -> AppVersionEvent?
 }
 
 extension AppVersionTracker {
     static var live: AppVersionTracker {
-        let defaults = UserDefaults.standard
-
-        return .init(
+        .init(
             checkVersion: {
-                let lastVersion = defaults.string(for: .lastVersionNumber)
+                let lastVersion = UserDefaults.standard.string(for: .lastVersionNumber)
 
                 let currentVersion = Bundle.main.releaseVersionNumber ?? Constants.defaultAppVersion
-                defaults.set(currentVersion, for: .lastVersionNumber)
+                UserDefaults.standard.set(currentVersion, for: .lastVersionNumber)
 
                 if lastVersion == nil {
                     return .install(currentVersion)

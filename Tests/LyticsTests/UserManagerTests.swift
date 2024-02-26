@@ -374,7 +374,7 @@ final class UserManagerTests: XCTestCase {
             Constants.idfaKey: expectedIDFA
         ]
 
-        let idfaProvider: () -> String? = {
+        let idfaProvider: @Sendable () -> String? = {
             expectedIDFA
         }
 
@@ -403,7 +403,7 @@ final class UserManagerTests: XCTestCase {
             Constants.idfaKey: expectedIDFA
         ]
 
-        let idfaProvider: () -> String? = {
+        let idfaProvider: @Sendable () -> String? = {
             expectedIDFA
         }
 
