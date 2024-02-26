@@ -26,7 +26,7 @@ struct EventPipeline: EventPipelineProtocol {
 
     private let configuration: Configuration
     private let logger: LyticsLogger
-    private let sessionDidStart: (Millisecond) -> Bool
+    private let sessionDidStart: @Sendable (Millisecond) -> Bool
     private let eventQueue: EventQueueing
     private let uploader: Uploading
     private let userSettings: UserSettings
@@ -39,7 +39,7 @@ struct EventPipeline: EventPipelineProtocol {
     init(
         configuration: Configuration,
         logger: LyticsLogger,
-        sessionDidStart: @escaping (Millisecond) -> Bool,
+        sessionDidStart: @escaping @Sendable (Millisecond) -> Bool,
         eventQueue: EventQueueing,
         uploader: Uploading,
         userSettings: UserSettings

@@ -23,7 +23,7 @@ final class AppEventTracker: AppEventTracking {
 
     private let configuration: Configuration
     private let logger: LyticsLogger
-    private let timestampProvider: () -> Millisecond = { Date().timeIntervalSince1970.milliseconds }
+    private let timestampProvider: @Sendable () -> Millisecond = { Date().timeIntervalSince1970.milliseconds }
     private let eventProvider: AppEventProvider
     private let eventPipeline: EventPipelineProtocol
     private let onEvent: (AppLifecycleEvent) -> Void

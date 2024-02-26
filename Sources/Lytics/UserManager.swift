@@ -22,7 +22,7 @@ actor UserManager: UserManaging {
 
     private let configuration: Configuration
     private let idfaProvider: () -> String?
-    private let idProvider: () -> String
+    private let idProvider: @Sendable () -> String
     private let encoder: JSONEncoder
     private let storage: UserStorage
 
@@ -72,7 +72,7 @@ actor UserManager: UserManaging {
         configuration: Configuration = .init(),
         encoder: JSONEncoder,
         idfaProvider: @escaping () -> String?,
-        idProvider: @escaping () -> String = { UUID().uuidString },
+        idProvider: @escaping @Sendable () -> String = { UUID().uuidString },
         storage: UserStorage
     ) {
         Self.ensure(
