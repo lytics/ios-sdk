@@ -169,6 +169,15 @@ extension Storage {
     }
 }
 
+extension UserManager {
+    static let mock = UserManager(
+        configuration: .init(),
+        encoder: JSONEncoder(),
+        idfaProvider: { nil },
+        storage: .mock()
+    )
+}
+
 extension UserSettings {
     static let optedInMock = Self(
         getOptIn: { true },
@@ -187,6 +196,22 @@ extension UserSettings {
         .init(
             getOptIn: getOptIn,
             setOptIn: setOptIn
+        )
+    }
+}
+
+extension UserStorage {
+    static func mock(
+        attributes: @escaping () -> [String: Any]? = { [:] },
+        identifiers: @escaping () -> [String: Any]? = { nil },
+        storeAttributes: @escaping ([String: Any]?) -> Void = { _ in },
+        storeIdentifiers: @escaping ([String: Any]?) -> Void = { _ in }
+    ) -> UserStorage {
+        .init(
+            attributes: attributes,
+            identifiers: identifiers,
+            storeAttributes: storeAttributes,
+            storeIdentifiers: storeIdentifiers
         )
     }
 }

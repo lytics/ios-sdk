@@ -225,13 +225,4 @@ extension UserManager {
             storage: .live()
         )
     }
-
-    #if DEBUG
-        static let mock = UserManager(
-            configuration: .init(),
-            encoder: JSONEncoder(),
-            idfaProvider: { nil },
-            storage: .mock()
-        )
-    #endif
 }
