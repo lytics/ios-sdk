@@ -14,9 +14,9 @@ struct AppEventProvider {
         let version: String
     }
 
-    private let identifiers: () async -> [String: AnyCodable]
+    private let identifiers: @Sendable () async -> [String: AnyCodable]
 
-    init(identifiers: @escaping () async -> [String: AnyCodable]) {
+    init(identifiers: @escaping @Sendable () async -> [String: AnyCodable]) {
         self.identifiers = identifiers
     }
 }
